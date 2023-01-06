@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RoleMenu">
+
+	<!-- 권한 미적용 메뉴리스트 -->
+	<select id="listNotRoleByMenu" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+        SELECT MENU_ID                              AS "menuId"
+             , SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) AS "menuNm"
+        FROM   TN_DSCO_MENU_MGT A
+        WHERE  MENU_ID NOT IN (SELECT DISTINCT MENU_ID
+                               FROM   TN_DSCO_ROLE_MENU
+                               WHERE  ROLE_ID = #roleId#)
+        CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH UPR_MENU_ID = 'NONE'
+        ORDER BY MENU_ID
+	</select>
+
+	<!-- 권한 적용 메뉴리스트 -->
+	<select id="listRoleByMenu" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT A.ROLE_ID                                    AS "roleId"
+		     , A.MENU_ID                                    AS "menuId"
+		     , B.MENU_NM                                    AS "menuNm"
+		FROM   TN_DSCO_ROLE_MENU A
+		     , (SELECT MENU_ID
+		             , SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) MENU_NM
+		        FROM   TN_DSCO_MENU_MGT
+		        CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		        START WITH UPR_MENU_ID = 'NONE') B
+		WHERE  A.ROLE_ID = #roleId#
+		AND    A.MENU_ID = B.MENU_ID
+		ORDER BY A.MENU_ID
+	</select>
+
+	<!-- 권한적용 등록 -->
+	<insert id="regiRoleByMenu" parameterClass="java.util.Map">
+		INSERT INTO TN_DSCO_ROLE_MENU (
+		       ROLE_ID
+		     , MENU_ID
+		     , REGISTER
+		     , REGI_DATE
+		) VALUES (
+		       #roleId#
+		     , #menuId#
+		     , #gsUserId#
+		     , sysdate
+		)
+	</insert>
+
+	<!-- 롤 메뉴 삭제 -->
+	<delete id="deltRoleByMenu" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_ROLE_MENU
+		WHERE  0 = 0
+		<isNotEmpty prepend="AND" property="roleId">
+			ROLE_ID = #roleId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="menuId">
+			MENU_ID = #menuId#
+		</isNotEmpty>
+	</delete>
+
+</sqlMap>

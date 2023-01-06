@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RoleProg">
+
+	<!-- 권한 미적용 프로그램리스트 -->
+	<select id="listNotRoleByProg" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+        SELECT PROGRAM_ID                              		AS "progId"
+             , PROGRAM_NM										AS "progNm"
+			 , (SELECT DECODE(SIGN(count(*)), 0, 'N', 'Y')
+			 	FROM   TN_DSCO_AUTHOR_INFO
+				WHERE  PROGRAM_ID = A.PROGRAM_ID)					AS "isAdded"
+        FROM   TN_DSCO_PROGRAM_MGT A
+        WHERE  PROGRAM_ID NOT IN (SELECT DISTINCT PROGRAM_ID
+                               FROM   TN_DSCO_AUTHOR_INFO
+                               WHERE  ROLE_ID = #roleId#)
+        ORDER BY PROGRAM_ID
+	</select>
+
+	<!-- 권한 적용 프로그램리스트 -->
+	<select id="listRoleByProg" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT A.ROLE_ID                                    AS "roleId"
+		     , A.PROGRAM_ID                                    AS "progId"
+		     , B.PROGRAM_NM                                    AS "progNm"
+		FROM   TN_DSCO_AUTHOR_INFO A
+		     , TN_DSCO_PROGRAM_MGT B
+		WHERE  A.ROLE_ID = #roleId#
+		AND    A.PROGRAM_ID = B.PROGRAM_ID
+		ORDER BY A.PROGRAM_ID
+	</select>
+
+	<!-- 권한별 프로그램 등록 -->
+	<insert id="regiRoleByProg" parameterClass="java.util.Map">
+		INSERT INTO TN_DSCO_AUTHOR_INFO (
+		       ROLE_ID
+		     , PROGRAM_ID
+		     , REGISTER
+		     , REGI_DATE
+		) VALUES (
+		       #roleId#
+		     , #progId#
+		     , #gsUserId#
+		     , sysdate
+		)
+	</insert>
+
+	<!-- 권한별 프로그램 삭제 -->
+	<delete id="deltRoleByProg" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_AUTHOR_INFO
+		WHERE  0 = 0
+		<isNotEmpty prepend="AND" property="roleId">
+			ROLE_ID = #roleId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="progId">
+			PROGRAM_ID = #progId#
+		</isNotEmpty>
+	</delete>
+
+</sqlMap>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="RoleUser">
+
+
+	<!-- 롤 사용자 삭제 -->
+	<delete id="deltRoleByUser" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_ROLE_USER
+		WHERE  0 = 0
+		<isNotEmpty prepend="AND" property="roleId">
+			ROLE_ID = #roleId#
+		</isNotEmpty>
+		<isNotEmpty prepend="AND" property="userId">
+			USER_ID = #userId#
+		</isNotEmpty>
+	</delete>
+
+</sqlMap>

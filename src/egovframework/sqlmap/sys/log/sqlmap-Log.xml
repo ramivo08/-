@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Log">
+
+    <sql id="Acchist-condition">
+        <isNotEmpty property="srchFromDate">
+            AND A.CONECT_DT <![CDATA[>=]]> TO_DATE(#srchFromDate#||' 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+        </isNotEmpty>
+        <isNotEmpty property="srchToDate">
+            AND A.CONECT_DT <![CDATA[<=]]> TO_DATE(#srchToDate#||' 23:59:59', 'yyyy-mm-dd hh24:mi:ss')
+        </isNotEmpty>
+    </sql>
+
+    <!--
+    메뉴별, 프로그램별 접속통계
+    -->
+    <select id="listAcchist" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT MENU_ID 						AS "menuId"
+		     , MENU_NM 						AS "menuNm"
+		     , MENU_PATH 					AS "menuPath"
+		     , CNT 							AS "cnt"
+		     , USER_CNT 					AS "userCnt"
+		     , LAST_DATE 					AS "lastDate"
+		     , RATE 						AS "rate"
+		FROM   (
+				<!-- 메뉴 단위별 프로그램 리스트 -->
+		        SELECT 2 AS SEQ
+		             , B.MENU_ID
+		             , B.MENU_NM
+		             , MAX(B.MENU_PATH) AS MENU_PATH
+		             , COUNT(*) as CNT
+		             , COUNT(DISTINCT A.CONECT_USER_ID) as USER_CNT
+		             , TO_CHAR(MAX(A.CONECT_DT), 'yyyy-mm-dd hh24:mi:ss') as LAST_DATE
+		             , ROUND(RATIO_TO_REPORT(COUNT(*)) OVER(PARTITION BY GROUPING_ID(B.MENU_ID)) * 100, 2) as RATE
+		             , MENU_LEVEL
+		             , MENU_ORDR
+		        FROM   TH_DSCO_CONECT_LOG A
+		             , (SELECT MENU_ID
+		                     , MENU_LEVEL
+		                     , MENU_LEVEL
+		                     , MENU_ORDR
+		                     , SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) AS MENU_PATH
+		                FROM   TN_DSCO_MENU_MGT
+		                <!-- WHERE  LEVEL <![CDATA[<=]]> 1 -->
+		                CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		                START WITH UPR_MENU_ID = 'NONE' ) B
+		             , TN_DSCO_PROGRAM_MGT C
+		        WHERE  A.CONECT_URL = C.PROGRAM_PTTRN(+)
+		        AND    B.MENU_ID = C.MENU_ID
+		        <include refid="Acchist-condition"/>
+		        GROUP BY B.MENU_ID, B.MENU_NM, B.MENU_LEVEL, B.MENU_ORDR
+
+				<!-- 프로그램 단위별 프로그램 리스트 (메인, 로그인등 특정 프로그램.) -->
+				<!--
+				UNION ALL
+
+		        SELECT 1 AS SEQ
+		             , C.PROGRAM_ID
+		             , C.PROG_NM
+		             , C.PROG_NM
+		             , COUNT(*)
+		             , COUNT(DISTINCT A.CONECT_USER_ID)
+		             , TO_CHAR(MAX(A.CONECT_DT), 'yyyy-mm-dd hh24:mi:ss')
+		             , null
+		             , 0
+		             , 0
+		        FROM   TH_DSCO_CONECT_LOG A
+		             , TN_DSCO_PROGRAM_MGT C
+		        WHERE  A.CONECT_URL = C.PROGRAM_PTTRN(+)
+		        AND    C.PROGRAM_ID IN ('PG-MEMB0101', 'PG-COMM0102')
+		        <include refid="Acchist-condition"/>
+		        GROUP BY C.PROGRAM_ID, C.PROG_NM
+				-->
+				)
+		ORDER BY SEQ, MENU_LEVEL, MENU_ORDR, MENU_ID
+    </select>
+    <select id="listAcchistCount" parameterClass="java.util.Map"  resultClass="java.lang.Integer">
+			SELECT  COUNT(*)
+			FROM   (
+					<!-- 메뉴 단위별 프로그램 리스트 -->
+                    SELECT 2 AS SEQ
+                         , B.MENU_ID
+                         , B.MENU_NM
+                         , MAX(B.MENU_PATH)
+                         , COUNT(*) as CNT
+                         , COUNT(DISTINCT A.CONECT_USER_ID) as USER_CNT
+                         , TO_CHAR(MAX(A.CONECT_DT), 'yyyy-mm-dd hh24:mi:ss') as LAST_DATE
+                         , ROUND(RATIO_TO_REPORT(COUNT(*)) OVER(PARTITION BY GROUPING_ID(B.MENU_ID)) * 100, 2) as RATE
+			        FROM   TH_DSCO_CONECT_LOG A,
+			               (
+                                SELECT MENU_ID
+                                     , MENU_NM
+                                     , MENU_LEVEL
+                                     , MENU_ORDR
+                                     , SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) AS MENU_PATH
+                                FROM   TN_DSCO_MENU_MGT
+                                <!-- WHERE  LEVEL <![CDATA[<=]]> 1 -->
+                                CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+                                START WITH UPR_MENU_ID = 'NONE'
+			               ) B,
+			                TN_DSCO_PROGRAM_MGT C
+			        WHERE  A.CONECT_URL   = C.PROGRAM_PTTRN(+)
+			        AND    B.MENU_ID    = C.MENU_ID
+			        <include refid="Acchist-condition"/>
+			        GROUP BY B.MENU_ID, B.MENU_NM, B.MENU_LEVEL, B.MENU_ORDR
+
+					<!-- 프로그램 단위별 프로그램 리스트 (메인, 로그인등 특정 프로그램.) -->
+					<!--
+					UNION ALL
+
+			        SELECT 1 AS SEQ
+			             , C.PROGRAM_ID
+			             , C.PROG_NM
+			             , C.PROG_NM
+			             , COUNT(*)
+			             , COUNT(DISTINCT A.CONECT_USER_ID)
+			             , TO_CHAR(MAX(A.CONECT_DT), 'yyyy-mm-dd hh24:mi:ss')
+			             , null
+			             , 0
+			             , 0
+			        FROM   TH_DSCO_CONECT_LOG A
+			             , TN_DSCO_PROGRAM_MGT C
+			        WHERE  A.CONECT_URL = C.PROGRAM_PTTRN(+)
+			        AND    C.PROGRAM_ID IN ('PG-MEMB0101', 'PG-COMM0102')
+			        <include refid="Acchist-condition"/>
+			        GROUP BY C.PROGRAM_ID, C.PROG_NM
+					-->
+			)
+    </select>
+
+
+    <sql id="Loghist-condition">
+        <isNotEmpty property="srchFromDate">
+            AND A.LOGIN_DT <![CDATA[>=]]> TO_DATE(#srchFromDate#||' 00:00:00', 'yyyy-mm-dd hh24:mi:ss')
+        </isNotEmpty>
+        <isNotEmpty property="srchToDate">
+            AND A.LOGIN_DT <![CDATA[<=]]> TO_DATE(#srchToDate#||' 23:59:59', 'yyyy-mm-dd hh24:mi:ss')
+        </isNotEmpty>
+        <isNotEmpty property="srchUserNm">
+            AND B.USER_NM like '%'||#srchUserNm#||'%'
+        </isNotEmpty>
+    </sql>
+
+	<!--
+    사용자별 로그인 로그조회
+    -->
+    <select id="listLoghist" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT LOGIN_USER_ID 				AS "userId"
+		     , USER_NM 						AS "userNm"
+		     , CNT 							AS "cnt"
+		     , LAST_DATE 					AS "lastDate"
+		FROM   (
+                SELECT A.LOGIN_USER_ID
+                     , B.USER_NM
+                     , count(*) AS CNT
+                     , TO_CHAR(MAX(A.LOGIN_DT), 'yyyy-mm-dd hh24:mi:ss') AS LAST_DATE
+                FROM   TH_DSCO_LOGIN_LOG A, TB_USER B
+                WHERE  A.LOGIN_STTUS_CODE 	= 'O'
+                AND    A.LOGIN_USER_ID 		= B.USER_ID(+)
+		        <include refid="Loghist-condition"/>
+                GROUP BY A.LOGIN_USER_ID, B.USER_NM
+		)
+		ORDER BY USER_NM
+    </select>
+    
+    <select id="listLoghistCount" parameterClass="java.util.Map"  resultClass="java.lang.Integer">
+		SELECT count(*)
+		FROM   (
+                SELECT A.LOGIN_USER_ID
+                     , B.USER_NM
+                     , count(*) AS CNT
+                     , TO_CHAR(MAX(A.LOGIN_DT), 'yyyy-mm-dd hh24:mi:ss') AS LAST_DATE
+                FROM   TH_DSCO_LOGIN_LOG A, TB_USER B
+                WHERE  A.LOGIN_STTUS_CODE 	= 'O'
+                AND    A.LOGIN_USER_ID 		= B.USER_ID(+)
+		        <include refid="Loghist-condition"/>
+                GROUP BY A.LOGIN_USER_ID, B.USER_NM
+		)
+		ORDER BY USER_NM
+    </select>
+    
+    <select id="loginLogList" parameterClass="map" resultClass="java.util.HashMap">
+    	SELECT 
+    	"LOGIN_USER_ID" 		AS "userId"
+    	, TO_CHAR("LOGIN_DT", 'YYYY-MM-DD HH24:MI:SS')			AS "loginDate"
+    	, "LOGIN_YY"			AS "loginYy"
+    	, "LOGIN_MT"			AS "loginMt"
+    	, "LOGIN_DE"			AS "loginDe"
+    	, "LOGIN_STTUS_CODE"	AS "loginSttusCode"
+    	, "LOGIN_FAIL_CODE"		AS "loginFailCode"
+    	, "LOGIN_IP_ADRES"		AS "loginIp"
+    	, "LOGIN_SERVER_NM"		AS "loginServerNm"
+		FROM public.aea_login_log
+		ORDER BY "LOGIN_ORDR" DESC
+    </select>
+    
+    
+    <select id="loginLogListCount" resultClass="int">
+		SELECT
+		COUNT(*)
+		FROM
+		public.aea_login_log
+	</select>
+	
+	<select id="shipLogList" parameterClass="map" resultClass="java.util.HashMap">
+    	SELECT 
+    	"LOGIN_USER_ID" 		AS "userId"
+    	, "LOGIN_DT"			AS "loginDate"
+    	, "LOGIN_YY"			AS "loginYy"
+    	, "LOGIN_MT"			AS "loginMt"
+    	, "LOGIN_DE"			AS "loginDe"
+    	, "LOGIN_STTUS_CODE"	AS "loginSttusCode"
+    	, "LOGIN_FAIL_CODE"		AS "loginFailCode"
+    	, "LOGIN_IP_ADRES"		AS "loginIp"
+    	, "LOGIN_SERVER_NM"		AS "loginServerNm"
+		FROM public.aea_login_log
+		ORDER BY "LOGIN_ORDR"
+    </select>
+    
+    <select id="shipLogListCount" resultClass="int">
+		SELECT
+		COUNT(*)
+		FROM
+		public.aea_login_log
+	</select>
+
+	<insert id="loginLog" parameterClass="map">
+		INSERT INTO public.aea_login_log(
+		"LOGIN_USER_ID", "LOGIN_DT", "LOGIN_YY", "LOGIN_MT", "LOGIN_DE", "LOGIN_STTUS_CODE", "LOGIN_FAIL_CODE", "LOGIN_IP_ADRES", "LOGIN_SERVER_NM", "LOGIN_ORDR")
+		VALUES (#userId#, now(), TO_CHAR(now(), 'YYYY'), TO_CHAR(now(), 'MM'), TO_CHAR(now(), 'DD'), NULL, NULL, #userIp#, #serverNm#, nextval('seq_login_log_order'));
+	</insert>
+</sqlMap>

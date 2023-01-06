@@ -1,0 +1,109 @@
+div.panel-body {
+	padding-top : 20px;
+}
+
+div.content-container {
+	padding-left : 20px;
+}
+
+div.additionalContent {
+	padding-left : 25px;
+	border-bottom : 1px solid #cccccc;
+	padding-bottom : 0.7rem;
+}
+
+div.additionalContent .file{
+	font-size : 12px;
+}
+
+div.content {
+	padding-top: 30px;
+	padding-left: 30px;
+	padding-right: 30px;
+	padding-bottom: 20px;
+}
+div.tf {
+	text-align: center;
+    margin-top: auto;
+    margin-bottom: auto;
+}
+
+div.fileContent {
+	padding-top : 20px;
+}
+
+
+div.file a {
+	color : #777777;
+}
+
+div.file a:hover {
+	color : #aaaaaa;
+}
+div.selectBtns {
+	display: table;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+div.selectBtns .btn {
+	margin-left: 5px;
+	margin-right: 5px;	
+}
+
+h4.card-header {
+	font-weight : bold !important;
+	font-size : 1.3rem !important;
+}
+
+span.file-title {
+    display: inline-block;
+    width: 350px;
+    line-height: 28px;
+    border: 1px solid #999;
+    padding: 5px 10px;
+    margin: 0 5px;
+    letter-spacing: -1px;
+    color: #999;
+}
+
+label[for="input-excel"] {
+    background: #999;
+    color: white;
+    width: 90px;
+    line-height: 28px;
+    border: 1px solid #999;
+    padding: 0 10px;
+    margin: 0 5px;
+    letter-spacing: -1px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 10pt;
+}
+
+label[for="input-excel"]:hover {
+    opacity: 0.8;
+}
+
+span.x-button {
+    float: right;
+    cursor: pointer;
+    display: inline-block;
+    font-size: 9pt;
+    background: black;
+    color: white;
+    padding: 0 20px;
+}
+
+span.x-button:hover {
+    color: #999;
+}
+
+i.delete-btn {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    background: url(/images/btn/delete.png);
+    vertical-align: text-bottom;
+    margin-right: 2px;
+}

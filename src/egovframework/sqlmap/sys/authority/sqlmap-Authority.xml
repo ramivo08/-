@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Authority">
+
+	<select id="getAuthorityUser" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		<!-- SELECT CASE WHEN AUTH_YN = 0 THEN 'X'
+               ELSE 'O'
+               END AS "auth"
+		FROM   (
+					SELECT   SIGN(COUNT(b.role_id)) AS AUTH_CNT
+						   , SIGN(COUNT(c.role_id)) AS AUTH_YN
+					FROM   TN_DSCO_PROGRAM_MGT a, TN_DSCO_AUTHOR_INFO b,
+						   (SELECT role_id
+							FROM   TN_DSCO_ROLE_MGT
+							CONNECT BY PRIOR role_id = UPR_ROLE_ID
+							START WITH role_id in (SELECT role_id
+												   FROM   TN_DSCO_ROLE_USER
+												   WHERE  user_id = #userId#)) c
+					WHERE  a.PROGRAM_ID = b.PROGRAM_ID
+					AND    b.role_id = c.role_id(+)
+					AND    a.PROGRAM_PTTRN = #url#
+				)
+		WHERE   AUTH_CNT > 0 -->
+		
+		SELECT CASE WHEN AUTH_YN = 0 THEN 'X'
+               ELSE 'O'
+               END AS "auth"
+		FROM   (
+					SELECT   SIGN(COUNT(b.ROLE_ID)) AS AUTH_CNT
+						   , SIGN(COUNT(c.ROLE_ID)) AS AUTH_YN
+					FROM   TN_DSCO_PROGRAM_MGT a, TN_DSCO_AUTHOR_INFO b,
+						<isNotEmpty property="userId">
+						(SELECT ROLE_ID
+												   FROM   TN_DSCO_ROLE_USER
+												   WHERE  USER_ID = #userId#) c
+						</isNotEmpty>
+						<isEmpty property="userId">
+						(SELECT ROLE_ID
+												   FROM   TN_DSCO_ROLE_MGT
+												   WHERE  ROLE_ID = 'ROLE_USER') c
+						</isEmpty>
+					WHERE  a.PROGRAM_ID = b.PROGRAM_ID
+					AND    b.ROLE_ID = c.ROLE_ID
+					AND    a.PROGRAM_PTTRN = #url#
+				)
+		WHERE   AUTH_CNT >= 0
+	</select>
+
+</sqlMap>

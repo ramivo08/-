@@ -1,0 +1,41 @@
+@charset "utf-8";
+
+/* ******************** ���� ******************** */
+/* table style */
+.tableMode {display:table; clear:both; float:none; width:100%; max-width:100%; padding:0; margin:0; border-bottom:0;}
+.tableMode>* {display:table-cell; float:none; padding:10px;}
+.tableMode>*:first-child {border-left:0;}
+.tableMode .middle {vertical-align:middle;}
+
+a:link {transition-duration:.3s !important;}
+
+/* ������ ���� - ���̺� ��Ÿ�� */
+.typeCube {clear:both;}
+.typeCube .tableWrap {display:table; width:100%; margin:0; padding:0;}
+.typeCube .tableWrap > * {display:table-cell; float:none; margin:0; padding:0;}
+
+.c_acc {color:#00cccc !important;} /* �������� */
+.c_sub1 {color:#71d5ff !important;} /* �ϴ� */
+.c_sub2 {color:#ffe400 !important;} /* ��� */
+
+.rightCube a {text-decoration: none; color:#666666;}
+
+
+/* ******************** ����ũž (992~) ******************** */
+@media screen and (min-width: 992px), print{
+	
+}
+
+
+
+/* ************************ �º� ����(~991) ************************ */
+@media screen and (max-width: 991px) {
+
+}
+
+
+
+/* ************************ ����� (0~767) ************************ */
+@media screen and (max-width:767px) {
+
+}

@@ -1,0 +1,226 @@
+
+#set ($urlHome				= "/main.do")								<!-- 홈 -->
+#set ($urlLogin				= "/login.do")								<!-- 로그인 -->
+#set ($urlLogout			= "/j_logout_check.do")						<!-- 로그아웃 -->
+#set ($urlRegiMemb			= "/memb/openRegiMembUser01.do")			<!-- 회원가입 -->
+#set ($urlUpdtMemb			= "/memb/viewMembUserInfo.do")				<!-- 회원수정 -->
+#set ($urlFindIdPass		= "/memb/viewMembFindId.do")				<!-- 아이디찾기 -->
+#set ($urlOutMemb			= "/memb/openWithdrawStep1.do")				<!-- 회원탈퇴 -->
+
+#set ($urlAdmin				= "/board/listAdmnUser.do")					<!-- 관리자-->
+
+<!--▼ 상단 영역 -->
+<header>
+	<div class="gnb">
+		<h1><a href="/main.do" title="야생동물 건강성평가 및 질병 정보시스템"><img src="${contextPath}/images/common/logo.jpg" alt="국립환경과학원 야생동물 건강성평가 및 질병 정보시스템 로고"></a></h1>
+		<div class="f_ng">
+			<ul>
+                <li><a class="btn2 ani02" href="${urlHome}" title="홈">HOME</a></li>
+                #if (!$pageInfo.gsUserId)
+                <li><a class="btn2 ani02" href="${urlLogin}" title="로그인">로그인</a></li>
+                <li><a class="btn2 ani02" href="${urlRegiMemb}" title="회원가입">회원가입</a></li>
+                <li><a class="btn2 ani02" href="${urlFindIdPass}" title="아이디/비밀번호 찾기">아이디/비밀번호 찾기</a></li>
+                #else
+                <li><a class="btn2 ani02" href="${urlUpdtMemb}" title="회원정보">회원정보</a></li>
+                <li><a class="btn2 ani02" href="${urlLogout}" title="로그아웃">${pageInfo.gsUserId} (${pageInfo.gsUserNm}님) 로그아웃</a></li>
+                	#if ($pageInfo.gsRoleId == 'ROLE_AUTH_SYS' || $pageInfo.gsRoleId == 'ROLE_NIER')
+               		 	<li><a class="btn2 ani02" href="${urlAdmin}" title="관리자">관리자</a></li>
+               		 #end
+               	#end
+			</ul>
+		</div>
+	</div>
+	<nav class="box">
+		<div class="navbg pc">
+			<div class="dep1"></div>
+			<div class="dep2"></div>
+		</div>
+		<div class="wrap box">
+			<!-- orgH:1차메뉴 높이 / maxH:최대높이 / leftgap:왼쪽에서 여백 px,% 사용가능 -->
+			<div class="lnb box" data-orgH="50" data-maxH="220" data-gap="0" data-leftPos="0">
+				<ul>
+				#set ($seq				= 1)
+				#set ($prevLevel 		= 0)
+				#set ($num				= 0)
+
+				#set ($targetUrl		= "")
+
+				#foreach( $map in $menuList)
+					#if ("$!map.tagtUrl" == "")
+						#set ($targetUrl		= "javascript:return;")
+					#else
+						#if ($map.popupYn == 'Y')
+							#set ($targetUrl		= "javascript:newWindow('${map.tagtUrl}','$map.menuId', '1150', '680', 'yes', 'yes');")
+						#else
+							#set ($targetUrl		= $map.tagtUrl)
+						#end
+					#end
+
+					##<!-- 대메뉴 -->
+					#if ($map.level == 1)
+
+						##<!-- 서브메뉴 닫기 -->
+						#if ($prevLevel == 1 && $map.level == 1 )
+								<ul>
+									<li></li>
+								</ul>
+							</li>
+						#end
+
+						##<!-- 서브메뉴 닫기 -->
+						#if ($seq != 1  && $menuList.size() != $seq && $prevLevel != 1)
+								</ul>
+							</li>
+						#end
+
+						#if ($map.menuLvl >= 10)
+							##<!-- 회원가입 메뉴 제외 -->
+							#break
+						#end
+
+						#set ($menuW1 = $arrMenuW1.get($num))
+						#set ($menuW2 = $arrMenuW2.get($num))
+
+						#if ($pageInfo.firstMenuId == $map.menuId)
+					    	<li>
+								<a class="ani02 f_ns" href="$!{targetUrl}">$!{map.menuNm}</a>
+						#else
+							<li>
+								<a class="ani02 f_ns" href="$!{targetUrl}">$!{map.menuNm}</a>
+						#end
+
+						#set ($num = $num + 1)
+					#end
+
+					##<!-- 서브 메뉴 -->
+					#if ($map.level == 2)
+						#if ($prevLevel == 1)
+							<ul>
+						#end
+							#if ($pageInfo.secondMenuId == $map.menuId)
+								<li class="on"><a href="$!{targetUrl}">$!{map.menuNm}</a></li>
+							#else
+								<li><a href="$!{targetUrl}">$!{map.menuNm}</a></li>
+							#end
+
+						#if ($menuList.size() == $seq)
+								</ul>
+							</li>
+						#end
+					#end
+
+					#if ($map.level <= 2 )
+						#set ($prevLevel 	= $map.level)
+						#set ($seq 	= $seq + 1)
+					#end
+				#end
+				</ul>
+			</div>
+		</div><!-- //wrap -->
+	</nav><!-- //nav -->
+
+</header><!-- // header -->
+
+#if($type == 'normal')
+	<section class="sub_visual f_ns">
+		<p class="c_blue">야생동물 건강성평가 및 질병 정보시스템</p>
+	    <p>최근 증가추세에 있는 국가 재난성 인수공통감염병에 신속히 대응하기 위해<br>야생동물유래 질병시료를 체계적으로 관리할 수 있는 정보관리 시스템입니다.</p>
+	</section><!-- //end header -->
+	<!--▲ 상단 영역-->
+
+	<!--▼ 왼쪽 메뉴 & 경로 -->
+	<section class="container box">
+	<div class="con_wrap">
+        <div class="snb f_ns">
+			#set ($seq			= 1)
+			#set ($prevLevel 	= 0)
+			#set ($isUseMenu 	= false)
+			#set ($isSubUseMenu = false)
+
+			#if ($pageInfo.firstMenuId)
+				#foreach( $map in $menuList)
+					#if ("$!map.tagtUrl" == "")
+						#set ($targetUrl	= "javascript:return;")
+					#else
+						#if ($map.popupYn == 'Y')
+							#set ($targetUrl	= "javascript:newWindow('$!{contextPath}${map.tagtUrl}','$map.menuId', '1150', '680', 'yes', 'yes');")
+						#else
+							#set ($targetUrl	= "$!{contextPath}$map.tagtUrl")
+						#end
+					#end
+
+					#if ($prevLevel > $map.level && $isSubUseMenu == true && $menuList.size() != $seq)
+							</ul>
+						</li>
+						#set ($isSubUseMenu = false)
+					#end
+
+					#if ($map.firstMenuId == $pageInfo.firstMenuId)
+						#if ($map.level == 1)
+							<h2>$!{map.menuNm}</h2>
+							<ul>
+							#set ($isUseMenu = true)
+						#else
+							#if ($pageInfo.menuId == $map.menuId || $pageInfo.secondMenuId == $map.menuId)
+								<li class="on">
+							#else
+								<li>
+							#end
+
+							#if ($map.isSubLast == 0)
+								<a href="$!{targetUrl}">$!{map.menuNm}</a></li>
+							#else
+								<a href="$!{targetUrl}">$!{map.menuNm}</a>
+									<ul>
+								#set ($isSubUseMenu	= true)
+							#end
+						#end
+					#end
+
+					#if ($isSubUseMenu == true && $menuList.size() == $seq )
+							</ul>
+						</li>
+					#end
+
+					#set ($prevLevel = $map.level)
+					#set ($seq 	= $seq + 1)
+				#end
+
+				#if ($isUseMenu == true)
+					</ul>
+				#end
+			#else
+				<h2></h2>
+				<ul></ul>
+			#end
+        </div>
+
+        <div class="contents #if ($pageInfo.progPattern == $urlLogin) login #end">
+        	<div class="location">
+                <h3>#if ($title) $title  #end</h3>
+                <p>HOME<span></span>&gt;<span></span>
+                #set ($len				= 1)
+                #foreach( $map in $pageInfo.pathList)
+                	$!{map.menuPath} #if ($pageInfo.pathList.size() != $len)<span></span>&gt;<span></span> #end
+                	#set ($len 	= $len + 1)
+                #end
+                </p>
+            </div>
+#end
+
+#if($type == 'error')
+		<!--▼ 가운데 영역 -->
+		<div class="container_wrap">
+		<div class="contenstswrapper">
+
+			<hr />
+
+			<!--▽ 가운데내용 -->
+			<div class="error_page_01">
+#end
+
+#if($type == 'fmain')
+		<!--▼ 가운데 영역 -->
+			<hr />
+			<!--▽ 가운데내용 -->
+#end

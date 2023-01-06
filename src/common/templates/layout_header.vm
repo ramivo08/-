@@ -1,0 +1,177 @@
+#set ($urlHome					= "/main.do")				<!-- 홈 -->
+#set ($urlLogin					= "/login.do")						<!-- 로그인 -->
+#set ($urlLogout				= "/logout.do")						<!-- 로그아웃 -->
+
+<!-- NAVBAR -->
+
+ <!-- NAVBAR -->
+
+    <nav class="navbar navbar-expand fixed-top">
+      <div class="navbar-brand d-none d-lg-block">
+        <a href="/main.do">   <h3 style="color:white;" >AEA</h3>   </a>
+      </div>
+      <div class="container-fluid p-0">
+        <button id="tour-fullwidth" type="button" class="btn btn-default btn-toggle-fullwidth"><i class="ti-menu"></i></button>
+        <form class="form-inline search-form mr-auto d-none d-sm-block">
+          <div class="input-group">
+            <!--<input type="text" value="" class="form-control" placeholder="Search dashboard..."> -->
+         <!--   <div class="input-group-append">-->
+            <!--  <button type="button" class="btn"><i class="fa fa-search"></i></button>-->
+           <!-- </div>-->
+          </div>
+        </form>
+        <div id="navbar-menu">
+          <ul class="nav navbar-nav align-items-center">
+        <!--    <li class="nav-item">
+              <a href="#" class="dropdown-toggle btn-toggle-rightsidebar">
+                <i class="ti-layout-sidebar-right"></i>
+              </a>
+            </li>
+		-->         
+            <li class="dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="userNamePlace"></span></a>
+              <ul class="dropdown-menu dropdown-menu-right logged-user-menu">
+                <li><a href="/profile.do"><i class="ti-user"></i> <span>프로필</span></a></li>
+                <li><a href="/logout.do"><i class="ti-power-off"></i> <span>로그아웃</span></a></li>
+              </ul>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!-- END NAVBAR -->
+     <script src="/js/layout.js"></script>
+     <!-- LEFT SIDEBAR -->
+    <div id="sidebar-nav" class="sidebar">
+      <nav>
+        <ul class="nav" id="sidebar-nav-menu">
+          <li class="menu-group">Menu</li>
+          
+          <li class="singleMenu"><a href="/main.do" class=""><i class="ti-dashboard"></i> <span class="title">조기폐차 보조금 조회</span></a></li>
+          
+          <!-- <li class="singleMenu"><a href="/psc/dashboard.do" class=""><i class="fa fa-database"></i> <span class="title">운전데이터 분석</span></a></li> -->
+         <!-- <li class="singleMenu"><a href="#" class=""><i class="ti-dashboard"></i> <span class="title">자가 진단</span></a></li>-->
+         <!-- <li class="singleMenu"><a href="/virtual/virtualDrive.do" class=""><i class="ti-map"></i> <span class="title">가상 운전</span></a></li> -->
+          <!-- <li class="singleMenu"><a href="/ship/viewShipData.do" class=""><i class="fa fa-search"></i> <span class="title">선박 데이터 조회</span></a></li>-->
+          <!--<li class="panel">
+          <a href="#insertShipInfo" data-toggle="collapse" data-parent="#sidebar-nav-menu" aria-expanded="" class=""><i class="ti-dashboard"></i> <span class="title">선박등록</span> <i class="icon-submenu ti-angle-left"></i></a>
+            <div id="insertShipInfo" class="collapse  ">
+              <ul class="submenu">
+              	<li><a href="/ship/insertShipInfo.do" class="">선박정보등록</a></li>
+				<li><a href="/ship/insertShipData.do" class="">선박데이터파일 등록</a></li>
+				<li><a href="/ship/viewShipData.do" class="">선박데이터 조회</a></li>
+              </ul>
+            </div>
+          </li>
+          
+       
+          <li class="panel">
+            <a href="#Domain" data-toggle="collapse" data-parent="#sidebar-nav-menu" aria-expanded="" class=""><i class="ti-receipt"></i> <span class="title">도메인</span> <i class="icon-submenu ti-angle-left"></i></a>
+            <div id="Domain" class="collapse  ">
+              <ul class="submenu">
+               <li><a href="/domain/ecDomain.do" class="">EC 도메인</a></li>
+				<li><a href="/domain/uvDomain.do" class="">UV 도메인</a></li>
+				<li><a href="/domain/o3Domain.do" class="">O3 도메인</a></li>
+              </ul>
+            </div>
+          </li>
+          <li class="panel">
+            <a href="#bbs" data-toggle="collapse" data-parent="#sidebar-nav-menu" aria-expanded="" class=""><i class="ti-layout-tab-window"></i> <span class="title">게시판</span> <i class="icon-submenu ti-angle-left"></i></a>
+            <div id="bbs" class="collapse  ">
+              <ul class="submenu">
+				<li><a href="/board/searchNotice.do" class="">공지사항</a></li>
+				<li><a href="/board/searchQNA.do" class="">Q&A</a></li>
+				<li><a href="/board/searchFAQ.do" class="">FAQ</a></li>
+              </ul>
+            </div>
+          </li>-->
+        </ul>
+        <button type="button" class="btn-toggle-minified" title="Toggle Minified Menu"><i class="ti-arrows-horizontal"></i></button>
+      </nav>
+    </div>
+ 
+  
+    <!-- END LEFT SIDEBAR -->
+    
+    	<!-- RIGHT SIDEBAR -->
+    	
+			<div id="sidebar-right" class="right-sidebar">
+				<div class="sidebar-widget">
+					<div class="row">
+						<h4 class="widget-heading">
+							<i class="fa fa-calendar"></i> 선박검색
+						</h4>
+
+					</div>
+					<input type="text" class="form-control margin-bottom" id="imoNum"
+						placeholder="IMO 번호 입력"> <select multiple=""
+						class="form-control margin-bottom">
+						<option value="cheese">Cheese</option>
+						<option value="tomatoes">Tomatoes</option>
+						<option value="mozarella">Mozzarella</option>
+						<option value="mushrooms">Mushrooms</option>
+						<option value="pepperoni">Pepperoni</option>
+						<option value="onions">Onions</option>
+					</select>
+					<div class="sidebar-widget">
+						<div class="widget-header">
+							<h4 class="widget-heading">기간선택</h4>
+							<a href="#" class="show-all">Show all</a>
+						</div>
+
+
+
+
+						<!--<input id="startDate" data-provide="datepicker"
+							data-date-autoclose="true" class="form-control margin-bottom "
+							data-date-format="yyyy/mm/dd" placeholder="시작일"> <input
+							id="endDate" data-provide="datepicker" data-date-autoclose="true"
+							class="form-control margin-bottom " data-date-format="yyyy/mm/dd"
+							placeholder="종료일">-->
+					</div>
+
+
+					<div class="sidebar-widget">
+						<div class="widget-header">
+							<h4 class="widget-heading">작동 방식</h4>
+							<a href="#" class="show-all">Show all</a>
+						</div>
+
+						<label class="fancy-radio custom-bgcolor-green"><input
+							name="bwmsType" value="EC" type="radio" ><span><i></i>EC</span></label>
+						<label class="fancy-radio custom-bgcolor-green"><input
+							name="bwmsType" value="UV" type="radio" ><span><i></i>UV</span></label>
+						<label class="fancy-radio custom-bgcolor-green"><input
+							name="bwmsType" value="O3" type="radio"><span><i></i>O3</span></label>
+
+					</div>
+
+					<div class="sidebar-widget">
+						<div class="widget-header">
+							<h4 class="widget-heading">파일 데이터</h4>
+							<a href="#" class="show-all">Show all</a>
+						</div>
+						<select class="form-control">
+							<option value="${fileNm}">123</option>
+
+						</select>
+					</div>
+
+					<div class="sidebar-widget">
+						<div class="widget-header">
+							<h4 class="widget-heading">데이터 분석</h4>
+							<a href="#" class="show-all">Show all</a>
+						</div>
+
+					</div>
+
+					<p class="text-center">
+						<a href="#" class="btn btn-primary btn-sm">More Widgets</a>
+					</p>
+				</div>
+
+				<!-- END RIGHT SIDEBAR -->
+
+			</div>
+    
+	

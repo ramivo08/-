@@ -1,0 +1,61 @@
+@charset "utf-8";
+
+/*공통::*/
+/* form[class^="form-"] .inputWrap input[type="text"], */
+/* form[class^="form-"] .inputWrap input[type="password"], */
+/* form[class^="form-"] .inputWrap select, */
+/* form[class^="form-"] .inputWrap textarea { */
+/* 	border:1px solid #ccc; border-radius:0; */
+/* 	height:40px; padding:6px 12px; */
+/* 	font-size:16px; line-height:1; color:#666; */
+/* 	background-color:#fff; background-image:none; */
+/* 	width:100%; */
+/* 	-webkit-appearance: none; 모바일에서 입체효과 없애기 */
+/* 	-moz-appearance: none; */
+/* 	appearance: none; */
+/* } */
+/* form[class^="form-"] input::-webkit-input-placeholder {color:#999 !important;} 크롬,사파리 */
+/* form[class^="form-"] input::-moz-placeholder {color:#999 !important;} 파폭 */
+/* form[class^="form-"] input::-ms-input-placeholder {color:#999 !important;} ie */
+
+/* input:focus,select:focus,textarea:focus {outline:none !important; border:1px solid #333 !important; background-color:#f9f9f9 !important;} */
+
+/* select { */
+/* 	background-image:url(../images/common/arrow-down-form.png) !important; */
+/* 	background-color:#fff !important; */
+/* 	background-repeat:no-repeat !important; */
+/* 	background-position:right center !important; */
+/* 	-webkit-appearance: none; 모바일에서 입체효과 없애기 */
+/* 	-moz-appearance: none; */
+/* 	appearance: none; */
+/* } */
+/* select::-ms-expand {display:none;} ie 없애기 */
+
+/* form[class^="form-"] .inputWrap textarea {width:100% !important; height:120px !important;} */
+
+/* ******************** 데스크탑 (992~) ******************** */
+@media screen and (min-width: 992px), print{
+
+
+
+
+}
+
+
+
+
+/* ************************ 태블릿 이하(~991) ************************ */
+@media screen and (max-width: 991px) {
+	
+	
+	
+	
+}
+
+
+/* ************************ 모바일 (0~767) ************************ */
+@media screen and (max-width:767px) {
+	
+	
+	
+}

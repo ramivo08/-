@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/xml/doc-files/log4j.dtd">
+
+ 
+
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <Appenders>
+        <Console name="console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d %5p [%c] %m%n" />
+        </Console>
+    </Appenders>
+   	<Loggers>
+        <Logger name="java.sql"  level = "DEBUG" additivity="false">
+            <appenderRef ref="console" />
+        </Logger>
+        <Logger name="business" level = "DEBUG" additivity="false">
+        	<appenderRef ref="console" />
+        </Logger>
+       
+          <!-- log SQL with timing information, post execution -->
+        <Logger name="jdbc.sqltiming"   level = "DEBUG" additivity="false">
+        	
+            <appenderRef ref="console" />
+        </Logger>
+        <Logger name="org.springframework"  level = "ERROR" additivity="false">
+        
+            <appenderRef ref="console" />
+        </Logger>
+        <Logger name="org.apache" level = "ERROR" additivity="false">
+        	
+            <appender-ref ref="console" />
+        </Logger>
+         <Root>
+        	<level value= "DEBUG"/>
+            <AppenderRef ref="console" />
+        </Root>
+       
+	</Loggers>
+</log4j:configuration>

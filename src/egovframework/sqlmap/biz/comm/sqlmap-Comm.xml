@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+<sqlMap namespace="Comm">
+
+	<typeAlias alias="ComboDomain" type="business.biz.comm.domain.ComboDomain" />
+
+    <select id="listComboCode" parameterClass="java.util.Map" resultClass="ComboDomain">
+    	SELECT  a.CODE_ID                 		AS "comboValue",
+				a.CODE_NM                	AS "comboText"
+		FROM   	TC_DSCO_CODE a
+		WHERE 	(0=0)
+		AND     a.USE_YN = 'Y'
+		<isNotEmpty property="codeNm">
+			AND a.CODE_ID      = #code#
+		</isNotEmpty>
+        <isNotEmpty property="searchNotIn">
+            <iterate prepend="AND" property="searchNotIn" open=" a.CODE_ID NOT IN ( " conjunction="," close=")">
+                #searchNotIn[]#
+            </iterate>
+        </isNotEmpty>
+        <isNotEmpty property="level">
+            AND level = #level#
+        </isNotEmpty>
+		<isEmpty property="startParentCode">
+            AND    a.UPR_CODE  = #parentCode#
+            ORDER BY a.CODE_ORDR, a.CODE_ID
+        </isEmpty>
+        <isNotEmpty property="startParentCode">
+            <isNotEmpty property="level">
+                AND level = #level#
+            </isNotEmpty>
+            CONNECT BY PRIOR      CODE_ID = UPR_CODE
+            START WITH UPR_CODE = #startParentCode#
+            ORDER SIBLINGS BY CODE_ID, CODE_ORDR
+        </isNotEmpty>
+    </select>
+
+	<!-- Code List -->
+	<select id="listCode" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT a.UPR_CODE           	AS "parentCode",
+			   a.CODE_ID                   AS "code",
+			   a.CODE_NM                AS "codeNm",
+			   a.CODE_DC1               AS "addCol1",
+			   a.CODE_DC2               AS "addCol2",
+			   a.CODE_DC3               AS "addCol3",
+			   a.CODE_DC4               AS "addCol4",
+			   a.CODE_DC5               AS "addCol5",
+			   a.USE_YN               	AS "useYn"
+		FROM   TC_DSCO_CODE a
+		WHERE  (0=0)
+		AND    a.USE_YN 	  = 'Y'
+		<isNotEmpty property="searchNm">
+			AND a.CODE_NM      like  '%'||#searchNm#||'%'
+		</isNotEmpty>
+		<isNotEmpty property="codeNm">
+			AND a.CODE_ID      = #code#
+		</isNotEmpty>
+		<isNotEmpty property="addCol01">
+			AND a.CODE_DC1 = #addCol01#
+		</isNotEmpty>
+		<isNotEmpty property="addCol02">
+			AND a.CODE_DC2 = #addCol02#
+		</isNotEmpty>
+		<isNotEmpty property="addCol03">
+			AND a.CODE_DC3 = #addCol03#
+		</isNotEmpty>
+		<isNotEmpty property="addCol04">
+			AND a.CODE_DC4 = #addCol04#
+		</isNotEmpty>
+		<isNotEmpty property="addCol05">
+			AND a.CODE_DC5 = #addCol05#
+		</isNotEmpty>
+        <isNotEmpty property="searchNotIn">
+            <iterate prepend="AND" property="searchNotIn" open=" CODE_ID NOT IN ( " conjunction="," close=")">
+                #searchNotIn[]#
+            </iterate>
+        </isNotEmpty>
+        <isEmpty property="startParentCode">
+            AND    a.UPR_CODE  = #parentCode#
+            ORDER BY a.CODE_ORDR, a.CODE_ID
+        </isEmpty>
+        <isNotEmpty property="startParentCode">
+            <isNotEmpty property="level">
+                AND level = #level#
+            </isNotEmpty>
+            CONNECT BY PRIOR      CODE_ID = UPR_CODE
+            START WITH UPR_CODE = #startParentCode#
+            ORDER SIBLINGS BY CODE_ID, CODE_ORDR
+        </isNotEmpty>
+	</select>
+
+
+</sqlMap>

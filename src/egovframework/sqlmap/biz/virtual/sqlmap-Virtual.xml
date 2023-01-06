@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Virtual">
+	
+<!-- 	<select id="selectHarborList"  resultClass="java.util.HashMap"> -->
+	
+<!-- 		SELECT  -->
+<!-- 			"no" -->
+<!-- 			, "harbor_nm" as "harborNm"  -->
+		
+<!-- 		FROM -->
+<!-- 			 marine_measurements_data -->
+			 
+<!-- 	</select> -->
+	
+	<select id="selectHarborList"  resultClass="java.util.HashMap">
+	
+		SELECT
+			 distinct st_name AS "stName"
+		FROM 
+			 bw_ocean_data_full 
+		ORDER BY 
+			st_name
+			 
+	</select>
+	
+	<select id="selectVirtualShipInfo" parameterClass="map" resultClass="java.util.HashMap">
+	SELECT
+			"imo_no" as "imoNo"
+			,"ship_nm" as "shipNm"
+			,"bwms_type" as "bwmsType"
+		FROM
+			public.bw_ship_info
+		WHERE
+			ship_nm = #shipNm#
+	</select>
+	
+	<select id="selectOceanMedian" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT 
+				st_name as "stName",
+				zone,
+				sea,
+				coast,
+				month,
+				median(temp1) as temp,
+				median(salinity1) as salinity,
+				median(ph1) as ph,
+				median(do1) as do,
+				median(cod1)as cod,
+				median(nh4_n1)as nh4n,
+				median(no2_n1) as no2n,
+				median(no3_n1) as no3n,
+				median(din1) as din,
+				median(tn1) as tn,
+				median(dip1) as dip,
+				median(tp1) as tp1,
+				median(sio2_si1) as "sio2Si",
+				median(ss1) as ss,
+				median(chla1) as chla,
+				median(trans1) as trans
+				
+		FROM 
+				bw_ocean_data_full
+		
+		WHERE 
+				st_name = #endPoint# 
+		
+		GROUP BY
+				 zone,sea,coast,st_name,"month" 
+		
+		ORDER BY
+				 st_name ,"month"=2; 
+	
+	</select>
+	
+	<select id="selectOceanYear" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT
+			 distinct "year" ,st_name 
+		FROM
+			 bw_ocean_data_full 
+		WHERE 
+			st_name=#endPoint#
+		ORDER BY 
+			"year";
+
+	
+	</select>
+	
+	
+	<select id="selectVirtualOption" parameterClass="String" resultClass="java.util.HashMap">
+		SELECT 
+			bwms_type
+			,temp_min AS "tempMin"
+			,temp_max AS "tempMax"
+			,salt_min AS "saltMin"
+			,salt_max AS "saltMax"
+			,matter_min AS "matterMin"
+			,matter_max AS "matterMax"
+		FROM
+			bw_virtual_option
+		WHERE
+			bwms_type = #bwmsType#	
+		
+	
+	</select>
+	
+	
+<!-- 	<select id="selectHaberNm" parameterClass="map" resultClass="java.util.HashMap"> -->
+		
+<!-- 		SELECT  -->
+<!-- 			"harbor_nm" -->
+<!-- 		FROM -->
+<!-- 			marine_measurements_data -->
+<!-- 		WHERE -->
+<!-- 			"no" = #endPoint# -->
+			
+	
+<!-- 	</select> -->
+	
+	
+	
+	
+	
+</sqlMap>
+
+
+

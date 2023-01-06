@@ -1,0 +1,46 @@
+.domainTitle {
+	margin-top: 20px;
+	text-align : center;
+	background : #999999;
+	font-size : 15px;
+	padding : 10px;
+	color : #ffffff;
+}
+
+.domainContent {
+	background : #f9f9f9;
+	padding : 5px;
+	margin-top : 5px;
+	margin-bottom : 5px;
+	text-align : center;
+}
+
+ul.domainList{
+	padding-right : 40px;
+}
+
+.domainBtn {
+	
+	margin-top : 5px;
+	
+	text-align : center;
+}
+
+.btn-outline-dark {
+	color: #343a40;
+    background-color: transparent;
+    background-image: none;
+    border-color: #343a40;
+}
+
+.btn-outline-dark:hover{
+	color: #fff;
+}
+
+.btn-outline-danger {
+	border-color: #f9354c;
+}
+
+.btn-outline-danger:hover {
+	color:#fff;
+}

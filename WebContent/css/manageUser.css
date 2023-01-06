@@ -1,0 +1,103 @@
+ul {
+	padding: 0px;
+}
+
+li {
+	list-style : none;
+}
+
+#menu {
+	text-align : right;
+}
+
+#menu a {
+	color : #868686;
+}
+
+#menu a:hover {
+	color : #a5a5a5;
+}
+
+#menu .nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+    color: #404040;
+    background-color: #fff;
+    font-weight: bold;
+}
+
+#content {
+	
+}
+
+#userList {
+	table-layout: fixed;
+    width: 100%;
+    text-align: center;
+    border-top : 2px solid;
+    border-bottom : 2px solid;
+}
+
+#userList th {
+	border-bottom : 1px solid #ababab;
+}
+
+#userList td {
+	border-bottom : 1px solid #d9d9d9;
+}
+
+#userList td, th {
+	padding-left : 5px;
+	padding-right : 5px;
+	padding-bottom : 5px;
+	padding-top : 5px;
+}
+
+.card-header>span {
+	font-weight: bold;
+    font-size: 20px;
+    color: #252525;
+}
+
+.custom-control {
+	text-align: center;
+    align-self: center;
+}
+
+.custom-control>.cumstom-control-input {
+	position: inherit;
+}
+
+#tableCardBody {
+	overflow-y : auto;
+	overflow-x : hidden;
+}
+
+.btn-outline-dark {
+	color: #343a40;
+    background-color: transparent;
+    background-image: none;
+    border-color: #343a40;
+}
+
+.btn-outline-dark:hover{
+	color: #fff;
+}
+
+.btn-outline-danger {
+	border-color: #f9354c;
+}
+
+.btn-outline-danger:hover {
+	color:#fff;
+}
+
+
+.page_box_normal {
+    margin-left: auto;
+    margin-right: auto;
+    display: table;	
+}
+
+.pagination li {
+	padding-left : 5px;
+	padding-right : 5px;
+}

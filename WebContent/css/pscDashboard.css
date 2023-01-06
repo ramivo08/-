@@ -1,0 +1,51 @@
+@charset "EUC-KR";
+
+#shipList,
+#shipDataList,
+#driveTable {
+	border-top: 2px solid #dddddd;
+	border-bottom: 2px solid #dddddd;
+}
+
+#shipList,
+#shipDataList {
+	max-height: 10rem;
+}
+
+.card-header>span {
+	font-weight: bold;
+	font-size: 20px;
+	color: #252525;
+}
+
+#bwmsTypeSelected {
+	background: #e2e6ea;
+	font-weight: bold;
+}
+
+#shipDataSelected,
+#shipSelected,
+#unitOperSelected {
+	color: #212529;
+	background-color: #f5f8fc;
+	font-weight: 800;
+}
+
+#fnmRuleListBody {
+	overflow: auto;
+}
+
+.pscTableList{
+	height: 300px;
+    overflow: auto;
+}
+.shipTableList{
+	height: 200px;
+    overflow: auto;
+	
+}
+
+
+.pointer-event{
+	pointer-events:none;
+}

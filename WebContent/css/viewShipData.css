@@ -1,0 +1,105 @@
+#radioDiv {
+	text-align: center;
+}
+
+#title {
+	border-bottom : 2px solid;
+}
+
+#fnmRuleTitle {
+	text-align: center;
+	font-weight : bold;
+	padding-bottom : 5px;
+	
+}
+
+.fnmRuleList {
+	margin-top : 10px;
+	margin-bottom : 10px;
+	min-height: 7rem;
+	max-height: 20rem;
+	
+	overflow-y : auto;
+	overflow-x: hidden;
+}
+
+.content {
+	border-bottom : 1px solid #bfbfbf;
+}
+
+.fnmRuleContent {
+	text-align: center;
+	padding-top : 5px;
+	padding-bottom : 5px;
+	
+}
+
+.tab-content .checked{
+	background: #00aaff1f;
+}
+
+#informationCard {
+	width : 100%;
+}
+
+#dataTable {
+	width : 100%;
+	
+}
+
+#dataTable th, td{
+	padding : 5px;
+}
+
+
+#tableBody {
+	overflow-x : auto;
+}
+
+#dataTable #tableHeader {
+	text-align : center;
+	border-bottom : 2px solid;
+}
+
+#dataTable .tableContent {
+	text-align : center;
+	border-bottom : 1px solid #bfbfbf;
+}
+
+.tab-content {
+	padding : 0px;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show>.nav-link {
+	background-color : #d9d9d9;
+	color : #999999;
+}
+
+a.nav-link {
+	color : #333333;
+}
+
+ul li {
+	list-style:none;
+}
+#domainCard ul {
+	padding : 0px;
+}
+
+#domainNameListItem {
+	border-bottom: 2px solid #aaaaaa;
+    padding-left: 5px;
+    padding-top: 3px;
+    padding-bottom: 5px;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+#domainDesListItem, #domainTypeListItem {
+	color: #989898;
+	padding-top: 10px;
+}
+
+#domainCard .card-body{
+	display : none
+}

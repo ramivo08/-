@@ -1,0 +1,51 @@
+#excel {
+	overflow: auto;
+    max-height: 70rem;
+}
+
+#table-menu {
+	width : 100%;
+}
+
+.input-group {
+	margin-bottom : 10px;
+}
+
+.custom-select {
+	font-size: .9rem !important;
+}
+
+#input-excel {
+	display: none;
+}
+
+#table-menu {
+	border-top: 2px solid;
+    border-bottom: 2px solid;
+}
+
+#table-menu td {
+	vertical-align: middle;
+	padding : 5px;
+}
+
+#table-menu tr {
+	border-bottom: 1px solid #bdbdbd;
+	text-align : center;
+}
+
+#selectedDBCol {
+	background-color : #dafbba;
+}
+
+#selectedDataStt {
+	background-color : #f7dfb3;
+}
+
+.selectedDate {
+	background-color : #e1ffff;
+}
+
+#selectedNormalize {
+	background-color : #aaaaaa;
+}

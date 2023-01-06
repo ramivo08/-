@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<%@ page language="java" pageEncoding="utf-8"%>
+
+
+<html lang="ko">
+
+<head>
+<%@ include file="../header.jsp"%>
+
+
+<app:layout mode="stylescript" type="main" title="main" />
+<link rel="stylesheet" type="text/css"
+	href="/assets/plugins/tui-grid/tui-grid.min.css">
+<link href="/assets/css/Chart.css" rel="stylesheet" type="text/css" />
+<link href="/css/dashboard.css" rel="stylesheet" type="text/css" />
+
+<script type="text/javascript"
+	src="/assets/plugins/tui-grid/tui-grid.min.js"></script>
+<script type="text/javascript" src="/assets/js/Chart.bundle.js"></script>
+<script type="text/javascript" src="/js/board/selectNotice.js"></script>
+
+
+<!-- <script type="text/javascript" src="/assets/plugins/tui-chart/tui-chart.min.js"></script> -->
+<!-- <link rel="stylesheet" type="text/css" href="/assets/plugins/tui-chart/tui-chart.min.css"> -->
+
+<style>
+.margin-bottom {
+	margin-bottom: 20px;
+}
+</style>
+</head>
+
+<body>
+
+	<!-- WRAPPER -->
+	<div id="wrapper">
+
+		<app:layout mode="header" />
+
+		<!-- MAIN -->
+		<div class="main">
+
+			<!-- MAIN CONTENT -->
+			<div class="main-content">
+					
+				<div class="content-heading">
+					<div class="heading-left">
+						<h1 class="page-title">Dashboard</h1>
+						<p class="page-subtitle">종합정보를 확인할 수 있는 대시보드 페이지입니다.</p>
+					</div>
+					<nav aria-label="breadcrumb">
+						<ol class="breadcrumb">
+							<li class="breadcrumb-item"><a href="/main.do"> <i
+									class="fa fa-home"></i> Home
+							</a></li>
+							<li class="breadcrumb-item"><a href="#">Dashboard</a></li>
+
+						</ol>
+					</nav>
+				</div>
+
+				<div class="container-fluid">
+
+
+
+					<!-- 					<div class="col-lg-12"> -->
+					<!-- 						<div class="card"> -->
+					<!-- 							<h3 class="card-header">운전자료 데이터</h3> -->
+					<!-- 							<div class="card-body"> -->
+					<!-- 							table삽입 -->
+
+					<!-- 							</div> -->
+					<!-- 						</div> -->
+					<!-- 					</div> -->
+					<div class="row">
+						<div class="col-md-6">
+							<div class="card">
+								<h3 class="card-header">등록된 데이터 셋 비율</h3>
+								<div class="card-body">
+
+									<canvas id="driveData1"></canvas>
+
+								</div>
+							</div>
+						</div>
+
+						<!-- 						<div class="col-md-4"> -->
+						<!-- 							<div class="card"> -->
+						<!-- 								<h3 class="card-header">정상화 판별기준 통과 비율</h3> -->
+						<!-- 								<div class="card-body"> -->
+
+						<!-- 									<canvas id="driveData2"></canvas> -->
+
+						<!-- 								</div> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+						
+						
+							
+<!-- 						<div class="col-md-4"> -->
+<!-- 							<div class="card"> -->
+<!-- 								<div class="card-header"> -->
+<!-- 									<div class="row"> -->
+<!-- 										<h3 class="card-title col-6">국내 주요  항 </h3> -->
+<!-- 										<div class="col-6 text-right"> -->
+<!-- 										</div> -->
+<!-- 									</div> -->
+
+<!-- 								</div> -->
+<!-- 								<div class="card-body"> -->
+<!-- 								<canvas id="portGraph"></canvas> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+						<div class="col-md-6">
+							<div class="card">
+								<h3 class="card-header">등록된 데이터 파일(월별)</h3>
+								<div class="card-body">
+									<div id="card-messages"></div>
+									<canvas id="driveData3"></canvas>
+
+								</div>
+							</div>
+						</div>
+						
+					
+					</div>
+
+
+
+
+					<div class="row boardRow">
+						<div class="col-md-6">
+							<div class="card">
+								<h3 class="card-header">공지사항</h3>
+								<div class="card-body">
+									<form method="post" id="notice">
+										<input type=hidden name="bbsNo" id="bbsNo" />
+										<ul class="notice">
+											<c:forEach var="notice" items="${noticeList}"
+												varStatus="status">
+												<li style="list-style: none;" class="noticeContent">
+
+													<div class="row">
+														<div class="col-md-1 contentNum">
+															<label class="fancy-checkbox"> <span>${status.count}</span>
+															</label>
+															<!-- <label class="fancy-checkbox" for="chk_num ${notice.bbsNo}">${pageNum - status.index}</label>  -->
+
+														</div>
+
+														<div class="col-md-9 content">
+															<h2 class="contentTitle">
+																<a href="javascript:selectNotice('${ notice.bbsNo }')"
+																	title="${ notice.bbsNo }">${notice.bbsSubject }</a>
+															</h2>
+															<p>
+																<span>작성일 : ${notice.rgsDe}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>작성자
+																	: ${notice.register}</span> &nbsp;&nbsp;&nbsp;&nbsp;<span>조회
+																	: ${notice.viewCnt}</span>
+															</p>
+														</div>
+													</div>
+												</li>
+											</c:forEach>
+										</ul>
+									</form>
+								</div>
+							</div>
+
+						</div>
+						<div class="col-md-6">
+							<div class="card">
+								<div class="card-header">
+									
+										운전자료 데이터
+									
+									
+
+								</div>
+								<div class="card-body">
+									<div id="grid">				</div>
+										
+										<div id="downloadBtn">
+										
+										</div>
+								</div>
+							</div>
+						</div>
+
+
+						<!-- 						<div class="col-md-4"> -->
+						<!-- 							<div class="card"> -->
+						<!-- 								<h3 class="card-header">FAQ</h3> -->
+						<!-- 								<div class="card-body"> -->
+						<!-- 									<ul class="faq"> -->
+						<%-- 										<c:forEach var="faq" items="${faqList}" varStatus="status"> --%>
+						<!-- 											<li style="list-style: none;" class="faqContent"> -->
+						<!-- 												<div class="row"> -->
+						<!-- 													<div class="col-md-1 contentNum"> -->
+						<%-- 														<label class="fancy-checkbox"> <span>${status.index}</span> --%>
+						<!-- 														</label> -->
+						<!-- 														<label class="fancy-checkbox" for="chk_num ${notice.bbsNo}">${pageNum - status.index}</label>  -->
+
+						<!-- 													</div> -->
+
+						<!-- 													<div class="col-md-9 content"> -->
+						<!-- 														<h2 class="contentTitle"> -->
+						<%-- 															<span>${faq.bbsSubject }</span> --%>
+						<!-- 														</h2> -->
+						<!-- 														<p> -->
+						<%-- 															${ faq.bbsCont } --%>
+						<!-- 														</p> -->
+						<!-- 														<p> -->
+						<%-- 															<span>작성일 : ${faq.rgsDe}</span>&nbsp;&nbsp;&nbsp;&nbsp;<span>카테고리 : ${faq.faqCategory}</span> --%>
+						<!-- 														</p> -->
+						<!-- 													</div> -->
+						<!-- 												</div> -->
+						<!-- 											</li> -->
+						<%-- 										</c:forEach> --%>
+						<!-- 									</ul> -->
+						<!-- 								</div> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+
+						<!-- 						<div class="col-md-4"> -->
+						<!-- 							<div class="card"> -->
+						<!-- 								<h3 class="card-header">데이터 자료실</h3> -->
+						<!-- 								<div class="card-body"></div> -->
+						<!-- 							</div> -->
+						<!-- 						</div> -->
+
+					</div>
+					
+					<div>
+						<canvas id="canvas"></canvas>
+					</div>
+					
+					
+					<!-- END MAIN CONTENT -->
+
+
+					<!-- END MAIN -->
+
+
+					<div class="clearfix"></div>
+
+					<!-- footer -->
+					<footer>
+						<div class="container-fluid">
+<!-- 							<p class="copyright"> -->
+<!-- 								&copy; 2020 <a href="https://www.themeineed.com" target="_blank">Theme -->
+<!-- 									I Need</a> . All Rights Reserved. -->
+<!-- 							</p> -->
+						</div>
+					</footer>
+					<!-- end footer -->
+
+				</div>
+				<!-- END WRAPPER -->
+			</div>
+		</div>
+
+	</div>
+
+
+	<!-- Vendor -->
+	<script src="/assets/js/vendor.min.js"></script>
+
+	<!-- Plugins -->
+	<script src="/assets/plugins/chart.js/Chart.min.js"></script>
+	<script src="/assets/plugins/chart.js/chartjs-plugin-zoom.min.js"></script>
+	<script src="/assets/plugins/chartist/chartist.min.js"></script>
+	<script src="/assets/plugins/flot/jquery.canvaswrapper.js"></script>
+	<script src="/assets/plugins/flot/jquery.colorhelpers.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.saturated.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.browser.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.drawSeries.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.uiConstants.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.resize.js"></script>
+	<script src="/assets/plugins/easy-pie-chart/jquery.easypiechart.min.js"></script>
+	<script src="/assets/plugins/datatables.net/jquery.dataTables.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-bs4/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.print.min.js"></script>
+	<script src="/assets/plugins/jszip/jszip.min.js"></script>
+	<script src="/assets/plugins/pdfmake/pdfmake.min.js"></script>
+	<script src="/assets/plugins/pdfmake/vfs_fonts.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons-bs4/buttons.bootstrap4.min.js"></script>
+
+
+
+	<!-- Datables Core -->
+	<script src="/assets/plugins/datatables.net/jquery.dataTables.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-bs4/dataTables.bootstrap4.min.js"></script>
+
+	<!-- Datables Extension -->
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.print.min.js"></script>
+	<script src="/assets/plugins/jszip/jszip.min.js"></script>
+	<script src="/assets/plugins/pdfmake/pdfmake.min.js"></script>
+	<script src="/assets/plugins/pdfmake/vfs_fonts.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons-bs4/buttons.bootstrap4.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-colreorder/dataTables.colReorder.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-colreorder-bs4/colReorder.bootstrap4.min.js"></script>
+
+
+	<!-- App -->
+	<script type="text/javascript" src="/assets/js/app.min.js"></script>
+</body>
+
+</html>

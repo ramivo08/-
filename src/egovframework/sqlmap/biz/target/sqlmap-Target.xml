@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Target">
+	
+	
+	<select id="searchTargetList" parameterClass="map" resultClass="java.util.HashMap">
+	select 
+	
+			target_no
+			,owner_nm
+			,rsdt_num
+			,addr
+			,phone_num
+			,vehicle_idntfc_num
+			,vehicle_nm
+			,vehicle_num
+			,subsidy_amnt
+			,model
+			,years
+			,dsplc
+			,personnel
+			,total_amnt
+			,to_char(release_de,'YYYY-MM-DD') as release_de
+			,distance_driven
+			,to_char(expunged_de,'YYYY-MM-DD') as expunged_de
+			,junkyard
+			,new_car_prchs_plan
+			,prchs_vehicle
+			,front_img_path
+			,back_img_path
+			,side1_img_path
+			,side2_img_path
+			,vehicle_video_path
+			,process
+			,appl_de
+			,register
+			,rgs_de
+			,updusr
+			,upd_de
+	from 
+			aea_target_vehicle
+			
+	where 
+		0=0
+<!-- 		
+		<isNotNull property="startDe" prepend="AND">
+			release_de between #startDe# and #endDe#
+		</isNotNull>
+		<isNotNull property="startDe" prepend="AND"> 
+			process = #searchValue#
+		</isNotNull>
+		and
+			owner_nm like %#searchValue#%	
+		and
+			vehicle_num =#searchValue#			
+		and
+			years = #searchValue#
+		and 
+			junkyard = #searchValue#
+	 -->
+	 <isNotNull property="searchValue">
+		 <isEqual property="searchList" compareValue="ownerNm" prepend="AND">
+		 	owner_nm  like '%'||#searchValue#||'%'
+		 </isEqual>
+		 <isEqual property="searchList" compareValue="vehicleNum" prepend="AND">
+		 	vehicle_num like '%'||#searchValue#||'%'
+		 </isEqual>
+		 <isEqual property="searchList" compareValue="vehicleIdntfcNum" prepend="AND">
+		 	vehicle_idntfc_num like '%'||#searchValue#||'%'
+		 </isEqual>
+		 <isEqual property="searchList" compareValue="vehicleNm" prepend="AND">
+		 	vehicle_nm like '%'||#searchValue#||'%'
+		 </isEqual>
+		 <isEqual property="searchList" compareValue="years" prepend="AND">
+		 	years  = #searchValue#
+		 </isEqual>
+	 </isNotNull>
+	 
+	</select>
+	
+	<select id="searchTargetListCount" resultClass="int">
+	select
+	
+		count(*)
+	
+	from
+		aea_target_vehicle
+	where
+		0=0
+	
+	</select>
+	
+	<select id="selectTargetMap" parameterClass = "map" resultClass ="hashmap">
+		select 
+	
+			target_no
+			,owner_nm
+			,rsdt_num
+			,addr
+			,phone_num
+			,vehicle_idntfc_num
+			,vehicle_nm
+			,vehicle_num
+			,subsidy_amnt
+			,model
+			,years
+			,dsplc
+			,personnel
+			,total_amnt
+			,to_char(release_de,'YYYY-MM-DD') as release_de
+			,distance_driven
+			,to_char(expunged_de,'YYYY-MM-DD') as expunged_de
+			,junkyard
+			,new_car_prchs_plan
+			,prchs_vehicle
+			,front_img_path
+			,back_img_path
+			,side1_img_path
+			,side2_img_path
+			,vehicle_video_path
+			,process
+			,appl_de
+			,register
+			,rgs_de
+			,updusr
+			,upd_de
+		from 
+			aea_target_vehicle
+				
+		where 
+			target_no = #targetNo#::numeric
+	
+	</select> 
+	<select id="searchProcessList" parameterClass="map" resultClass="java.util.HashMap">
+	
+	select 
+	
+		"CODE_ID" as "codeId"
+		,"CODE_NM" as "codeNm"
+		
+	from
+		aea_code
+	where 	
+		"UPR_CODE" = 'process'	
+	and
+		"USE_YN" = 'Y'
+	order by "CODE_ORDR"  
+	  
+	</select>
+	
+
+</sqlMap>

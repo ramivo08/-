@@ -1,0 +1,52 @@
+#if($type == 'otherClass')
+	#set($style_list= '')
+	#set($style_page= '')
+#else
+	#set($style_list= 'btnbox_move')
+	#set($style_page= 'page')
+#end
+
+	<div class="${style_list}">
+	#if($startPage > $indexSize)
+		<a class="move_group1" href="javascript:${jsFunction}(1);">처음</a>
+	#end
+
+	#if($page > 10)
+		#set($prevIdx = $page - 10)
+		<a class="move_group1" href="javascript:${jsFunction}(${prevIdx});">이전</a>
+	#end
+
+	#foreach( $idx in [$startPage..$endPage] )
+		#if($idx != $page)
+			#if($idx != 1)
+				<a class="move_group2" href="javascript:${jsFunction}(${idx});" title="${idx} 번 페이지로 이동">$idx</a>
+			#else
+				<a class="move_group3" href="javascript:${jsFunction}(${idx});" title="${idx} 번 페이지로 이동">$idx</a>
+			#end
+		#else
+			#if($idx != 1)
+				<a class="move_group2 active" href="#">$idx</a>
+			#else
+				<a class="move_group3 active" href="#">$idx</a>
+			#end
+		#end
+	#end
+
+	#if($page < $totalPage)
+		#if($page /10 != ($totalPage - 1) /10)
+			#set($nextIdx = ((($page - 1) / 10) * 10 + 11))
+			<a class="move_group1" href="javascript:${jsFunction}(${nextIdx});">다음</a>
+		#else
+			#if(($page - 1) /10 != ($totalPage - 1 )/10)
+				#set($nextIdx = ((($page - 1) / 10) * 10 + 11))
+				#<a class="move_group1" href="javascript:${jsFunction}(${nextIdx});">다음</a>
+			#end
+		#end
+	#end
+	
+	#if($page < $totalPage)
+	##if($currentPageCount < $lastPageCount)
+		<a class="move_group1" href="javascript:${jsFunction}(${totalPage});">끝</a>
+	#end
+	</div>
+

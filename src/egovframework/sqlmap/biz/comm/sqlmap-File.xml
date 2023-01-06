@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="File">
+
+    <!-- 파일 리스트 조회 -->
+    <select id="listFile" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT
+			 "ATCHMNFL_NO"            AS "fileNo"
+		   , bbs_no             	AS "rootNo"
+		   , "DOC_TY"           		AS "docuType"
+		   , "ATCHMNFL_TY"           	AS "atthType"
+		   , "ATCHMNFL_NM"         	AS "fileOrgNm"
+		   , "SERVER_ATCHMNFL_NM"     AS "fileSvrNm"
+		   , "ATCHMNFL_PATH"          AS "filePath"
+		   , "ATCHMNFL_SIZE"          AS "fileSize"
+		   , "ATCHMNFL_DC"            AS "atthRmk"
+		   , "DELETE_YN"              AS "delYn"
+		   , "REGISTER"            	AS "regiId"
+		   , "RGS_DE"           		AS "regiDate"
+		FROM
+			aea_board_atchmnfl
+		WHERE
+			  bbs_no   = #rootNo#::Integer 
+        <isNotEmpty property="docuType" prepend="AND">
+              "DOC_TY" = #docuType#
+        </isNotEmpty>
+        <isNotEmpty property="atthType" prepend="AND">
+              "ATCHMNFL_TY" = #atthType#
+        </isNotEmpty>
+        	AND "DELETE_YN"    = 'N'
+        ORDER BY "ATCHMNFL_NO"
+    </select>
+    
+    <select id="listFileCount" resultClass="int" parameterClass="java.util.HashMap">
+		SELECT
+			count(*)
+		FROM
+			aea_board_atchmnfl
+		WHERE
+			  bbs_no   = #rootNo#::Integer 
+        <isNotEmpty property="docuType" prepend="AND">
+              "DOC_TY" = #docuType#
+        </isNotEmpty>
+        <isNotEmpty property="atthType" prepend="AND">
+              "ATCHMNFL_TY" = #atthType#
+        </isNotEmpty>
+        	AND "DELETE_YN"    = 'N'
+     
+    </select>
+
+    <select id="viewFile" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT
+			 "ATCHMNFL_NO"            AS "fileNo"
+		   , bbs_no             	AS "rootNo"
+		   , "DOC_TY"           		AS "docuType"
+		   , "ATCHMNFL_TY"           	AS "atthType"
+		   , "ATCHMNFL_NM"         	AS "fileOrgNm"
+		   , "SERVER_ATCHMNFL_NM"     AS "fileSvrNm"
+		   , "ATCHMNFL_PATH"          AS "filePath"
+		   , "ATCHMNFL_SIZE"          AS "fileSize"
+		   , "ATCHMNFL_DC"            AS "atthRmk"
+		   , "DELETE_YN"              AS "delYn"
+		   , "REGISTER"            	AS "regiId"
+		   , "RGS_DE"           		AS "regiDate"
+		FROM
+			aea_board_atchmnfl
+		WHERE
+           "ATCHMNFL_NO" = #fileNo#
+    </select>
+    
+    <select id="viewFileForExcel" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+		SELECT
+			 "FNM_RULE_NUM"            AS "fnmRuleNum"
+		   , "ATCHMNFL_TY"           	AS "atthType"
+		   , "ATCHMNFL_NM"         	AS "fileOrgNm"
+		   , "SERVER_ATCHMNFL_NM"     AS "fileSvrNm"
+		   , "ATCHMNFL_PATH"          AS "filePath"
+		   , "ATCHMNFL_SIZE"          AS "fileSize"
+		   , "ATCHMNFL_DC"            AS "atthRmk"
+		   , "DELETE_YN"              AS "delYn"
+		   , "REGISTER"            	AS "regiId"
+		   , "RGS_DE"           		AS "regiDate"
+		FROM
+			fnm_rule_atchmnfl
+		WHERE
+           "FNM_RULE_NUM" = #fnmRuleNum#
+    </select>
+
+	<!-- 삭제 파일 검색 -->
+    <select id="listDelFile" resultClass="java.util.HashMap" parameterClass="java.util.HashMap">
+    	SELECT
+        	  "ATCHMNFL_NO"             AS "fileNo"
+        	, bbs_no             AS "rootNo"
+        	, "DOC_TY"           AS "docuType"
+        	, "ATCHMNFL_TY"           AS "atthType"
+        	, "ATCHMNFL_NM"         AS "fileOrgNm"
+        	, "SERVER_ATCHMNFL_NM"         AS "fileSvrNm"
+        	, "ATCHMNFL_PATH"           AS "filePath"
+    	FROM
+    		aea_board_atchmnfl
+    	WHERE
+    		"DELETE_YN" = 'N'
+            <isNotEmpty property="arrFileNo" prepend="AND">
+                   "ATCHMNFL_NO" IN
+                <iterate property="arrFileNo" conjunction="," open="(" close=")">
+                    #arrFileNo[]#
+                </iterate>
+            </isNotEmpty>
+            <isNotEmpty property="rootNo" prepend="AND">
+                bbs_no = #rootNo#::Integer 
+            </isNotEmpty>
+    </select>
+
+    <!-- FILE 등록 -->
+    <statement id="insertFile" parameterClass="java.util.HashMap">
+        INSERT INTO public.aea_board_atchmnfl (
+             "ATCHMNFL_NO"
+            , bbs_no
+            ,"DOC_TY"
+            ,"ATCHMNFL_NM"
+            ,"SERVER_ATCHMNFL_NM"
+            ,"ATCHMNFL_SIZE"
+            ,"ATCHMNFL_PATH"
+            ,"ATCHMNFL_DC"
+            ,"REGISTER"
+            ,"RGS_DE"
+            ,"DELETE_YN"
+        )
+        VALUES
+        (
+             (
+               SELECT  COALESCE(MAX("ATCHMNFL_NO"), 0) + 1
+               FROM   aea_board_atchmnfl
+             )
+            ,#rootNo#::Integer
+            ,#docuType#
+            ,#fileOrgNm#
+            ,#fileSvrNm#
+            ,#fileSize#
+            ,#filePath#
+            ,#atthRmk#
+            ,#regiId#
+            ,NOW()
+            ,'N'
+        )
+    </statement>
+    
+    <!-- 선박 증명서 파일  DB등록 -->
+    <statement id="insertProofFile" parameterClass="java.util.HashMap">
+        INSERT INTO public.aea_proof_atchmnfl (
+             "ATCHMNFL_NO"
+            ,"IMO_NO"
+            ,"DOC_TY"
+            ,"ATCHMNFL_NM"
+            ,"SERVER_ATCHMNFL_NM"
+            ,"ATCHMNFL_SIZE"
+            ,"ATCHMNFL_PATH"
+            ,"ATCHMNFL_DC"
+            ,"REGISTER"
+            ,"RGS_DE"
+        )
+        VALUES
+        (
+            nextval('seq_proof_no')
+            ,#rootNo#::Integer
+            ,#docuType#
+            ,#fileOrgNm#
+            ,#fileSvrNm#
+            ,#fileSize#
+            ,#filePath#
+            ,#atthRmk#
+            ,#regiId#
+            ,NOW()
+        )
+    </statement>
+    
+    <!-- FILE 등록 -->
+    <statement id="insertFileForExcel" parameterClass="java.util.HashMap">
+        INSERT INTO public.aea_subsidy_atchmnfl (
+			     doc_type
+				,atchmnfl_ty
+				,atchmnfl_nm
+				,server_atchmnfl_nm
+				,atchmnfl_path
+				,atchmnfl_size
+				,delete_yn
+				,register
+				,rgs_de
+        )
+        VALUES
+        (
+            #docTy#
+            ,#atchmnflTy#
+            ,#fileOrgNm#
+            ,#fileSvrNm#
+            ,#filePath#
+            ,#fileSize#
+			,default
+            ,#regiId#
+            ,NOW()
+        )
+    </statement>
+
+    <!-- FILE 삭제 -->
+    <statement id="deleteFile" parameterClass="java.util.HashMap">
+        UPDATE
+			aea_board_atchmnfl
+		SET
+			"DELETE_YN" = 'Y',
+			"UPDUSR" = #updtId#,
+			"UPD_DE" = now()
+        WHERE
+        	"DELETE_YN" = 'N' AND
+        	"ATCHMNFL_NO"  = #fileNo#
+    </statement>
+
+    <!-- FILE 삭제(전체) -->
+    <statement id="deleteAllFiles" parameterClass="java.util.HashMap">
+        UPDATE
+			aea_board_atchmnfl
+		SET
+			"DELETE_YN" = 'Y',
+			"UPDUSR" = #updtId#,
+			"UPD_DE" = now()
+        WHERE
+        	"DELETE_YN" = 'N' AND
+        	bbs_no  = #rootNo#::Integer
+    </statement>
+
+    <!-- FILE 삭제(전체) -->
+    <statement id="deltPopFiles" parameterClass="java.util.HashMap">
+        DELETE
+        FROM
+			aea_board_atchmnfl
+        WHERE
+        	"DELETE_YN" = 'N' AND
+        	"ATCHMNFL_NO"  = #fileNo#
+    </statement>
+
+
+</sqlMap>

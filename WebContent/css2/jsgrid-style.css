@@ -1,0 +1,45 @@
+@charset "utf-8"; 
+
+.external-pager {
+	margin: 0;
+	padding: 0;
+	font-weight: bold;
+	font-size:14px;
+	font-family:"NotoMedium";
+}
+
+.external-pager .jsgrid-pager-page {
+}
+.external-pager .jsgrid-pager-page a {
+	float:left; text-align:center;
+	width:36px; height:36px; border: 1px solid #A8C6DF; margin-left:-1px;
+	display:block; color: #8DABC4;
+	line-height: 32px;
+	padding: 0;
+}
+.external-pager .jsgrid-pager-page a:hover {
+	background-color: #ECF5FD;
+}
+
+.external-pager .jsgrid-pager-nav-button {
+}
+.external-pager .jsgrid-pager-nav-button a {
+	float:left; text-align:center; width:36px; height:36px; border: 1px solid #A8C6DF; margin-left:-1px;
+	display:block; color: #8DABC4;
+	line-height: 31px;
+	padding: 0;
+}
+.external-pager .jsgrid-pager-nav-button a:hover {
+	background-color: #ECF5FD;
+}
+
+.external-pager .jsgrid-pager-current-page {
+	float:left;
+	width:36px; height:36px; margin-left:-1px;
+	line-height: 32px;
+	padding: 0;
+	display:block;
+    background-color: #0093EE; border: 1px solid #0093EE;
+    color:#fff;
+    text-align: center;
+}

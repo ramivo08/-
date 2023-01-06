@@ -1,0 +1,1628 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Ship">
+	
+	<select id="getFnmRuleExists" parameterClass="map" resultClass="int">
+		SELECT COUNT(*)
+		FROM fnm_rule
+		WHERE "imo_num" = #imo_num#
+		AND "fnm_rule" = #fnm_rule#
+		<isNotEmpty property="log_type" prepend="AND">
+		 
+		
+		</isNotEmpty>
+	
+	</select>
+	
+	<select id="getFnmRule" parameterClass="int" resultClass="java.util.HashMap">
+		SELECT fnm_rule as "fnmRule"
+		FROM fnm_rule
+		WHERE "imo_num" = #imoNum#
+		
+	
+	</select>
+	
+	<insert id="setFnmRule" parameterClass="map">
+		INSERT INTO public.fnm_rule(
+		"imo_num", "fnm_rule_num", "fnm_rule", "bwms_type", "ball_deball", "register", "rgs_de", "updusr", "upd_de")
+		VALUES (#imo_num#, exists_fnm_rule_num(#fnm_rule#), #fnm_rule#, #bwms_type#, #ball_deball#, #gsUserId#, now(), NULL, now())
+		
+	</insert>
+	
+	<select id ="getFnmRuleNum" parameterClass="map" resultClass="int">
+		SELECT "fnm_rule_num"
+		FROM fnm_rule
+		WHERE "imo_num" = #imo_num#
+		AND "fnm_rule" = #fnm_rule#
+	</select>
+	
+	<select id="getFnmRuleNum2" parameterClass="String" resultClass="int">
+		SELECT "fnm_rule_num"
+		FROM fnm_rule_sheets
+		WHERE "exl_sht_nm" = #inputFile#
+	</select>
+	
+	<select id="getFnmRuleSheet" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT
+			"fnm_rule_num"
+			,"exl_sht_nm"
+			,"log_type"
+			,"data_stt_idx"
+			,"dtm_idx"
+		FROM
+			fnm_rule_sheets
+		WHERE
+			"fnm_rule_num" = #fnm_rule_num#
+		and
+			"log_type" = #log_type#
+	</select>
+	
+	<select id="getUVDomainType" parameterClass="String" resultClass="String">
+		SELECT "TYPE"
+		FROM uv_domain
+		WHERE "NAME" = #domainName#
+	</select>
+	
+	<select id="getBwmsMsrElem" parameterClass="int" resultClass="String">
+		SELECT 
+		"bwms_msr_elem"
+		FROM public.bwms_msr_elem
+		WHERE
+		"fnm_rule_num" = #fnm_rule_num#
+		ORDER BY "bwms_msr_elem"
+	</select>
+	
+	
+	<select id="getBwmsMsrElemMap" parameterClass="map" resultClass="String">
+		SELECT 
+			"bwms_msr_elem"
+		FROM 
+			public.bwms_msr_elem
+		WHERE
+			"fnm_rule_num" = #fnm_rule_num#
+		<isNotEmpty property="logType" prepend="AND">
+			"log_type" = #logType#
+		</isNotEmpty>
+		
+		<isNotEmpty property="log_type" prepend="AND">
+			"log_type" = #log_type#
+		</isNotEmpty>
+		<isNotEmpty property="category" >
+		<isEqual property="category" compareValue="EC" >
+		order by array_position(array['tro1','tro2','tro_b1','tro_b2','tro_b3','gps'],"bwms_msr_elem"::text) asc;
+		</isEqual>	
+		
+		</isNotEmpty>
+	</select>
+	
+	<select id="getFnmRuleView" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT 
+			"bwms_msr_elem"
+		FROM 
+			public.bwms_msr_elem
+		WHERE
+			"fnm_rule_num" = #fnm_rule_num#
+		<isNotEmpty property="logType" prepend="AND">
+			"log_type" = #logType#
+		</isNotEmpty>
+		<isNotEmpty property="log_type" prepend="AND">
+			"log_type" = #log_type#
+		</isNotEmpty>
+	
+	</select>
+
+
+
+	
+	
+	
+	<select id="getFnmFileList" parameterClass="map" resultClass="java.util.HashMap">
+			SELECT
+				"imo_num" AS "imoNo"
+				,"fnm_rule" AS "fnmRule"
+				,"bwms_type" AS "bwmsType"
+				, TO_CHAR(b."RGS_DE", 'YYYY-MM-DD')	AS	"rgsDe"
+				, a."fnm_rule_num"	AS "fnmRuleNum"
+				, b."ATCHMNFL_NM" AS "excelOrgNm"
+			
+			FROM fnm_rule a
+				,fnm_rule_atchmnfl b
+			
+			
+			WHERE
+				 0=0
+			AND 
+				a.fnm_rule_num =b."FNM_RULE_NUM"
+			
+			ORDER BY b."RGS_DE" DESC
+	</select>
+	
+	<select id="getFnmRuleList" parameterClass="map" resultClass="java.util.HashMap">
+		<isEqual property="gsRoleId" compareValue="ROLE_MNFT" >
+			SELECT
+			distinct a."imo_num" AS "imoNo"
+			,a."fnm_rule" AS "fnmRule"
+			,a."bwms_type" AS "bwmsType"
+			,TO_CHAR(a."rgs_de", 'YYYY-MM-DD')	AS	"rgsDe"
+			, a."fnm_rule_num"	AS "fnmRuleNum"
+			, c."mnft_nm" as "mnftNm" 
+			FROM
+				 fnm_rule a, bw_ship_info c
+			<isEqual property="bwms_type" compareValue="EC">
+				,(select distinct fnm_rule_num from ec_data_log ) b 
+			</isEqual>
+			<isEqual property="bwms_type" compareValue="UV">
+				,(select distinct fnm_rule_num from uv_data_log  ) b 
+			</isEqual>
+			<isEqual property="bwms_type" compareValue="O3">
+				,(select distinct fnm_rule_num from o3_data_log  ) b
+			</isEqual>
+				 
+			WHERE 0=0
+			
+       		AND a.imo_num  = c.imo_no 
+       		AND a.fnm_rule_num = b.fnm_rule_num	
+			<isNotNull property="gsMnftNm" prepend="AND">
+				c."mnft_nm" = #gsMnftNm#
+			</isNotNull>
+			<isNotNull property="bwms_type" prepend="AND">
+				a."bwms_type" = #bwms_type#
+			</isNotNull>
+			<isNotNull property="ball_deball" prepend="AND">
+				a."ball_deball" = #ball_deball#
+			</isNotNull>
+			<isNotNull property="imoNo" prepend="AND">
+				a."imo_num" = #imoNo#
+			</isNotNull>
+		</isEqual>
+		<isNotEqual property="gsRoleId" compareValue="ROLE_MNFT">
+			SELECT
+			"imo_num" AS "imoNo"
+			,"fnm_rule" AS "fnmRule"
+			,"bwms_type" AS "bwmsType"
+			, TO_CHAR("rgs_de", 'YYYY-MM-DD')	AS	"rgsDe"
+			, a."fnm_rule_num"	AS "fnmRuleNum"
+			
+			FROM fnm_rule a
+			<isEqual property="bwms_type" compareValue="EC">
+				,(select distinct fnm_rule_num from ec_data_log ) b 
+			</isEqual>
+			<isEqual property="bwms_type" compareValue="UV">
+				,(select distinct fnm_rule_num from uv_data_log  ) b 
+			</isEqual>
+			<isEqual property="bwms_type" compareValue="O3">
+				,(select distinct fnm_rule_num from o3_data_log  ) b
+			</isEqual>
+			
+			WHERE 0=0
+			AND 	a.fnm_rule_num =b.fnm_rule_num
+
+			<isNotNull property="bwms_type" prepend="AND">
+				"bwms_type" = #bwms_type#
+			</isNotNull>
+			<isNotNull property="ball_deball" prepend="AND">
+				"ball_deball" = #ball_deball#
+			</isNotNull>
+			<isNotNull property="imoNo" prepend="AND">
+				"imo_num" = #imoNo#
+			</isNotNull>
+			<isEqual property="gsRoleId" compareValue="ROLE_SHIPOWNER" prepend="AND">
+				"register" = #gsUserId#
+			</isEqual>
+		
+			
+			
+			<!--  제조사 추가 해야됨  -->
+			ORDER BY "rgs_de" DESC, "imo_num" ASC
+		</isNotEqual>
+	</select>
+	
+	<select id="getData" parameterClass="map" resultClass="java.util.HashMap" remapResults="true">
+		<dynamic prepend="SELECT">
+			<iterate conjunction="," property="columnnamearr">
+				<isEqual property="columnnamearr[]" compareValue="start_time">
+				TO_CHAR("$columnnamearr[]$", 'yyyy-MM-dd HH24:MI:SS') AS "start_time",
+				</isEqual>
+				<isEqual property="columnnamearr[]" compareValue="end_time">
+				TO_CHAR("$columnnamearr[]$", 'yyyy-MM-dd HH24:MI:SS') AS "end_time"
+				</isEqual>
+				<isEqual property="columnnamearr[]" compareValue="log_date">
+<!-- 					TO_CHAR("$columnnamearr[]$", 'YYYY-MM-DD HH24:MI:SS') AS "log_date" -->
+					TO_CHAR("$columnnamearr[]$", 'yyyy-MM-dd HH24:MI:SS') AS "log_date"
+				</isEqual>
+				<isEqual property="category" compareValue="EC">
+				<isEqual property="columnnamearr[]" compareValue="gps">
+					REPLACE(gps, ' ', '') AS "gps"
+				</isEqual>
+				</isEqual>
+				
+				<isNotEqual property="columnnamearr[]" compareValue="start_time">
+				<isNotEqual property="columnnamearr[]" compareValue="end_time">
+				<isNotEqual property="columnnamearr[]" compareValue="log_date">
+				<isNotEqual property="columnnamearr[]" compareValue="gps">
+				$columnnamearr[]$
+				</isNotEqual>
+				</isNotEqual>
+				</isNotEqual>
+				</isNotEqual>
+			</iterate>
+			
+		
+		</dynamic>
+		
+		FROM
+		<isNotEmpty property="log_type">
+			<isEqual property="log_type" compareValue="data">
+				<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="event">
+				<isEqual property="category" compareValue="EC">
+					ec_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_alarm_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_event_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="oper">
+				<isEqual property="category" compareValue="EC">
+					ec_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_alarm_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_operation_log
+				</isEqual>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="log_type">
+			<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+		</isEmpty>
+		
+		WHERE "fnm_rule_num" = #fnm_rule_num#
+		<isNotNull property="startTime">
+			<isNotNull property="endTime" prepend="AND">
+				<!-- "log_date" BETWEEN TO_CHAR(#startTime#, 'YYYY-MM-DD HH24:MI:SS') AND TO_CHAR(#endTime#, 'YYYY-MM-DD HH24:MI:SS') -->
+				"log_date" &gt;= #startTime# AND "log_date" &lt; #endTime#
+				
+			</isNotNull>
+		</isNotNull>
+		
+		<isNotEmpty property="log_date">
+		ORDER BY "log_date" ASC
+		</isNotEmpty>
+		
+		<isNotEmpty property="start_time">
+		ORDER BY "start_time" ASC
+		</isNotEmpty>
+	</select>
+	
+	<select id="getDataSetCount" resultClass="java.util.HashMap">
+		SELECT 	(SELECT COUNT(*) FROM fnm_rule a , fnm_rule_atchmnfl  b WHERE "bwms_type" = 'EC'and 
+					a.fnm_rule_num = b."FNM_RULE_NUM"
+					and b."ATCHMNFL_TY" = 'data') AS "ecCount", 
+				(SELECT COUNT(*) FROM fnm_rule a , fnm_rule_atchmnfl  b WHERE "bwms_type" = 'UV' and 
+					a.fnm_rule_num = b."FNM_RULE_NUM"
+					and b."ATCHMNFL_TY" = 'data') AS "uvCount", 
+				(SELECT COUNT(*) FROM fnm_rule a , fnm_rule_atchmnfl  b WHERE "bwms_type" = 'O3'and 
+					a.fnm_rule_num = b."FNM_RULE_NUM"
+					and b."ATCHMNFL_TY" = 'data') AS "o3Count"
+	</select>
+	
+	<select id="getDataSetRgsDe" resultClass="java.util.Date">
+<!-- 		SELECT "rgs_de" FROM fnm_rule_ WHERE EXTRACT(YEAR FROM "rgs_de") =  EXTRACT(YEAR FROM NOW())  -->
+		SELECT "RGS_DE" FROM fnm_rule_atchmnfl WHERE EXTRACT(YEAR FROM "RGS_DE") =  EXTRACT(YEAR FROM NOW())
+<!-- 		AND "ATCHMNFL_TY" = 'data'  -->
+	</select>
+	
+	<select id="getDomainDescription" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT
+		"DESCRIPTION" as "des"
+		,"TYPE" as "type"
+		
+		FROM 
+		<isNotEmpty property="category">
+			<isEqual property="category" compareValue="EC">
+				ec_domain
+			</isEqual>
+			<isEqual property="category" compareValue="UV">
+				uv_domain
+			</isEqual>
+			<isEqual property="category" compareValue="O3">
+				o3_domain
+			</isEqual>
+		</isNotEmpty>
+		
+		WHERE
+		"NAME" = #domainName#
+		
+	</select>
+	<select id="getSeqList" parameterClass="map" resultClass="int">
+		SELECT
+			distinct	seq
+		FROM
+		<isNotEmpty property="log_type">
+			<isEqual property="log_type" compareValue="data">
+				<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="event">
+				<isEqual property="category" compareValue="EC">
+					ec_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_event_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="oper">
+				<isEqual property="category" compareValue="EC">
+					ec_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_operation_log
+				</isEqual>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="log_type">
+			<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+		</isEmpty>
+		WHERE
+			"fnm_rule_num" = #fnmRuleNum#
+
+	</select>
+	
+	<select id="getMaxSeq" parameterClass="map" resultClass="Integer">
+		SELECT
+			coalesce(MAX(seq),0)
+		FROM
+		<isNotEmpty property="log_type">
+			<isEqual property="log_type" compareValue="data">
+				<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="event">
+				<isEqual property="category" compareValue="EC">
+					ec_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_event_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="oper">
+				<isEqual property="category" compareValue="EC">
+					ec_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_operation_log
+				</isEqual>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="log_type">
+			<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+		</isEmpty>
+		WHERE
+			"fnm_rule_num" = #fnm_rule_num#
+
+	</select>
+	
+	<select id="getDataGroupByDate" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT 
+		<isNotEmpty property="seqList">
+		"seq",
+		</isNotEmpty>
+		TO_CHAR(MAX("log_date"), 'YYYY-MM-DD HH24:MI:SS')	AS	"endTime",
+		TO_CHAR(MIN("log_date"), 'YYYY-MM-DD HH24:MI:SS') 	AS	"startTime"
+		
+		FROM
+		<isNotEmpty property="log_type">
+			<isEqual property="log_type" compareValue="data">
+				<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="event">
+				<isEqual property="category" compareValue="EC">
+					ec_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_event_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_event_log
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="oper">
+				<isEqual property="category" compareValue="EC">
+					ec_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_operation_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_operation_log
+				</isEqual>
+			</isEqual>
+		</isNotEmpty>
+		<isEmpty property="log_type">
+			<isEqual property="category" compareValue="EC">
+					ec_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					uv_data_log
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					o3_data_log
+				</isEqual>
+		</isEmpty>
+		WHERE
+		"fnm_rule_num" = #fnmRuleNum#
+		<isNotEmpty property="seqList">
+		 <iterate prepend="AND seq IN " property="seqList" open="(" close=")" conjunction=",">	
+		 #seqList[]#
+		 </iterate>
+		 GROUP BY "seq"
+		 
+		</isNotEmpty>
+		
+	</select>
+	
+	<insert id="setFnmRuleSheets" parameterClass="map">
+		INSERT INTO fnm_rule_sheets
+		(
+		"fnm_rule_num"
+		,"exl_sht_nm"
+		,"log_type"
+		,"data_stt_idx"
+		,"dtm_idx"
+		,"register"
+		,"rgs_de"
+		,"updusr"
+		,"upd_de"
+		)
+		VALUES 
+		(
+			#fnm_rule_num#
+		  , #exl_sht_nm#
+		  , #log_type#
+		  , #data_stt_idx#
+		  ,
+		  <iterate prepend="ARRAY" property="dtm_idx" open="[" close="]" conjunction=",">
+		  #dtm_idx[]#
+		  </iterate>
+		  , #gsUserId#
+		  , now()
+		  , null
+		  ,	now()
+		)
+		<!-- ON CONFLICT("log_type") DO NOTHING -->
+	</insert>
+	<insert id="setOrgCols" parameterClass="map">
+		INSERT INTO bw_org_cols
+		(
+			fnm_rule_num
+			,col_nm
+			,log_type
+			,bwms_type
+			,register
+			,rgs_de
+		)
+		VALUES
+		<iterate property="cols" conjunction="," >
+		(
+			#fnm_rule_num#
+			, #cols[]#
+			, #log_type#
+			, #bwms_type# <!-- msr_elem_expl -->
+			, #gsUserId#
+			, now()
+		)	
+		
+		</iterate>
+		
+	
+	</insert>
+	<insert id="setBwmsMsrElem" parameterClass="map">
+		INSERT INTO bwms_msr_elem 
+		(
+		"fnm_rule_num"
+		, "exl_sht_nm"
+		, "bwms_msr_elem"
+		, "log_type"
+		, "register"
+		, "rgs_de"
+		, "updusr"
+		, "upd_de"
+		, "bwms_type"
+		)
+		VALUES
+		<iterate  property="cols" conjunction=","  >
+			(
+			#fnm_rule_num#
+			, #exl_sht_nm#
+			, #cols[]#
+			, #log_type# <!-- msr_elem_expl -->
+			, #gsUserId#
+			, now()
+			, null
+			, now()
+			, #bwms_type#
+			)
+			
+		</iterate>
+	
+	</insert>
+	
+<!-- 	<select id="getFnmRuleSheets" parameterClass="java.util.Map" resultClass="frs"> -->
+<!-- 		SELECT log_type, data_stt_idx, dtm_idx[0:1] AS dtm_idx -->
+<!-- 		FROM fnm_rule_sheets -->
+<!-- 		WHERE fnm_rule_num = #fnmRuleNum# -->
+<!-- 		AND exl_sht_nm = #exlShtNm# -->
+<!-- 		<isNotEmpty prepend="AND" property="log_type"></isNotEmpty> -->
+	
+<!-- 			AND log_type = #logType# -->
+		
+<!-- 	</select> -->
+
+	<insert id="insertECEvent" parameterClass="hashMap">
+	
+	INSERT INTO public.ec_event_log(
+		fnm_rule_num
+		,tag_name
+		,device_name
+		,log_date
+		,descript
+		,level
+		,device_display
+		,ack_time
+		,reset_time
+		,isclear
+		,type
+		,simul
+		,master
+		,merge
+	)
+	VALUES
+	(
+		#fnm_rule_num#
+		,#tag_name#
+		,#device_name#
+		,#log_date#
+		,#descript#
+		,#level#
+		,#device_display#
+		,#ack_time#
+		,#reset_time#
+		,#isclear#
+		,#type#
+		,#simul#
+		,#master#
+		,#merge#
+	
+	
+	)
+	
+	
+	
+	</insert>
+	
+	<insert id="insertECOper" parameterClass="hashMap">
+	
+	INSERT INTO public.ec_operation_log(
+		fnm_rule_num
+		,operation
+		,start_time
+		,end_time
+		,running_time
+		,gps
+		,volume
+		,line
+		,master
+		,merge
+		
+	)
+	VALUES
+	(
+		#fnm_rule_num#
+		,#operation#
+		,#start_time#
+		,#end_time#
+		,#running_time#
+		,#gps#
+		,#volume#
+		,#line#
+		,#master#
+		,#merge#
+		
+	
+	
+	)
+	
+	
+	
+	</insert>
+	
+	
+	<insert id="insertECData" parameterClass="hashMap">
+		INSERT INTO public.ec_data_log(
+		"fnm_rule_num", "log_date", "current", "rec1_current", "rec2_current" ,"rec3_current", 
+		"rec4_current", "rec5_current", "rec6_current", "voltage", "rec1_voltage" ,"rec2_voltage",
+		"rec3_voltage", "rec4_voltage", "rec5_voltage", "rec6_voltage", "anu_d1", "anu_d2", 
+		"anu_d3", "anu_d4", "anu_s1","anu_s2", "csu", "csu1", "csu2", "csu3", "fmu", 
+		"fmu1","fmu2","fmu3", "fmu4", "fts1", "fts2", "fts3", "gds", "gds1","gds2", "gds3", 
+		"gds4", "tro1", "tro2", "tro_b1","tro_b2","tro_b3","tro_d1", "tro_d2", "tro_d3", 
+		"tro_d4", "tro_s1","tro_s2", "gps", "pump1", "pump2", "master", "merge", "nwse", 
+		"lat", "lon", "operation","seq")
+		VALUES (
+		#fnm_rule_num#,#log_date#, #current#, #rec1_current# ,#rec2_current# ,#rec3_current#, 
+		#rec4_current#, #rec5_current#, #rec6_current#, #voltage# ,#rec1_voltage#, #rec2_voltage#, 
+		#rec3_voltage#, #rec4_voltage#, #rec5_voltage#, #rec6_voltage#, #anu_d1#, #anu_d2#, 
+		#anu_d3#, #anu_d4#, #anu_s1#, #anu_s2#, #csu#, #csu1#, #csu2#, #csu3#, #fmu#, 
+		#fmu1#, #fmu2#, #fmu3#, #fmu4#, #tro1#, #tro2#, #fts3#, #gds#, #gds1#, #gds2#, #gds3#,
+		#gds4#, #tro1#, #tro2#, #tro_b1#, #tro_b2#, #tro_b3#, #tro_d1#, #tro_d2#, #tro_d3#, 
+		#tro_d4#, #tro_s1#, #tro_s2#, #gps#, #pump1#, #pump2#, #master#, #merge#, #nwse#, 
+		#lat#, #lon#, #operation#,#seq#);
+
+	</insert>
+	<insert id="insertUVData" parameterClass="map">
+		INSERT INTO public.uv_data_log(
+		"fnm_rule_num", "log_date", "lat", "lon", "flow", "s1_flow", "s2_flow", "s3_flow", 
+		"p1_flow", "p2_flow", "p3_flow", "f_in", "s1_m_in", "s1_1_in", "s1_2_in", "s1_3_in", 
+		"p1_m_in", "p1_1_in", "p1_2_in", "p1_3_in", "f_dp", "s1_m_dp", "s1_1_dp", "s1_2_dp", 
+		"s1_3_dp", "p1_m_dp", "p1_1_dp", "p1_2_dp", "p1_3_dp", "dose", "s1_dose", "s2_dose", 
+		"s3_dose", "s4_dose", "s5_dose", "s6_dose", "p1_dose", "p2_dose", "p3_dose", "p4_dose", 
+		"p5_dose", "p6_dose", "temp", "s1_temp", "s2_temp", "s3_temp", "s4_temp", "s5_temp", 
+		"s6_temp", "p1_temp", "p2_temp", "p3_temp", "p4_temp", "p5_temp", "p6_temp", "nwse", "seq")
+		
+		VALUES(#fnm_rule_num#, #log_date#, #lat#, #lon#, #flow#, #s1_flow#, #s2_flow#, #s3_flow#, 
+		#p1_flow#, #p2_flow#, #p3_flow#, #f_in#, #s1_m_in#, #s1_1_in#, #s1_2_in#, #s1_3_in#, 
+		#p1_m_in#, #p1_1_in#, #p1_2_in#, #p1_3_in#, #f_dp#, #s1_m_dp#, #s1_1_dp#, #s1_2_dp#, 
+		#s1_3_dp#, #p1_m_dp#, #p1_1_dp#, #p1_2_dp#, #p1_3_dp#, #dose#, #s1_dose#, #s2_dose#, 
+		#s3_dose#, #s4_dose#, #s5_dose#, #s6_dose#, #p1_dose#, #p2_dose#, #p3_dose#, #p4_dose#, 
+		#p5_dose#, #p6_dose#, #temp#, #s1_temp#, #s2_temp#, #s3_temp#, #s4_temp#, #s5_temp#, 
+		#s6_temp#, #p1_temp#, #p2_temp#, #p3_temp#, #p4_temp#, #p5_temp#, #p6_temp#, #nwse#, #seq#);
+		
+	</insert>
+	
+	<insert id="insertUVOper" parameterClass="hashMap">
+			
+			INSERT INTO public.uv_operation_log(
+				fnm_rule_num
+				,log_date
+				,message
+				,ack_time
+				,rec_time
+				,no_of_occ
+				,acc_time
+				,level
+				
+			)
+			VALUES
+			(
+				#fnm_rule_num#
+				,#log_date#
+				,#message#
+				,#ack_time#
+				,#rec_time#
+				,#no_of_occ#
+				,#acc_time#
+				,#level#
+			
+			
+			)
+	
+	
+	
+	</insert>
+	
+	<insert id="insertUVEvent" parameterClass="hashMap">
+			
+			INSERT INTO public.uv_alarm_log(
+				fnm_rule_num
+				,log_date
+				,message
+				,ack_time
+				,rec_time
+				,no_of_occ
+				,acc_time
+				,level
+				
+			)
+			VALUES
+			(
+				#fnm_rule_num#
+				,#log_date#
+				,#message#
+				,#ack_time#
+				,#rec_time#
+				,#no_of_occ#
+				,#acc_time#
+				,#level#
+			
+			
+			)
+	
+	
+	
+	</insert>
+	
+	<insert id="insertUVList" parameterClass="java.util.List">
+		INSERT INTO public.uv_data_log(
+		"fnm_rule_num", "log_date", "lat", "lon", "flow", "s1_flow", "s2_flow", "s3_flow", 
+		"p1_flow", "p2_flow", "p3_flow", "f_in", "s1_m_in", "s1_1_in", "s1_2_in", "s1_3_in", 
+		"p1_m_in", "p1_1_in", "p1_2_in", "p1_3_in", "f_dp", "s1_m_dp", "s1_1_dp", "s1_2_dp", 
+		"s1_3_dp", "p1_m_dp", "p1_1_dp", "p1_2_dp", "p1_3_dp", "dose", "s1_dose", "s2_dose", 
+		"s3_dose", "s4_dose", "s5_dose", "s6_dose", "p1_dose", "p2_dose", "p3_dose", "p4_dose", 
+		"p5_dose", "p6_dose", "temp", "s1_temp", "s2_temp", "s3_temp", "s4_temp", "s5_temp", 
+		"s6_temp", "p1_temp", "p2_temp", "p3_temp", "p4_temp", "p5_temp", "p6_temp", "nwse" ,"seq")
+		
+		VALUES
+		<iterate conjunction=","> 
+		(#List[].fnm_rule_num#, #List[].log_date#, #List[].lat#, #List[].lon#, 
+		#List[].flow#, #List[].s1_flow#, #List[].s2_flow#, #List[].s3_flow#, 
+		#List[].p1_flow#, #List[].p2_flow#, #List[].p3_flow#, #List[].f_in#, 
+		#List[].s1_m_in#, #List[].s1_1_in#, #List[].s1_2_in#, #List[].s1_3_in#, 
+		#List[].p1_m_in#, #List[].p1_1_in#, #List[].p1_2_in#, #List[].p1_3_in#, 
+		#List[].f_dp#, #List[].s1_m_dp#, #List[].s1_1_dp#, #List[].s1_2_dp#, 
+		#List[].s1_3_dp#, #List[].p1_m_dp#, #List[].p1_1_dp#, #List[].p1_2_dp#, 
+		#List[].p1_3_dp#, #List[].dose#, #List[].s1_dose#, #List[].s2_dose#, 
+		#List[].s3_dose#, #List[].s4_dose#, #List[].s5_dose#, #List[].s6_dose#, 
+		#List[].p1_dose#, #List[].p2_dose#, #List[].p3_dose#, #List[].p4_dose#, 
+		#List[].p5_dose#, #List[].p6_dose#, #List[].temp#, #List[].s1_temp#, 
+		#List[].s2_temp#, #List[].s3_temp#, #List[].s4_temp#, #List[].s5_temp#, 
+		#List[].s6_temp#, #List[].p1_temp#, #List[].p2_temp#, #List[].p3_temp#, 
+		#List[].p4_temp#, #List[].p5_temp#, #List[].p6_temp#, #List[].nwse#, #List[].seq#)
+		</iterate>
+	</insert>
+	
+	<insert id="insertO3Data" parameterClass="map">
+		INSERT INTO public.o3_data_log(
+		"fnm_rule_num", "log_date", "air_temp", "o2_conc", "o2_d1", "dew_point", "o3_conc", 
+		"neutralizer_tank_level", "fit_1", "fit_2", "port_o3_dose", "stbd_o3_dose", "port_o3_flow", 
+		"stbd_o3_flow", "port_o3_control", "stbd_o3_control", "sit", "br_dose", "br_level", 
+		"no1_metering", "no2_metering", "tro_1", "tro_2", "tro_3", "tro_4", "tro_5", "o3_d1", 
+		"o3_d2", "o3_d3", "pt_1", "pt_2", "pt_3", "pt_4", "pt_5", "pt_6", "pt_7", "seq")
+		VALUES 
+		(#fnm_rule_num#, #log_date#, #air_temp#, #o2_conc#, #o2_d1#, #dew_point#, #o3_conc#, 
+		#neutralizer_tank_level#, #fit_1#, #fit_2#, #port_o3_dose#, #stbd_o3_dose#, #port_o3_flow#, 
+		#stbd_o3_flow#, #port_o3_control#, #stbd_o3_control#, #sit#, #br_dose#, #br_level#, 
+		#no1_metering#, #no2_metering#, #tro_1#, #tro_2#, #tro_3#, #tro_4#, #tro_5#, #o3_d1#, 
+		#o3_d2#, #o3_d3#, #pt_1#, #pt_2#, #pt_3#, #pt_4#, #pt_5#, #pt_6#, #pt_7# , #seq#);
+		
+	</insert>
+	
+	<insert id="insertShip" parameterClass="map" >
+		INSERT INTO public.bw_ship_info
+				(
+					"user_id",
+					"imo_no",
+				 	"ship_nm",
+				 	<isNotEmpty property="shipKnd">
+				  	"ship_kind",
+				  	</isNotEmpty>
+				  	<isNotEmpty property="shipNo">
+				    "ship_num",
+				    </isNotEmpty>
+				    <isNotEmpty property="shipCnstrDt">
+			    	"ship_cnstr_dt",
+			    	</isNotEmpty>
+			    	<isNotEmpty property="shipGrtg">
+				    "ship_weight", 
+				    </isNotEmpty>
+				    <isNotEmpty property="bwmsType">
+				    "bwms_type", 
+				    </isNotEmpty>
+				    <isNotEmpty property="shipNlty">
+				    "country_code",
+				    </isNotEmpty>
+				    "rgs_de",
+				    <isNotEmpty property="shipMnftList">
+				    "mnft_nm",
+				    </isNotEmpty>
+				    "bwms_device_nm"
+				   
+				)
+		VALUES
+			 	(
+			 		#registerId#,
+			 		#imoNo#, 
+					#shipName#, 
+					<isNotEmpty property="shipKnd">
+					#shipKnd#, 
+					</isNotEmpty>
+					<isNotEmpty property="shipNo">
+					#shipNo#, 
+					</isNotEmpty>
+					<isNotEmpty property="shipCnstrDt">
+					#shipCnstrDt#,
+					</isNotEmpty> 
+					<isNotEmpty property="shipGrtg">
+					#shipGrtg#, 
+					</isNotEmpty>
+					<isNotEmpty property="bwmsType">
+					#bwmsType#, 
+					</isNotEmpty>
+					<isNotEmpty property="shipNlty">
+					#shipNlty#,
+					</isNotEmpty>
+					now(),
+					<isNotEmpty property="shipMnftList">
+					#shipMnftList#,
+					</isNotEmpty>
+					#bwmsDeviceNm#
+				);
+		
+	</insert>
+	
+	<delete id="deleteFnmRuleNum" parameterClass="int">
+		DELETE FROM public.fnm_rule
+		WHERE "fnm_rule_num" = #fnm_rule_num#
+	</delete>
+	
+	
+	<select id="searchEcGps" parameterClass="String" resultClass="map">
+		SELECT
+			"gps"
+		FROM	
+			ec_data_type
+		WHERE
+			"fnm_Rule_Num";		
+	
+	</select>
+	
+	<select id="selectShipSeq" resultClass="int">
+		select nextval('seq_ship_no');
+	</select>
+	
+	<!-- 수정필요  -->
+	<select id="selectSeq" resultClass="map" parameterClass="map">
+		
+		select imo_no,ship_nm
+		 from (select
+		 				 s.imo_no ,s.ship_nm,s.ship_seq 
+		 		from 	
+						public.bw_ship_info s,public.bw_user_info b
+				WHERE
+			 			b."user_role_seq"  = s."ship_seq") bm
+			 
+		where 
+			 bm.ship_seq = #gsRoleSeq#
+	</select>
+	
+	
+	
+	
+	<select id="getDataNomalize"  parameterClass="map" resultClass="java.util.HashMap">
+		
+		SELECT
+		
+			"NAME"
+			,"DESCRIPTION"
+		
+		FROM
+		
+		<isEqual property="bwmsType" compareValue="EC">
+			public.ec_domain
+		</isEqual>
+		<isEqual property="bwmsType" compareValue="UV">
+			public.uv_domain
+		</isEqual>
+		<isEqual property="bwmsType" compareValue="O3">
+			public.o3_domain
+		</isEqual>
+	
+		WHERE
+		
+		1=1
+		<isNotEmpty property="logType" prepend="AND">
+			log_type = #logType#
+		</isNotEmpty>
+		AND "NAME" not like '%fnm_rule_num%' 
+		
+		order by "NAME" 
+		
+		
+		
+		
+		
+	</select>
+	
+	
+	<select id="selectShipInfo" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT
+			"imo_no" as "imoNo"
+			,"ship_nm" as "shipNm"
+			,"bwms_type" as "bwmsType"
+		FROM
+			public.bw_ship_info
+		WHERE
+			user_id = #gsUserId#
+		<isNotEmpty property="shipNm" prepend="AND">
+			ship_nm = #shipNm#			
+		</isNotEmpty>
+	</select>
+	
+	
+	<select id="selectShipNm" parameterClass="map" resultClass="int">
+		SELECT
+			 COUNT(*)
+		FROM
+			public.bw_ship_info
+		WHERE
+			"ship_nm" = #shipName#
+	</select>
+	
+	<select id="selectMnftList" resultClass="java.util.HashMap">
+		SELECT
+			 mnft_kr as "mnftKr"
+			 ,mnft_en as "mnftEn"
+			,bwms_type as "bwmsType"
+		FROM
+			bw_mnft_info
+		
+			
+	
+	</select>
+	
+	
+	<select id="selectAllShipInfo" parameterClass="map" resultClass="java.util.HashMap">
+	
+		SELECT 
+			"imo_no" AS "imoNo"
+			,"ship_nm" AS "shipNm"
+ 			,"ship_kind" AS "shipKind"
+			,"ship_num" AS "shipNum"
+			,"ship_cnstr_dt" AS "shipCnstrDt"
+			,"ship_weight" AS "shipWeight"
+			,"bwms_type" AS "bwmsType"
+			,"country_code" AS "counrty_code"
+			,"user_id" AS "userId"
+			,"rgs_de" AS "rgsDe"
+			,"mnft_nm" AS "mnftNm"
+			,"bwms_device_nm"  AS "bwmsDeviceNm"
+		FROM
+			public.bw_ship_info
+		WHERE
+		    0=0
+		<isEqual property="gsRoleId" compareValue="ROLE_MNFT" >
+			<isNotNull property="gsMnftNm" prepend="AND">
+				"mnft_nm" = #gsMnftNm#
+			</isNotNull>
+		</isEqual>
+		<isEqual property="gsRoleId" compareValue="ROLE_SHIPOWNER" >
+			<isNotNull property="gsUserId" prepend="AND">
+				"user_id" = #gsUserId#
+			</isNotNull>
+		</isEqual>
+		<isEqual property="gsRoleId" compareValue="ROLE_PSC" >
+			<isNotNull property="gsUserId" prepend="AND">
+				"user_id" = #gsUserId#
+			</isNotNull>
+		</isEqual>
+	
+	</select>
+	
+	
+	<select id="selectShipInfoProfile" parameterClass="map" resultClass="java.util.HashMap">
+	
+		SELECT 
+			"imo_no" AS "imoNo"
+			,"ship_nm" AS "shipNm"
+ 			,"ship_kind" AS "shipKind"
+			,"ship_num" AS "shipNum"
+			,"ship_weight" AS "shipWeight"
+			,"bwms_type" AS "bwmsType"
+			,"country_code" AS "countryCode"
+			,"user_id" AS "userId"
+			,"mnft_nm" AS "mnftNm"
+			,"bwms_device_nm"  AS "bwmsDeviceNm"
+		FROM
+			public.bw_ship_info
+		WHERE
+		    0=0
+		<isNotNull property="gsMnftNm" prepend="AND">
+			"mnft_nm" = #gsMnftNm#
+		</isNotNull>
+		<isNotNull property="imoNum" prepend="AND">
+			"imo_no" = #imoNum#
+		</isNotNull>
+	</select>
+	
+	<select id="getOrgCols" parameterClass="map" resultClass="String">
+		SELECT
+			
+			col_nm
+			
+		FROM
+			bw_org_cols
+		WHERE
+			fnm_rule_num = #fnm_rule_num#
+		AND
+			log_type = #log_type#
+	</select>
+	
+	<select id="countCols" parameterClass="map" resultClass="Integer">
+		SELECT
+			coalesce(count(*),0)
+		FROM
+			bw_org_cols
+		WHERE
+			fnm_rule_num = #fnm_rule_num#
+		AND
+			log_type = #log_type#
+			
+	
+	</select>
+	<select id="countMsrCols" parameterClass="map" resultClass="Integer">
+		SELECT
+			coalesce(count(*),0)
+		FROM
+			bwms_msr_elem
+		WHERE
+			fnm_rule_num = #fnm_rule_num#
+		AND
+			log_type = #log_type#
+			
+	
+	</select>
+	
+	<select id="countOrgCols" parameterClass="map" resultClass="Integer">
+		SELECT count(*)
+		FROM bw_org_cols
+		
+		WHERE fnm_rule_num = #fnm_rule_num#
+		
+		<isNotEmpty property="log_type" prepend="AND">
+			
+		log_type = #log_type#
+			
+		</isNotEmpty>
+		
+	</select>
+	
+	
+	<select id="getOperCount" parameterClass="map" resultClass="Integer">
+		SELECT count(*)
+		FROM 
+		<isEqual property="category" compareValue="EC">
+			public.ec_operation_log
+		</isEqual>
+		<isEqual property="category" compareValue="UV">
+			public.uv_operation_log
+		</isEqual>
+		<isEqual property="category" compareValue="O3">
+			public.o3_operation_log
+		</isEqual>
+		
+	
+		WHERE fnm_rule_num = #fnmRuleNum#
+		<isEqual property="category" compareValue="EC">
+			<isNotNull  property="startTime">
+			<isNotNull  property="endTime">
+			and
+				TO_CHAR(start_time, 'YYYY-MM-DD') &gt;= #startTime#
+			and 
+				TO_CHAR(end_time, 'YYYY-MM-DD') &lt;= #endTime# 
+			and running_time::INTEGER > 1800	
+			</isNotNull>
+			</isNotNull>
+		</isEqual>
+		
+		<isEqual property="category" compareValue="UV">
+			<isNotNull  property="startTime">
+			<isNotNull  property="endTime">
+			and
+				TO_CHAR(log_date, 'YYYY-MM-DD') &gt;= #startTime#
+			and 
+				TO_CHAR(log_date, 'YYYY-MM-DD') &lt;= #endTime# 
+			</isNotNull>
+			</isNotNull>
+		</isEqual>
+	</select>
+	
+	<select id = "getOperTime" parameterClass="map" resultClass="java.util.HashMap">
+		<isEqual property="category" compareValue="EC">
+		SELECT 	
+				distinct a.start_time
+				,TO_CHAR("start_time", 'YYYY-MM-DD HH24:MI:SS')  as "startTime"
+				,TO_CHAR("end_time", 'YYYY-MM-DD HH24:MI:SS')   as "endTime"
+		FROM
+		
+			public.ec_operation_log a 
+			, (select  * from ec_data_log b where 
+				b.tro_b1 != 0
+				or
+				b.tro_b2 != 0
+				or
+				b.tro_b3 != 0 
+				or
+				b.tro1 != 0
+				or
+				b.tro2 != 0
+				or
+				b.tro_d1 != 0
+				or
+				b.tro_d2!= 0
+				or
+				b.tro_d3 != 0
+				or
+				b.tro_d4 != 0
+				or
+				b.tro_s1 != 0
+				or
+				b.tro_s2 != 0
+				or
+				b.tro_s3 != 0
+				or
+				b.tro_s4 != 0
+			)b 
+		</isEqual>
+		<isEqual property="category" compareValue="O3">
+			public.o3_operation_log a, o3_data_log b
+		</isEqual>
+	
+		WHERE a.fnm_rule_num = #fnmRuleNum#
+		<isEqual property="category" compareValue="EC" prepend="AND">
+		 
+		a.fnm_rule_num= b.fnm_rule_num
+		
+		and running_time::INTEGER > 1800
+	
+		and	
+		b.log_date &gt;= a.start_time
+		and 
+		b.log_date &lt;= a.end_time
+		
+		<isNotNull  property="startTime">
+		<isNotNull  property="endTime">
+		and
+			TO_CHAR(a.start_time,'YYYY-MM-DD') &gt;= #startTime#
+		and 
+			TO_CHAR(a.end_time,'YYYY-MM-DD') &lt;= #endTime# 
+		</isNotNull>
+		</isNotNull>
+		
+			order by a.start_time desc
+		</isEqual>
+	
+	
+	</select>
+	
+	<select id = "getUVOperTime" parameterClass="map" resultClass="java.util.HashMap">
+	SELECT
+	distinct a.log_date
+	,TO_CHAR(a.log_date,'YYYY-MM-DD HH24:MI:SS') as "startTime"
+	,TO_CHAR(b.log_date, 'YYYY-MM-DD HH24:MI:SS') as "endTime"
+	FROM
+
+	(
+	select fnm_rule_num,
+	log_date,
+	rec_time
+
+
+	from
+	uv_operation_log
+	where fnm_rule_num =#fnmRuleNum#
+	and
+	message = 'UV LAMP ON'
+	) a ,
+
+
+	(
+	SELECT
+	fnm_rule_num
+	,log_date
+	FROM
+	uv_operation_log
+	WHERE fnm_rule_num
+	=#fnmRuleNum#
+	and
+
+	message = 'UV LAMP OFF'
+	) b,
+
+	(
+	select *
+	from uv_data_log
+	where
+	dose != 0
+	or
+	s1_dose != 0
+	or
+	s2_dose != 0
+	or
+	s3_dose != 0
+	or
+	s4_dose != 0
+	or
+	s5_dose != 0
+	or
+	s6_dose != 0
+	or
+	p1_dose != 0
+	or
+	p2_dose != 0
+	or
+	p3_dose != 0
+	or
+	p4_dose != 0
+	or
+	p5_dose != 0
+	or
+	p6_dose != 0
+	) c
+	,
+	(
+	select
+		fnm_rule_num ,
+		max(log_date) as "maxdate",
+		min(log_date) as "mindate" 
+	from uv_data_log
+	group by fnm_rule_num
+	) d
+
+	WHERE a.fnm_rule_num = #fnmRuleNum#
+	and
+	a.fnm_rule_num = b.fnm_rule_num
+	and
+	a.fnm_rule_num = c.fnm_rule_num
+	and a.fnm_rule_num = d.fnm_rule_num
+	and 
+		split_part(to_char(a.log_date, 'yyyy-MM-DD HH24:MI:SS'), ' ', 1) = split_part(to_char(b.log_date, 'yyyy-MM-DD HH24:MI:SS'), ' ', 1)
+	and d.mindate &lt;= a.log_date
+	<isEqual property="category" compareValue="uv">
+			<isNotNull  property="startTime">
+			<isNotNull  property="endTime">
+			and
+				TO_CHAR(a.log_date, 'YYYY-MM-DD') &gt;= #startTime#
+			and 
+				TO_CHAR(b.log_date, 'YYYY-MM-DD') &lt;= #endTime# 
+			</isNotNull>
+			</isNotNull>
+	</isEqual>
+	order by
+	a.log_date desc
+		   	
+	</select>  
+	
+	<select id = "searchValidData" parameterClass="map" resultClass="java.util.HashMap" >
+		<isEqual property="category" compareValue="EC">
+		SELECT 	
+				distinct b.log_date
+						,b.tro_b1 
+						,b.tro_b2 
+						,b.tro_b3
+						,b.tro1
+						,b.tro2 
+						,b.tro_d1
+						,b.tro_d2
+						,b.tro_d3
+						,b.tro_d4
+						,b.tro_s1
+						,b.tro_s2
+						,b.tro_s3
+						,b.tro_s4
+		FROM
+		
+			public.ec_operation_log a 
+			, (select  * from ec_data_log b where 
+				b.tro_b1 != 0
+				or
+				b.tro_b2 != 0
+				or
+				b.tro_b3 != 0 
+				or
+				b.tro1 != 0
+				or
+				b.tro2 != 0
+				or
+				b.tro_d1 != 0
+				or
+				b.tro_d2!= 0
+				or
+				b.tro_d3 != 0
+				or
+				b.tro_d4 != 0
+				or
+				b.tro_s1 != 0
+				or
+				b.tro_s2 != 0
+				or
+				b.tro_s3 != 0
+				or
+				b.tro_s4 != 0
+			)b 
+		
+		
+	
+		WHERE a.fnm_rule_num = #fnmRuleNum#
+		
+		AND
+			a.fnm_rule_num= b.fnm_rule_num
+			
+	
+		AND	
+			b.log_date &gt;= a.start_time
+		AND 
+			b.log_date &lt;= a.end_time
+		
+		<isNotNull  property="startTime">
+		<isNotNull  property="endTime">
+		AND
+			a.start_time &gt;= #startTime#
+		AND 
+			a.end_time  &lt;= #endTime# 
+		</isNotNull>
+		</isNotNull>
+			
+		order by b.log_date desc
+	 </isEqual>
+	 <isEqual property="category" compareValue="UV">
+	 
+		 SELECT
+		distinct a.log_date
+		,c.dose 
+		,c.s1_dose 
+		,c.s2_dose 
+		,c.s3_dose 
+		,c.s4_dose 
+		,c.s5_dose 
+		,c.s6_dose 
+		,c.p1_dose 
+		,c.p2_dose 
+		,c.p3_dose 
+		,c.p4_dose 
+		,c.p5_dose 
+		,c.p6_dose 
+		FROM
+	
+		(
+		select fnm_rule_num,
+		log_date,
+		rec_time
+	
+	
+		from
+		uv_operation_log
+		where fnm_rule_num =#fnmRuleNum#
+		and
+		message = 'UV LAMP ON'
+		) a ,
+	
+	
+		(
+		SELECT
+		fnm_rule_num
+		,log_date
+		FROM
+		uv_operation_log
+		WHERE fnm_rule_num
+		=#fnmRuleNum#
+		and
+	
+		message = 'UV LAMP OFF'
+		) b,
+	
+		(
+		select *
+		from uv_data_log
+		where
+		dose != 0
+		or
+		s1_dose != 0
+		or
+		s2_dose != 0
+		or
+		s3_dose != 0
+		or
+		s4_dose != 0
+		or
+		s5_dose != 0
+		or
+		s6_dose != 0
+		or
+		p1_dose != 0
+		or
+		p2_dose != 0
+		or
+		p3_dose != 0
+		or
+		p4_dose != 0
+		or
+		p5_dose != 0
+		or
+		p6_dose != 0
+		) c
+		,
+		(
+		select
+			fnm_rule_num ,
+			max(log_date) as "maxdate",
+			min(log_date) as "mindate" 
+		from uv_data_log
+		group by fnm_rule_num
+		) d
+	
+		WHERE a.fnm_rule_num = #fnmRuleNum#
+		and
+		a.fnm_rule_num = b.fnm_rule_num
+		and
+		a.fnm_rule_num = c.fnm_rule_num
+		and a.fnm_rule_num = d.fnm_rule_num
+		and 
+			split_part(to_char(a.log_date, 'yyyy-MM-DD HH24:MI:SS'), ' ', 1) = split_part(to_char(b.log_date, 'yyyy-MM-DD HH24:MI:SS'), ' ', 1)
+		and d.mindate &lt;= a.log_date
+		<isEqual property="category" compareValue="uv">
+				<isNotNull  property="startTime">
+				<isNotNull  property="endTime">
+				and
+					TO_CHAR(a.log_date, 'YYYY-MM-DD') &gt;= #startTime#
+				and 
+					TO_CHAR(b.log_date, 'YYYY-MM-DD') &lt;= #endTime# 
+				</isNotNull>
+				</isNotNull>
+		</isEqual>
+		</isEqual>
+	
+		
+	</select> 
+	
+	
+	
+	<select id="searchColsExistTable" parameterClass="map" resultClass="String">
+	
+	
+		SELECT 
+			column_name as "cols"
+		 FROM
+		 	 INFORMATION_SCHEMA.COLUMNS
+		WHERE
+			 TABLE_CATALOG = 'monitering_bwms'
+		 AND
+		 	 TABLE_NAME    = 
+		 <isNotEmpty property="log_type">
+			<isEqual property="log_type" compareValue="data">
+				<isEqual property="category" compareValue="EC">
+					'ec_data_log'
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					'uv_data_log'
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					'o3_data_log'
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="event">
+				<isEqual property="category" compareValue="EC">
+					'ec_event_log'
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					'uv_event_log'
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					'o3_event_log'
+				</isEqual>
+			</isEqual>
+				<isEqual property="log_type" compareValue="oper">
+				<isEqual property="category" compareValue="EC">
+					'ec_operation_log'
+				</isEqual>
+				<isEqual property="category" compareValue="UV">
+					'uv_operation_log'
+				</isEqual>
+				<isEqual property="category" compareValue="O3">
+					'o3_operation_log'
+				</isEqual>
+			</isEqual>
+		</isNotEmpty>
+		
+		 	 
+		 ORDER BY 
+		 	 ORDINAL_POSITION;
+	</select>
+	
+	<update id="updateShipInfo" parameterClass="map" >
+		UPDATE bw_ship_info
+		SET 
+					"imo_no" = #imoNo#,
+		
+		 			
+				  	"ship_kind" = #shipKnd#,
+				  	
+				  	
+				    "ship_num" = #shipNo#,
+				    
+<!-- 				    <isNotEmpty property="shipCnstrDt"> -->
+<!-- 			    	"ship_cnstr_dt" =# #, -->
+<!-- 			    	</isNotEmpty> -->
+<!-- 			    	<isNotEmpty property="shipGrtg"> -->
+<!-- 				    "ship_weight" = # #,  -->
+<!-- 				    </isNotEmpty> -->
+				    
+				    "country_code" = #shipNlty#,
+				    
+					"bwms_type" = #bwms_type#
+		
+		
+		
+		WHERE user_id = #registerId#
+		and
+			ship_nm = #shipNm#
+	
+	</update>   
+	
+	<delete id="deleteShipInfo" parameterClass="map">
+		delete from bw_ship_info
+		
+		where ship_nm = #shipNm#
+	
+	</delete>
+</sqlMap>

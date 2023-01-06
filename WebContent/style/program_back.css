@@ -1,0 +1,45 @@
+
+/************************** 로그인 **********************/
+.login_wrap {width:100%; border:1px solid #444; background:#fff; text-align:center;}
+.login_wrap .title {font-size:24px; font-weight:bold; padding:40px 0;}
+.login_wrap p {font-size:11px; margin:0px; padding:17px 17px 13px 17px ; background:#f8f8f8; border-bottom:1px solid #efefef; border-top:1px solid #efefef; font-family:"NanumGothic", "돋움", sans-serif;}
+.login_wrap .login_form {text-align:center !important; display:inline-block !important; margin:30px 0 20px;}
+.login_wrap .login_form li {float:left;}
+.login_wrap .login_form label {display:none;/*  width:53px; margin-rignt:1px; text-align:right; color:#666; font-size:14px; */}
+.login_wrap .login_form input {width:290px; margin-bottom:5px;}
+
+.login_wrap .login_form .btn_wrap {padding:0 0 0 2px;}
+.login_wrap .login_form .login_btn {background:#4673c5; position:absolute;top:245px; right:240px; padding:21px 22px; border-radius:3px; color:#fff;}
+
+.login_wrap .member_etc_btn_01 {padding:0 0 30px; font-size:11px;}
+.login_wrap .member_etc_btn_01 .btn1_join, .login_wrap .member_etc_btn_01 .btn1_idpw {background:#fff; border:1px solid #ddd; color:#666 !important;}
+.login_wrap .member_etc_btn_01 .space {margin-left:50px;}
+
+
+
+
+/*페이징*/
+.pagenum {text-align:center; color:#434343;}
+.pagenum ul {display:inline-block;}
+.pagenum ul li {display:inline;}
+.pagenum a {position:relative; float:left; background:#fff; color:#333; border:1px solid #dadada; padding:6px 13px; line-height:1.6; border-radius:0; margin-left:-1px;}
+.pagenum a:hover {/* background:#f7b758; */ color:#fb3838;}
+.pagenum a.on {font-weight:bold; color:#fb3838;}
+
+.pagenum a.first, .pagenum a.prev, .pagenum a.next, .pagenum a.last {width:10px; height:22px;}
+.pagenum a.first {background:#fff url(../images/btn/first.png)no-repeat center;}
+.pagenum a.prev {margin-right:8px; background:#fff url(../images/btn/prev.png)no-repeat center;}
+.pagenum a.next {margin-left:8px; background:#fff url(../images/btn/next.png)no-repeat center;}
+.pagenum a.last {background:#fff url(../images/btn/last.png)no-repeat center;}
+
+
+
+/************************** 달력 **********************/
+#calenderPop { z-index:10000; }
+#calenderPop select {background:none !important;}
+.input_sel {border:1px solid #7f9db9; background:#f7f9fb;font-size:11px;height:19px; vertical-align:middle; }
+.input_sel {color:#555555;}
+
+.Calendar_Day_mouseOver { background:#72a6ef; }
+.Calendar_Day_mouseOut {  background:#ffffff; }
+#cursorData td{ border:1px solid white; width:14px; padding:4px 8px;font-family:"돋움", sans-serif; font-size:11px;}

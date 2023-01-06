@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Role">
+
+	<typeAlias alias="ComboDomain" type="business.biz.comm.domain.ComboDomain" />
+
+    <!--******************************   ROLE MASTER  ***************************************-->
+	<!-- 롤 리스트 -->
+	<select id="searchRoleMgmt" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		SELECT   ROLE_ID							AS "roleId"
+			   , UPR_ROLE_ID						AS "parentRoleId"
+			   , ROLE_NM                            AS "roleNm"
+               , SUBSTR(LPAD(ROLE_NM , ((LEVEL-1)*5) + LENGTHB(ROLE_NM), '@'), 1, (LEVEL-1)*5)
+                  ||DECODE(LEVEL, 1, '', '┖ ')||ROLE_NM    AS "treeRoleNm"
+			   , REGISTER                            AS "regiId"
+               , TO_CHAR(RGS_DE, 'yyyy-mm-dd')   AS "regiDate"
+               , TO_CHAR(NVL(UPD_DE, RGS_DE), 'yyyy-mm-dd')	AS "regiDate2"
+		FROM  TN_DSCO_ROLE_MGT
+        CONNECT BY PRIOR ROLE_ID = UPR_ROLE_ID
+        START WITH UPR_ROLE_ID = 'NONE'
+		ORDER siblings BY ROLE_ID
+	</select>
+
+    <select id="listComboRole" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+        SELECT ROLE_ID 								AS "comboValue"
+             , ROLE_ID||' : '||ROLE_NM 				AS "comboText"
+        FROM   TN_DSCO_ROLE_MGT
+        WHERE  0 = 0
+        AND    ROLE_ID NOT IN ('ROLE_RESTRICTED')
+        <isNotEmpty property="roleId">
+            AND    ROLE_ID != #roleId#
+        </isNotEmpty>
+        ORDER BY ROLE_ID
+    </select>
+
+    <select id="listComboRoleAll" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+        SELECT ROLE_ID 								AS "comboValue"
+             , ROLE_ID||' : '||ROLE_NM				AS "comboText"
+        FROM   TN_DSCO_ROLE_MGT
+        WHERE  0 = 0
+        ORDER BY ROLE_ID
+    </select>
+
+	<!-- 롤 상세 -->
+	<select id="viewRole" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		SELECT   ROLE_ID							AS "roleId"
+			   , UPR_ROLE_ID						AS "parentRoleId"
+			   , ROLE_NM                            AS "roleNm"
+			   , REGISTER                            AS "regiId"
+		FROM  TN_DSCO_ROLE_MGT
+		WHERE ROLE_ID = #roleId#
+	</select>
+
+	<!-- 롤 등록 -->
+	<insert id="regiRole" parameterClass="java.util.Map">
+        INSERT INTO TN_DSCO_ROLE_MGT (
+               ROLE_ID
+             , UPR_ROLE_ID
+             , ROLE_NM
+             , REGISTER
+             , REGI_DATE
+        ) VALUES (
+               #roleId#
+             , #parentRoleId#
+             , #roleNm#
+             , #gsUserId#
+             , sysdate
+        )
+	</insert>
+
+	<!-- 롤 수정 -->
+	<update id="updtRole" parameterClass="java.util.Map">
+		UPDATE TN_DSCO_ROLE_MGT
+		SET    ROLE_NM  		= #roleNm#
+		     , UPR_ROLE_ID  	= #parentRoleId#
+		     , UPDT_ID  		= #gsUserId#
+		     , UPDT_DATE   		= sysdate
+		WHERE  ROLE_ID  		= #roleId#
+	</update>
+
+	<!-- 롤 삭제 -->
+	<delete id="deltRole" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_ROLE_MGT
+        WHERE  ROLE_ID  = #roleId#
+	</delete>
+
+</sqlMap>

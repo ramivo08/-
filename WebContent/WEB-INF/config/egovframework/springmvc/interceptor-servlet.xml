@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd">
+
+	<!--  웹페이지 접근 인터셉터 Start -->
+    <bean id="securityInterceptor" class="business.sys.intercept.SecurityInterceptor"/>
+
+	<!-- spring3.1 이전버전 <bean id="webAccessMapping" class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping"> -->
+	<bean id="securityMapping" class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" p:order="0">
+		<property name="interceptors">
+			<list>
+				<ref bean="securityInterceptor" />
+			</list>
+		</property>
+	</bean>
+	<!--  웹페이지 접근  인터셉터 End -->
+
+
+</beans>

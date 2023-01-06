@@ -1,0 +1,662 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Admin">
+
+	<resultMap id="selectFaqMap" class="java.util.HashMap">
+		<result column="bbsNo" property="bbsNo" />
+		<result column="bbsSubject" property="bbsSubject" />
+		<result column="bbsCont" property="bbsCont" jdbcType="CLOB"
+			javaType="java.lang.String" />
+		<result column="openYn" property="openYn" />
+	</resultMap>
+
+	<!-- [관리자] 메뉴관리 리스트 -->
+	<select id="searchMenuMgmt" resultClass="java.util.HashMap"
+		parameterClass="java.util.Map" remapResults="true">
+		SELECT MENU_ID AS "menuId"
+		, MENU_LEVEL AS "menuLvl"
+		, MENU_ORDR AS
+		"menuOdr"
+		, MENU_NM AS "menuNm"
+		<!-- <isEmpty property="srchMenuNm"> -->
+		<!-- , SUBSTR(LPAD(MENU_NM , ((LEVEL-1)*4) + LENGTHB(MENU_NM), '@'), 1, 
+			(LEVEL-1)*4) -->
+		<!-- ||DECODE(LEVEL, 1, '', '┖ ')||MENU_NM AS "treeMenuNm" -->
+		<!-- </isEmpty> -->
+		<!-- <isNotEmpty property="srchMenuNm"> -->
+		, MENU_NM AS "treeMenuNm"
+		<!-- </isNotEmpty> -->
+		, CNNC_PROGRAM_ID AS "refProgId"
+		, TRGT_URL AS "tagtUrl"
+		, UPR_MENU_ID
+		AS "parentMenuId"
+		, (SELECT MENU_NM
+		FROM TN_DSCO_MENU_MGT
+		WHERE MENU_ID =
+		A.UPR_MENU_ID) AS "parentMenuNm"
+		, NVL(USE_YN, 'N') AS "useYn"
+		,
+		NVL(POPUP_YN, 'N') AS "popupYn"
+		FROM TN_DSCO_MENU_MGT A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchMenuNm">
+				REPLACE(MENU_NM, ' ',
+				'') like '%'||REPLACE(#srchMenuNm#, ' ', '')||'%'
+			</isNotEmpty>
+		</dynamic>
+		CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH UPR_MENU_ID = 'NONE'
+		ORDER siblings BY MENU_LEVEL, MENU_ORDR
+	</select>
+
+	<!-- [관리자] 메뉴관리 리스트 Count -->
+	<select id="searchMenuMgmtCount" resultClass="int"
+		parameterClass="java.util.Map" remapResults="true">
+		SELECT COUNT(*)
+		FROM TN_DSCO_MENU_MGT A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchMenuNm">
+				MENU_NM like
+				'%'||#srchMenuNm#||'%'
+			</isNotEmpty>
+		</dynamic>
+	</select>
+
+	<!-- [관리자] 메뉴관리 상세 조회 -->
+	<select id="selectMenuMgmt" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT MENU_ID AS "menuId"
+		, MENU_LEVEL AS "menuLvl"
+		,
+		MENU_ORDR AS "menuOdr"
+		, MENU_NM AS "menuNm"
+		,
+		SUBSTR(DECODE(UPR_MENU_ID, 'NONE', MENU_ID, UPR_MENU_ID),
+		INSTR(DECODE(UPR_MENU_ID, 'NONE', MENU_ID, UPR_MENU_ID), '-')+1) AS
+		"menuEngNm"
+		, TRGT_URL AS "tagtUrl"
+		, UPR_MENU_ID AS "parentMenuId"
+		,
+		NVL(USE_YN, 'N') AS "useYn"
+		, NVL(POPUP_YN, 'N') AS "popupYn"
+		FROM
+		TN_DSCO_MENU_MGT
+		WHERE MENU_ID =
+		#menuId#
+	</select>
+
+	<!-- [관리자] > 메뉴관리 상위메뉴 조회(콤보용) -->
+	<select id="searchComboMenu" parameterClass="java.util.Map"
+		resultClass="java.util.HashMap">
+		SELECT MENU_ID AS "comboValue"
+		,
+		SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) AS "comboText"
+		FROM TN_DSCO_MENU_MGT
+		WHERE 0 = 0
+		<isNotEmpty property="menuId">
+			AND MENU_ID != #menuId#
+		</isNotEmpty>
+		CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH UPR_MENU_ID = 'NONE'
+		ORDER siblings BY MENU_ID
+	</select>
+
+	<!-- 메뉴관리 메뉴 최고 레벨 호출 -->
+	<select id="selectMenuMaxLvl" parameterClass="java.util.Map"
+		resultClass="int">
+		SELECT MAX(MENU_LEVEL) + 1
+		FROM TN_DSCO_MENU_MGT
+		WHERE MENU_LEVEL <![CDATA[<=]]>
+		10
+	</select>
+
+	<!-- 메뉴관리 메뉴 레벨 호출 -->
+	<select id="selectMenuLvl" parameterClass="java.util.Map"
+		resultClass="int">
+		SELECT MENU_LEVEL
+		FROM TN_DSCO_MENU_MGT
+		WHERE MENU_ID =
+		#menuId#
+	</select>
+
+	<!-- [관리자] 메뉴 관리 수정 -->
+	<update id="updateMenuMgmt" parameterClass="java.util.HashMap">
+		UPDATE
+		TN_DSCO_MENU_MGT
+		SET MENU_NM = #menuNm#
+		, MENU_LEVEL = #menuLvl#
+		,
+		MENU_ORDR = #menuOdr#
+		, POPUP_YN = #popupYn#
+		, USE_YN = #useYn#
+		,
+		UPR_MENU_ID = #parentMenuId#
+		, UPDUSR = #gsUserId#
+		, UPD_DE = SYSDATE
+		WHERE MENU_ID = #menuId#
+	</update>
+
+	<!-- [관리자] 메뉴 관리 삭제 -->
+	<delete id="deleteMenuMgmt" parameterClass="String">
+		DELETE
+		TN_DSCO_MENU_MGT
+		WHERE
+		MENU_ID = #menuId#
+	</delete>
+
+	<!-- [관리자] 사용자 접속기록 리스트 -->
+	<select id="searchUserLogMgmt"
+		parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT ROWNUM AS "rNum"
+		, CONECT_ORDR AS "logOrd"
+		, CONECT_USER_ID AS
+		"userId"
+		, CONECT_DT AS "logDt"
+		, CONECT_IP_ADRES AS "logIp"
+		, CONECT_URL
+		AS "conUrl"
+		FROM TH_DSCO_CONECT_LOG
+		WHERE 0=0
+		<isNotEmpty property="searchCond" prepend="AND">
+			UPPER(CONECT_USER_ID) LIKE UPPER('%'||#searchWord#||'%')
+		</isNotEmpty>
+		ORDER BY ROWNUM ASC
+	</select>
+
+	<!-- [관리자] 사용자 접속기록 리스트 Count -->
+	<select id="searchUserLogMgmtCount"
+		parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(*)
+		FROM TH_DSCO_CONECT_LOG
+		WHERE 0 = 0
+		<isNotEmpty property="searchCond" prepend="AND">
+			UPPER(CONECT_USER_ID) LIKE UPPER('%'||#searchWord#||'%')
+		</isNotEmpty>
+	</select>
+
+	<!-- [관리자] 사용자 접속기록 상세조회 리스트 -->
+	<select id="searchUserLogDetail"
+		parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT ROWNUM AS "rNum"
+		, LOG_SEQ AS "logOrd"
+		, PROG_NM AS "progNm"
+		, BBS_SUBJECT AS "bbsSub"
+		,
+		REGISTER AS "useId"
+		, RGS_DE AS "rgsDe"
+		FROM SYS_DATALOGHIST
+		WHERE
+		LOGIN_SEQ=#logSeq#
+		ORDER BY
+		RGS_DE ASC
+	</select>
+
+	<!-- [관리자] 사용자 접속기록 상세조회 리스트 Count -->
+	<select id="searchUserLogDetailCount"
+		parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(*)
+		FROM
+		SYS_DATALOGHIST
+		WHERE LOGIN_SEQ=#logSeq#
+	</select>
+
+	<!-- [관리자] FAQ 관리 리스트 -->
+	<select id="searchFAQMgmt" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT ROWNUM AS "rNum"
+		, BBS_NO AS "bbsNo"
+		, BBS_KND AS "bbsType"
+		,
+		BBS_SJ AS "bbsSubject"
+		, RDCNT AS "viewCnt"
+		, REGISTER AS "register"
+		,
+		RGS_DE AS "rgsDe"
+		FROM (
+		SELECT BBS_NO
+		, BBS_KND
+		, BBS_SJ
+		, RDCNT
+		, REGISTER
+		, RGS_DE
+		FROM TN_DSCO_BBS
+		WHERE BBS_KND = #bbsType#
+		<isNotEmpty property="searchCond" prepend="AND">
+			<isEqual property="searchCond" compareValue="subjectContent">
+				(UPPER(BBS_SJ)
+				LIKE UPPER('%'||#searchWord#||'%') OR
+				UPPER(BBS_CN) LIKE
+				UPPER('%'||#searchWord#||'%'))
+			</isEqual>
+			<isEqual property="searchCond" compareValue="subject">
+				UPPER(BBS_SJ)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+			<isEqual property="searchCond" compareValue="content">
+				UPPER(BBS_CN)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+		</isNotEmpty>
+		ORDER BY RGS_DE DESC
+		)
+	</select>
+
+	<!-- [관리자] FAQ 관리 리스트 Count -->
+	<select id="searchFAQMgmtCount"
+		parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(*)
+		FROM TN_DSCO_BBS
+		WHERE BBS_KND = #bbsType#
+		<isNotEmpty property="searchCond" prepend="AND">
+			<isEqual property="searchCond" compareValue="subjectContent">
+				(UPPER(BBS_SJ)
+				LIKE UPPER('%'||#searchWord#||'%') OR
+				UPPER(BBS_CN) LIKE
+				UPPER('%'||#searchWord#||'%'))
+			</isEqual>
+			<isEqual property="searchCond" compareValue="subject">
+				UPPER(BBS_SJ)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+			<isEqual property="searchCond" compareValue="content">
+				UPPER(BBS_CN)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+		</isNotEmpty>
+	</select>
+
+	<!-- [관리자] FAQ 관리 상세 조회 -->
+	<select id="selectFAQMgmt" parameterClass="java.util.HashMap"
+		resultMap="selectFaqMap">
+		SELECT BBS_NO AS "bbsNo"
+		, BBS_SJ AS "bbsSubject"
+		, BBS_CN AS
+		"bbsCont"
+		, OTHBC_YN AS "openYn"
+		FROM TN_DSCO_BBS
+		WHERE BBS_KND =
+		#bbsType#
+		AND
+		BBS_NO = #bbsNo#
+	</select>
+
+	<!-- [관리자] FAQ 수정 -->
+	<update id="updateFAQMgmt" parameterClass="java.util.HashMap">
+		UPDATE
+		TN_DSCO_BBS
+		SET
+		BBS_SJ = #bbsSubject#
+		, BBS_CN = #bbsCont#
+		, OTHBC_YN = #openYn#
+		WHERE
+		BBS_NO = #bbsNo#
+	</update>
+
+	<!-- [관리자] FAQ 등록 -->
+	<insert id="insertFAQMgmt" parameterClass="java.util.HashMap">
+		<selectKey resultClass="String" keyProperty="bbsNo">
+			SELECT
+			NVL(MAX(BBS_NO),0) + 1
+			FROM TN_DSCO_BBS
+		</selectKey>
+		INSERT INTO TN_DSCO_BBS
+		(
+		BBS_NO
+		, BBS_KND
+		, BBS_SJ
+		, BBS_CN
+		, RDCNT
+		,
+		DELETE_YN
+		, OTHBC_YN
+		, REGISTER
+		, RGS_DE
+		) VALUES (
+		#bbsNo#
+		, #bbsType#
+		,
+		#bbsSubject#
+		, #bbsCont#
+		, 0
+		, 'N'
+		, 'Y'
+		, #gsUserId#
+		, SYSDATE
+		)
+	</insert>
+
+
+	<!-- [관리자] FAQ 관리 삭제 -->
+	<delete id="deleteFAQMgmt" parameterClass="String">
+		DELETE
+		TN_DSCO_BBS
+		WHERE
+		BBS_NO = #faqId#
+	</delete>
+
+
+	<!-- [관리자] FAQ 추가 시 로그 기록 추가 -->
+	<insert id="insertDataLog" parameterClass="java.util.HashMap">
+		INSERT INTO
+		SYS_DATALOGHIST
+		(
+		LOG_SEQ
+		, PROG_NM
+		, PROG_ACT
+		, BBS_NO
+		, BBS_SUBJECT
+		,
+		REGISTER
+		, RGS_DE
+		) VALUES
+		(
+		SEQ_DATALOGHIST.nextval
+		, #progNm#
+		, #progAct#
+		, #bbsNo#
+		, (SELECT BBS_SJ FROM TN_DSCO_BBS WHERE BBS_NO = #bbsNo#)
+		,
+		#gsUserId#
+		, SYSDATE
+		)
+	</insert>
+
+
+	<!-- [관리자] 권한관리 롤 리스트 -->
+	<select id="searchRoleMgmt" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT ROLE_ID AS "roleId"
+		, UPR_ROLE_ID AS "parentRoleId"
+		, ROLE_NM AS "roleNm"
+		, SUBSTR(LPAD(ROLE_NM , ((LEVEL-1)*5) +
+		LENGTHB(ROLE_NM), '@'), 1,
+		(LEVEL-1)*5)
+		||DECODE(LEVEL, 1, '', '┖
+		')||ROLE_NM AS "treeRoleNm"
+		, REGISTER AS "regiId"
+		, TO_CHAR(RGS_DE,
+		'yyyy-mm-dd') AS "regiDate"
+		, TO_CHAR(NVL(UPD_DE, RGS_DE),
+		'yyyy-mm-dd') AS "regiDate2"
+		FROM
+		TN_DSCO_ROLE_MGT
+		CONNECT BY PRIOR
+		ROLE_ID = UPR_ROLE_ID
+		START WITH UPR_ROLE_ID = 'NONE'
+		ORDER siblings BY
+		ROLE_ID
+	</select>
+
+	<!-- [관리자] 권한에 따른 메뉴 리스트 -->
+	<select id="searchRoleMenuMgmt"
+		parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT A.ROLE_ID AS
+		"roleId"
+		, A.MENU_ID AS "menuId"
+		, B.MENU_NM AS "menuNm"
+		FROM
+		TN_DSCO_ROLE_MENU A
+		, (SELECT MENU_ID
+		,
+		SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4) MENU_NM
+		FROM
+		TN_DSCO_MENU_MGT
+		CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH
+		UPR_MENU_ID = 'NONE') B
+		WHERE A.ROLE_ID = #roleId#
+		AND A.MENU_ID =
+		B.MENU_ID
+		ORDER BY A.MENU_ID
+
+	</select>
+
+	<!-- [관리자] 메뉴권한 부여 -->
+	<insert id="insertMenuRole" parameterClass="java.util.HashMap">
+		INSERT INTO
+		TN_DSCO_ROLE_MENU
+		(
+		MENU_ID,
+		ROLE_ID,
+		REGISTER,
+		RGS_DE
+		) VALUES (
+		#menuId#,
+		#roleId#,
+		#register#,
+		SYSDATE
+		)
+	</insert>
+
+	<!-- [관리자] 메뉴권한 삭제 -->
+	<delete id="deleteMenuRole" parameterClass="java.util.HashMap">
+		DELETE FROM
+		TN_DSCO_ROLE_MENU
+		WHERE
+		MENU_ID = #menuId# AND
+		ROLE_ID = #roleId#
+	</delete>
+
+	<!-- [관리자] 사용자 리스트 -->
+	<select id="searchUserMgmt" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT ROWNUM AS "rNum"
+		, A.USER_NO AS "userNo"
+		, A.USERID AS "userId"
+		,
+		A.RGS_DE AS "resDe"
+		, B.ROLE_ID AS "roleId"
+		, B.UPD_DE AS "updDe"
+		FROM
+		TN_DSCO_USER_INFO A, TN_DSCO_ROLE_USER B,
+		TN_DSCO_ROLE_MGT C
+		WHERE
+		A.USERID = B.USER_ID
+		AND B.ROLE_ID = C.ROLE_ID
+		<isNotEmpty property="searchCond" prepend="AND">
+			<isEqual property="searchCond" compareValue="subject">
+				UPPER(USERID)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+			<isEqual property="searchCond" compareValue="role">
+				UPPER(ROLE_NM)
+				LIKE UPPER('%'||#searchWord#||'%')
+			</isEqual>
+		</isNotEmpty>
+
+		<!-- ORDER BY LOGIN_DT ASC -->
+	</select>
+
+	<!-- [관리자] 사용자 리스트 Count -->
+	<select id="searchUserMgmtCount"
+		parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(*)
+		FROM TN_DSCO_USER_INFO
+		WHERE 0 = 0
+		<isNotEmpty property="searchCond" prepend="AND">
+			UPPER(USERID)
+			LIKE UPPER('%'||#searchWord#||'%')
+		</isNotEmpty>
+	</select>
+
+	<!-- [관리자] 사용자 리스트 -->
+	<select id="searchUserMgmt2" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT ROWNUM AS "rNum"
+		, A.USERID AS "userId"
+		, A.RGS_DE AS "resDe"
+		FROM USERS A
+		WHERE 0 = 0
+		<isNotEmpty property="searchCond" prepend="AND">
+			UPPER(USERID)
+			LIKE UPPER('%'||#searchWord#||'%')
+		</isNotEmpty>
+		<!-- ORDER BY LOGIN_DT ASC -->
+	</select>
+
+	<!-- [관리자] 사용자 리스트 Count -->
+	<select id="searchUserMgmt2Count"
+		parameterClass="java.util.HashMap" resultClass="int">
+		SELECT COUNT(*)
+		FROM USERS
+		WHERE 0 = 0
+		<isNotEmpty property="searchCond" prepend="AND">
+			UPPER(USERID)
+			LIKE UPPER('%'||#searchWord#||'%')
+		</isNotEmpty>
+	</select>
+
+	<!-- [관리자] 사용자 권한 수정 -->
+	<update id="updateUserRole" parameterClass="java.util.HashMap">
+		UPDATE
+		TN_DSCO_ROLE_USER
+		SET
+		ROLE_ID=#roleId#,
+		UPD_DE=SYSDATE
+		WHERE USER_ID =
+		#usrId#
+	</update>
+
+	<!-- [관리자] 통합관리시스템 사용자 삭제 -->
+	<delete id="deleteUser" parameterClass="java.util.HashMap">
+		DELETE FROM
+		TN_DSCO_USER_INFO
+		WHERE USERID = #usrId#
+	</delete>
+
+	<!-- [관리자] 통합관리시스템 사용자 권한 삭제 -->
+	<delete id="deleteUserRole" parameterClass="java.util.HashMap">
+		DELETE FROM
+		TN_DSCO_ROLE_USER
+		WHERE USER_ID = #usrId#
+	</delete>
+
+	<!-- [관리자] 관리자시스템 사용자 삭제 -->
+	<delete id="deleteAdmnUser" parameterClass="java.util.HashMap">
+		DELETE FROM USERS
+		WHERE USERID = #usrId#
+	</delete>
+
+	<!-- [관리자] 사용자 추가 -->
+	<insert id="insertId" parameterClass="java.util.HashMap">
+		INSERT INTO
+		TN_DSCO_USER_INFO(USER_NO, USERID,ORGANIZATION_CD, RGS_DE)
+		VALUES
+		((SELECT NVL(MAX(USER_NO),0)+1 FROM TN_DSCO_USER_INFO),
+		#roleId#,#roleOrg#, SYSDATE)
+	</insert>
+	<!-- [관리자] 관리자 추가 -->
+	<insert id="insertAdmnId" parameterClass="java.util.HashMap">
+		INSERT INTO USERS(ID,
+		USERID, PASSWORD, ORGANIZATION_ID,RGS_DE)
+		VALUES ((SELECT
+		NVL(MAX(ID),0)+1 FROM USERS), #userId#, #passwd#,00, SYSDATE)
+	</insert>
+
+	<!-- [관리자] 사용자 권한 추가 -->
+	<insert id="insertUserRole" parameterClass="java.util.Map">
+		INSERT INTO TN_DSCO_ROLE_USER(ROLE_ID, USER_ID)
+		VALUES (
+		<isEqual property="roleOrg" compareValue="00">
+			'ROLE_AUTH_SYS'
+		</isEqual>
+		<isEqual property="roleOrg" compareValue="03">
+			'ROLE_RELT_ORG'
+		</isEqual>
+		<isEqual property="roleOrg" compareValue="04">
+			'ROLE_MOIS'
+		</isEqual>
+		<isEqual property="roleOrg" compareValue="05">
+			'ROLE_USER'
+		</isEqual>
+
+		, #roleId#)
+	</insert>
+	<!-- [관리자] 관리자 권한 추가 -->
+	<insert id="insertAdmnRole" parameterClass="java.util.Map">
+		INSERT INTO
+		TN_DSCO_ROLE_USER(ROLE_ID, USER_ID)
+		VALUES ('ROLE_ROLE_AUTH_SYS',
+		#roleId#)
+
+	</insert>
+
+	<!-- [관리자] 관리자 수정 -->
+
+	<update id="updateAdmn" parameterClass="java.util.Map">
+		UPDATE USERS
+
+		SET PASSWORD
+		= #inputChangePwd#
+
+		WHERE USERID = (SELECT USERID FROM USERS WHERE
+		USERID = #inputId#)
+	</update>
+
+
+	<!-- [관리자] 공통 코드 조회 -->
+
+	<select id="searchCodeList" parameterClass="java.util.HashMap"
+		resultClass="java.util.HashMap">
+		SELECT
+		"GROUP_ID" AS "groupId"
+		,"CODE_ID" AS "codeId"
+		,"UPR_CODE" AS "uprCode"
+		,"CODE_NM" AS "codeNm"
+		,"CODE_DC1" AS "codeDc1"
+		,"CODE_DC2" AS "codeDc2"
+		,"CODE_DC3" AS "codeDc3"
+		,"CODE_DC4" AS
+		"codeDc4"
+		,"CODE_DC5" AS "codeDc5"
+		,"CODE_ORDR" AS "codeOrdr"
+		,"USE_YN"
+		AS "useYn"
+		,"REGISTER" AS "register"
+		,"RGS_DE" AS "rgsDe"
+		,"UPDUSR" AS
+		"updusr"
+		,"UPD_DE" AS "updDe"
+		FROM
+		aea_code
+		WHERE
+		"USE_YN" = 'Y'
+
+	</select>
+	<select id="searchCodeListCount"
+		parameterClass="java.util.HashMap" resultClass="int"  remapResults="true">
+		SELECT
+		COUNT(*)
+		FROM
+		aea_code
+		WHERE
+		"USE_YN" = 'Y'
+
+	</select>
+	
+	
+	
+	<select id="searchJunkyardList" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT
+			junkyard_nm as "junkyardNm",
+			junkyard_agent as "junkyardAgent",
+			junkyard_addr as "junkyardAddr",
+			junkyard_tel as "junkyardTel"
+		from
+			aea_junkyard
+		
+	</select>
+	
+	
+	<select id="searchJunkyardListCount"
+		parameterClass="java.util.HashMap" resultClass="int"  remapResults="true">
+		SELECT
+		COUNT(*)
+		FROM
+		aea_junkyard
+		
+
+	</select>
+	
+</sqlMap>

@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Board">
+	
+	<sql id="searchSql">
+		<isEqual property="searchType" compareValue="content" prepend="AND">
+			"BBS_CN" LIKE  '%'||#searchCont#||'%'
+		</isEqual>
+		
+		<isEqual property="searchType" compareValue="title" prepend="AND">
+			"BBS_SJ" LIKE  '%'||#searchCont#||'%'
+		</isEqual>	
+		
+		<isEqual property="searchType" compareValue="all" prepend="AND">
+			("BBS_CN" LIKE  '%'||#searchCont#||'%' OR "BBS_SJ" LIKE  '%'||#searchCont#||'%')
+		</isEqual>
+	</sql>
+	
+	<sql id="listBbsSql">
+		SELECT 
+		"BBS_NO" AS "bbsNo"
+		,"BBS_SJ" AS "bbsSubject"
+		,"BBS_CN" AS "bbsCont"
+		,"RDCNT" AS "viewCnt"
+		,"REGISTER" AS "register"
+		,TO_CHAR("RGS_DE", 'YYYY-MM-DD') AS "rgsDe"
+		,"PRIV_YN" AS "privYn"
+		
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND
+		"BBS_KND" = 'BW1'
+		
+	</sql>
+	
+
+	<select id="listBbs" parameterClass="map" resultClass="java.util.HashMap">
+		<include refid="listBbsSql" />
+		
+		<include refid="searchSql" />
+		
+		
+		ORDER BY "BBS_NO" DESC
+	</select>
+
+	<!-- 2019.10.31 공지사항 리스트 카운트 -->
+	<select id="listBbsCount" parameterClass="map" resultClass="int">
+		SELECT 
+		COUNT(*)
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND "BBS_KND" = 'BW1'
+		<include refid="searchSql" />
+	</select>
+	
+	<!-- FAQ 리스트 --> 
+	<select id="listFAQ" resultClass="java.util.HashMap">
+		SELECT 
+		"BBS_NO" AS "bbsNo"
+		,"BBS_SJ" AS "bbsSubject"
+		,"BBS_CN" AS "bbsCont"
+		,"RDCNT" AS "viewCnt"
+		,"REGISTER" AS "register"
+		,TO_CHAR("RGS_DE", 'YYYY-MM-DD') AS "rgsDe"
+		,"PRIV_YN" AS "privYn"
+		
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND "BBS_KND" = 'BW2'
+		<include refid="searchSql" />
+	</select>
+	
+	
+	<!-- FAQ 리스트 카운트 -->
+	<select id="listFAQCount" parameterClass="map" resultClass="int">
+		SELECT 
+		COUNT(*)
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND "BBS_KND" = 'BW2'
+		<include refid="searchSql" />
+	</select>
+	
+	<!-- QNA 리스트 -->
+		<select id="listQNA" resultClass="java.util.HashMap">
+		SELECT 
+		"BBS_NO" AS "bbsNo"
+		,"BBS_SJ" AS "bbsSubject"
+		,"BBS_CN" AS "bbsCont"
+		,"RDCNT" AS "viewCnt"
+		,"REGISTER" AS "register"
+		,TO_CHAR("RGS_DE", 'YYYY-MM-DD') AS "rgsDe"
+		,"PRIV_YN" AS "privYn"
+		
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND "BBS_KND" = 'BW3'
+		<include refid="searchSql" />
+		
+		ORDER BY "BBS_NO" DESC
+	</select>
+	
+	
+	<!-- QNA 리스트 카운트 -->
+	<select id="listQNACount" parameterClass="map" resultClass="int">
+		SELECT 
+		COUNT(*)
+		FROM 
+		aea_board
+		
+		WHERE "DELETE_YN" = 'N'
+		AND "BBS_KND" = 'BW3'
+		<include refid="searchSql" />
+	</select>
+	
+	<!-- 공지사항 상세보기 22.11.02 -->
+	<select id="selectBbs" parameterClass="int" resultClass="business.biz.board.domain.BoardDomain">
+		select 
+      "BBS_NO" AS "bbsNo"
+      ,"BBS_SJ" AS "bbsSubject"
+      ,"BBS_CN" AS "bbsCont"
+      ,"RDCNT" AS "viewCnt"
+      ,"REGISTER" AS "register"
+      ,TO_CHAR("RGS_DE", 'YYYY-MM-DD') AS "rgsDe"
+      ,"PRIV_YN" AS "privYn"
+      from aea_board 
+      where "BBS_NO"=#bbsNo#
+	</select>
+	
+
+	
+	<select id="isPrivate" parameterClass="map" resultClass="boolean">
+		
+	</select>
+	
+	<select id="checkPwd" parameterClass="map" resultClass="boolean">
+		
+	</select>
+	
+	<select id="getFAQCategoryList" resultClass="String">
+	
+	</select>
+	
+	<!-- 공지사항 글등록 -->
+	<insert id="insertBbs" parameterClass="map">
+		INSERT INTO aea_board(
+			"BBS_NO",    "UPR_BBS_NO",    "BBS_KND",    "DOC_KND",    "BBS_SJ",    "BBS_CN",    "RDCNT",    "OTHBC_YN",   
+						"DELETE_YN",    "REGISTER",    "RGS_DE",    "UPDUSR",    "UPD_DE",  
+						"BBS_PWD",    "PRIV_YN",    "FAQ_CATEGORY"
+		)VALUES(
+			nextval('board_sequence'),
+			#uprBbsNo#,
+			#bbsKind#,
+			#bbsKind#,
+			#bbsSubject#,
+			#bbsCont#,
+			0,
+			'Y',
+			'N',
+			#register#,
+			now(),
+			#updusr#,
+			#updDe#,
+			#password#,
+			#privYn#,
+			#faqCategory#
+		)
+	</insert>
+	
+	
+	
+	<delete id="deleteBbsList" parameterClass="map">
+       
+		
+    </delete>
+    
+ <!--    <delete id="deleteBbs" parameterClass="map">
+       
+    </delete> -->
+   
+   <!-- 상세보기에서 삭제 -->
+    <update id="deleteBbs" parameterClass="map">
+      UPDATE aea_board
+      SET "DELETE_YN" = 'Y'
+       WHERE "BBS_NO" = #bbsNo#::numeric
+    </update>
+   
+
+    <update id="updateBbs" parameterClass="map">
+    	
+    </update>
+    
+    <!-- 공지사항 수정 -->
+	<update id="updateNotice" parameterClass="business.biz.board.domain.BoardDomain">
+    	UPDATE aea_board 
+    	SET 
+    		"BBS_SJ" = #bbsSubject#, 
+    		"BBS_CN" = #bbsCont# 
+    	WHERE 
+    		"BBS_NO" = #bbsNo#::numeric
+    </update>
+    <!-- ::numeric - 특정변수의 형태를 숫자로 바꾼다-->
+    
+    <!-- 조회수 올리기 -->
+    <update id="viewPlus" parameterClass="map">
+    	UPDATE aea_board
+    	SET "RDCNT" = "RDCNT" + 1
+    	WHERE "BBS_NO" = #bbsNo#::numeric
+    </update>
+    
+    <select id="selectBbsNo" resultClass="int">
+    	
+    </select>
+    
+    <select id="selectCurrentBbsNo" resultClass="int">
+    	SELECT currval('board_sequence')
+    </select>
+    
+</sqlMap>

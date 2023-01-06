@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="AccessControl">
+
+	<insert id="regiAccessLog" parameterClass="java.util.Map">
+		INSERT INTO TH_DSCO_CONECT_LOG (
+			CONECT_ORDR,
+			CONECT_URL,
+			CONECT_TY,
+			CONECT_USER_ID,
+			CONECT_YY,
+			CONECT_MT,
+			CONECT_DE,
+			CONECT_DT,
+			CONECT_IP_ADRES,
+			CONECT_SERVER_NM
+		) VALUES (
+			SEQ_ACCHIST.nextval,
+			#progNm#,
+			#acchistType#,
+			#userId#,
+			to_char(sysdate, 'yyyy'),
+			to_char(sysdate, 'mm'),
+			to_char(sysdate, 'dd'),
+			systimestamp,
+			#userIp#,
+			#serverNm#
+		)
+	</insert>
+
+	<insert id="regiLoginInfo" parameterClass="java.util.Map">
+		INSERT INTO TH_DSCO_LOGIN_LOG (
+			LOGIN_ORDR,
+			LOGIN_USER_ID,
+			LOGIN_YY,
+			LOGIN_MT,
+			LOGIN_DE,
+			LOGIN_DT,
+			LOGIN_STTUS_CODE,
+			LOGIN_FAILR_CODE,
+			LOGIN_IP_ADRES,
+			LOGIN_SERVER_NM
+		) VALUES (
+			SEQ_LOGHIST.nextval,
+			#userId#,
+			to_char(sysdate, 'yyyy'),
+			to_char(sysdate, 'mm'),
+			to_char(sysdate, 'dd'),
+			systimestamp,
+			#loginStat#,
+			#loginReas#,
+			#userIp#,
+			#serverNm#
+		)
+	</insert>
+</sqlMap>

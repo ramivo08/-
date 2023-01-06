@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Admin">
+
+	
+	<!-- 공통 검색조건 -->
+	<sql id="srchItemSql">
+		
+		<!-- 진행상태 -->
+		<isNotEmpty property="srchUserType">
+			AND USER_TYPE = #srchUserType#
+		</isNotEmpty>
+		
+
+		<!--  
+			검색조건 코드
+         * cd01 = 아이디
+         * cd02 = 사용자명
+         * cd03 = 기관명
+         * cd04 = 가입상태
+         -->
+        <!-- 검색조건 -->
+		<isNotEmpty property="srchKeyWord" prepend="AND">
+			<isNotEmpty property="srchCondItem">
+				<!-- 의뢰접수번호 -->
+				<isEqual property="srchCondItem" compareValue="cd01">
+					USER_ID like '%'||#srchKeyWord#||'%'
+				</isEqual>
+				<!-- 시료번호 -->
+				<isEqual property="srchCondItem" compareValue="cd02">
+					USER_NM like '%'||#srchKeyWord#||'%'
+				</isEqual>
+				<!-- 신청인 -->
+				<isEqual property="srchCondItem" compareValue="cd03">
+					ORGAN_NM like '%'||#srchKeyWord#||'%'
+				</isEqual>
+				<!-- 신청기관 -->
+				<isEqual property="srchCondItem" compareValue="cd04">
+					USE_STAT_NM like '%'||#srchKeyWord#||'%'
+				</isEqual>
+				
+			</isNotEmpty>
+		</isNotEmpty>
+		
+		<isNotEmpty property="toJoinDate" prepend="AND">
+			JOIN_DATE  <![CDATA[>=]]> TO_DATE(#toJoinDate#, 'YYYY-MM-DD')+1
+		</isNotEmpty>
+					
+		<isNotEmpty property="fromJoinDate" prepend="AND">
+			JOIN_DATE  <![CDATA[<=]]> TO_DATE(#fromJoinDate#, 'YYYY-MM-DD')+1
+		</isNotEmpty>				
+	
+			AND USE_YN = 'Y'
+	</sql>
+
+
+
+
+
+
+
+    <!-- 사용자관리 리스트 -->
+    <select id="listAdmnUser" parameterClass="map" resultClass="hashmap">
+	    SELECT
+	    	ROWNUM			as "rNum",
+			USER_ID				as "userId",
+			USER_NM				as "userNm",
+			EMAIL					as "email",
+			ORGAN_NM			as "organNm",
+			PSN_BUSI				as "psnBusi",
+			TEL_NO				as "telNo",
+			OFFI_TEL_NO			as "offiTelNo",
+			FAX_NO				as "faxNo",
+			RSCU_CD				as "rscuCd",
+			JOIN_DATE			as "joinDate",
+			USE_STAT				as "useStat",
+			USE_STAT_NM		as "useStatNm",
+			USER_TYPE			as "userType",
+			USER_TYPE_NM		as "userTypeNm"  
+		FROM
+		(	
+	    	SELECT
+	    		ROWNUM,
+				USER_ID,
+				USER_NM	,
+				EMAIL,
+				ORGAN_NM,
+				PSN_BUSI,
+				TEL_NO,
+				OFFI_TEL_NO,
+				FAX_NO,
+				RSCU_CD,
+				TO_CHAR(TO_DATE(JOIN_DATE), 'YYYY-MM-DD') 	as "JOIN_DATE",
+				USE_STAT	,
+				FN_GET_CODENM('USE_STAT',  USE_STAT) 		as "USE_STAT_NM",
+				USER_TYPE,
+				FN_GET_CODENM('USCM_TYPE',  USER_TYPE)		as "USER_TYPE_NM",
+				USE_YN
+			FROM
+				TB_USER
+		)
+		WHERE
+			(1 = 1)	
+	    	<include refid="srchItemSql"/>
+    </select>
+    
+    <!-- 사용자관리 리스트 카운트-->
+    <select id="listAdmnUserCount" parameterClass="map" resultClass="int">
+	    SELECT
+			COUNT(*) 
+		FROM
+		(	
+	    	SELECT
+	    		ROWNUM,
+				USER_ID,
+				USER_NM	,
+				EMAIL,
+				ORGAN_NM,
+				PSN_BUSI,
+				TEL_NO,
+				OFFI_TEL_NO,
+				FAX_NO,
+				RSCU_CD,
+				JOIN_DATE,
+				USE_STAT	,
+				FN_GET_CODENM('USE_STAT',  USE_STAT) 		as "USE_STAT_NM",
+				USER_TYPE,
+				FN_GET_CODENM('USCM_TYPE',  USER_TYPE)		as "USER_TYPE_NM",
+				USE_YN
+			FROM
+				TB_USER
+		)
+		WHERE
+			(1 = 1)	
+	    	<include refid="srchItemSql"/>
+    </select>
+    
+    <!-- 관리자 사용자 기본정보 조회. -->
+    <select id="viewAdmnUser" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+        SELECT
+			A.USER_ID				AS "userId",
+			A.USER_NM				AS "userNm",
+			A.PASSWD				AS "password",
+			A.EMAIL					AS "email",
+			A.ORGAN_NM			AS "organNm",
+			A.PSN_BUSI				AS "psnBusi",
+			A.TEL_NO					AS "telNo",
+			A.OFFI_TEL_NO			AS	"offTelNo",
+			A.FAX_NO				AS	"faxNo",
+			A.USER_TYPE				as "userType",
+			A.RSCU_CD 				AS "rscuCd",
+			A.POST_NO 				AS "roadPostNo",
+            A.ADDR1||' '||A.ADDR2||' '||A.ADDR3||' '||A.ADDR4||' '||A.ADDR5 AS "roadAddress1",
+			A.ADDR1					AS "roadAddr1",
+			A.ADDR2					AS "roadAddr2",
+			A.ADDR3					AS "roadAddr3",
+			A.ADDR4					AS "roadAddr4",
+			A.ADDR5   				AS "roadAddr5",
+			A.USE_STAT				AS "useStat",
+			A.ROLE_ID				AS "roleId"
+        FROM VW_USER A
+        WHERE (0=0)
+          AND
+          		USER_ID = #userId#
+    </select>
+    
+     <!-- 회원정보 수정 -->
+    <update id="updtAdmnUser" parameterClass="java.util.Map">
+        UPDATE
+    		TB_USER
+    	SET
+    	    UPDT_ID = #regiId#,
+    		UPDT_DATE = sysdate,
+    		USER_TYPE	= #userType#,
+    		USE_STAT = #useStat#
+    	<isEqual property="mode" compareValue="updt" prepend=",">
+    		EMAIL = #email#,
+    		ORGAN_NM = #organNm#,
+    		PSN_BUSI = #psnBusi#,
+    		TEL_NO = #telNo#,
+    		OFFI_TEL_NO = #offTelNo#,
+			FAX_NO = #faxNo#,
+    		RSCU_CD = #rscuCd#,
+    		POST_NO = #roadPostNo#,
+    		ADDR1 = #roadAddr1#,
+    		ADDR2 = #roadAddr2#,
+    		ADDR3 = #roadAddr3#,
+    		ADDR4 = #roadAddr4#,
+    		ADDR5 = #roadAddr5#    	
+    	</isEqual>
+    	WHERE
+    		 (0=0)
+          	AND (    USER_ID = #userId# )
+    </update>
+    
+    <!-- 해당 사용자의 모든 권한을 삭제 -->
+    <delete id="deltAdmnAllUserRole" parameterClass="java.util.Map" >
+        DELETE 
+        FROM 
+        	SYS_ROLE_USER
+        WHERE 
+        	USER_ID = #userId#
+    </delete>
+    
+        <!-- 해당사용자의 권한정보를 등록. -->
+    <insert id="regiAdmnUserRole" parameterClass="java.util.Map" >
+        INSERT INTO SYS_ROLE_USER (
+             USER_ID
+            ,ROLE_ID
+            ,REGISTER
+            ,REGI_DATE
+        ) VALUES (
+             #userId#
+            ,#roleId#
+            ,#regiId#
+            ,SYSDATE
+        )
+    </insert>	
+    
+        <!-- 비밀번호 수정  -->
+    <update id="saveResetUserPwd" parameterClass="map">
+         UPDATE 
+         	TB_USER A
+         SET   
+         	A.PASSWD = #passwd#
+         WHERE 
+         	A.USER_ID = #userId#
+    </update>
+    
+</sqlMap>

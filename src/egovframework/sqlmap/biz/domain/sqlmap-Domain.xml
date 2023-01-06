@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Domain">
+
+	<sql id="selectDomainCategory">
+		<isEqual property="domainCategory" compareValue="ec">
+		ec_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="uv">
+		uv_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="o3">
+		o3_domain
+		</isEqual>
+	</sql>
+	
+	
+<!-- 	<sql id="selectLogTypedomainCategory"> -->
+<!-- 		<isEqual property="logType" compareValue="data">  </isEqual> -->
+<!-- 	data -->
+<!-- 	</sql> -->
+
+	
+	
+	
+	<select id="getDomainList" parameterClass="map" resultClass="java.util.HashMap">
+		SELECT
+			"NAME" 			AS "name"
+			, "DESCRIPTION" AS "des"
+			, "TYPE" 		AS "type"
+			
+		
+		FROM 
+		<isEqual property="domainCategory" compareValue="EC">
+			ec_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="UV">
+			uv_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="O3">
+			o3_domain
+		</isEqual>
+		
+		<isNotEmpty property="logType">
+		WHERE 
+			"log_type" = #logType#
+		</isNotEmpty>
+		
+		ORDER BY "NAME" ASC
+	</select>
+    
+     <insert id="addDomain" parameterClass="map">
+    	INSERT INTO 
+    	<isEqual property="domainCategory" compareValue="EC">
+		ec_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="UV">
+		uv_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="O3">
+		o3_domain
+		</isEqual>
+    	
+    	
+    	("NAME", "DESCRIPTION", "TYPE", "log_type")
+		VALUES (#domainName#, #domainDes#, #domainType#, #logType#);
+<!-- 		VALUES (#domainName#, #domainDes#, #domainType#, #domaindomainCategory#); -->
+    </insert>
+    
+    <update id="updateDomain" parameterClass="map">
+    	UPDATE 
+    	<isEqual property="domainCategory" compareValue="EC">
+		ec_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="UV">
+		uv_domain
+		</isEqual>
+		<isEqual property="domainCategory" compareValue="O3">
+		o3_domain
+		</isEqual>
+		SET "NAME"=#domainName#, "DESCRIPTION"=#domainDes#, "TYPE"=#domainType#
+		WHERE "NAME"=#domainOrgName# AND "log_type" = #logType#;
+    </update>
+    
+   <delete id="removeDomain" parameterClass="map">
+    	DELETE FROM
+	    	<isEqual property="domainCategory" compareValue="EC">
+			ec_domain
+			</isEqual>
+			<isEqual property="domainCategory" compareValue="UV">
+			uv_domain
+			</isEqual>
+			<isEqual property="domainCategory" compareValue="O3">
+			o3_domain
+			</isEqual>
+		WHERE "NAME"=#domainOrgName# AND "log_type" = #logType#;
+    </delete>
+    
+    
+    
+</sqlMap>

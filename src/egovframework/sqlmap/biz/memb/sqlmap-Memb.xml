@@ -1,0 +1,282 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Memb">
+
+	<!-- 회원정보 입력 -->
+	<insert id="regiMembUser" parameterClass="java.util.Map">
+		INSERT INTO TB_USER
+		(
+			USER_ID,
+			USER_NM,
+			PASSWD,
+			EMAIL,
+			ORGAN_NM,
+			PSN_BUSI,
+			TEL_NO,
+			OFFI_TEL_NO,
+			FAX_NO,
+			USER_TYPE,
+			RSCU_CD,
+			POST_NO,
+			ADDR1,
+			ADDR2,
+			ADDR3,
+			ADDR4,
+			ADDR5,
+			USE_YN,
+			JOIN_DATE,
+			USE_STAT,
+			REGISTER,
+			REGI_DATE
+		)
+		VALUES
+		(
+			#userId#,
+			#userNm#,
+			#passwd#,
+			#email#,
+			#organNm#,
+			#psnBusi#,
+			#telNo#,
+			#offTelNo#,
+			#faxNo#,
+			#userType#,
+			#rscuCdr#,
+			#roadPostNo#,
+			#roadAddr1#,
+			#roadAddr2#,
+			#roadAddr3#,
+			#roadAddr4#,
+			#roadAddr5#,
+			#useYn#,
+			REPLACE(sysdate, '/', ''),
+			#useStat#,
+			#regiId#,
+			sysdate
+		)
+	</insert>
+
+ 	<!-- 회원정보 입력 --> 
+<!-- 	<insert id="regiMembUser" parameterClass="java.util.Map"> -->
+<!-- 		INSERT INTO TB_USER -->
+<!-- 		( -->
+<!-- 			USER_ID, -->
+<!-- 			USER_NM, -->
+<!-- 			PASSWD, -->
+<!-- 			EMAIL, -->
+<!-- 			ORGAN_NM, -->
+<!-- 			PSN_BUSI, -->
+<!-- 			TEL_NO, -->
+<!-- 			OFFI_TEL_NO, -->
+<!-- 			FAX_NO, -->
+<!-- 			USER_TYPE, -->
+<!-- 			RSCU_CD, -->
+<!-- 			POST_NO, -->
+<!-- 			ADDR1, -->
+<!-- 			ADDR2, -->
+<!-- 			ADDR3, -->
+<!-- 			ADDR4, -->
+<!-- 			ADDR5, -->
+<!-- 			USE_YN, -->
+<!-- 			JOIN_DATE, -->
+<!-- 			USE_STAT, -->
+<!-- 			REGI_ID, -->
+<!-- 			REGI_DATE -->
+<!-- 		) -->
+<!-- 		VALUES -->
+<!-- 		( -->
+<!-- 			#userId#, -->
+<!-- 			#userNm#, -->
+<!-- 			#passwd#, -->
+<!-- 			#email#, -->
+<!-- 			#organNm#, -->
+<!-- 			#psnBusi#, -->
+<!-- 			#telNo#, -->
+<!-- 			#offTelNo#, -->
+<!-- 			#faxNo#, -->
+<!-- 			#userType#, -->
+<!-- 			#rscuCdr#, -->
+<!-- 			#roadPostNo#, -->
+<!-- 			#roadAddr1#, -->
+<!-- 			#roadAddr2#, -->
+<!-- 			#roadAddr3#, -->
+<!-- 			#roadAddr4#, -->
+<!-- 			#roadAddr5#, -->
+<!-- 			#useYn#, -->
+<!-- 			TO_CHAR(sysdate, 'YYYY-MM-DD'), -->
+<!-- 			#useStat#, -->
+<!-- 			#regiId#, -->
+<!-- 			sysdate -->
+<!-- 		) -->
+<!-- 	</insert> -->
+
+	 <!-- 해당 사용자의 모든 권한을 삭제 -->
+    <delete id="deltMembAllUserRole" parameterClass="java.util.Map" >
+        DELETE
+        FROM
+        	TN_DSCO_ROLE_USER
+        WHERE
+        	USER_ID = #userId#
+    </delete>
+
+    <!-- 해당사용자의 권한정보를 등록. -->
+    <insert id="regiMembUserRole" parameterClass="java.util.Map" >
+        INSERT INTO TN_DSCO_ROLE_USER (
+             USER_ID
+            ,ROLE_ID
+            ,REGISTER
+            ,REGI_DATE
+        ) VALUES (
+             #userId#
+            ,#roleId#
+            ,#regiId#
+            ,SYSDATE
+        )
+    </insert>
+
+	 <!-- 사용자 ID 중복 검사 -->
+    <select id="viewMembCheckDuplUserId" parameterClass="java.util.Map" resultClass="java.lang.Integer">
+        SELECT
+        	SUM(CNT) AS CNT FROM
+        (
+            SELECT
+            	COUNT(*) AS CNT
+             FROM
+             	TB_USER
+            WHERE
+            	USER_ID = #userId#
+        )
+    </select>
+
+    <!-- ID 찾기 -->
+    <select id="getMembFindId" parameterClass="java.util.Map" resultClass="String">
+        SELECT
+        	USER_ID AS "userId"
+        FROM
+        	VW_USER
+        WHERE
+        	USE_YN = 'Y' AND
+        	USER_NM = #userNm# AND
+        	EMAIL   = #email#
+    </select>
+
+    <!-- PWD 찾기 -->
+    <select id="getMembFindPwd" parameterClass="java.util.Map" resultClass="String">
+        SELECT
+        	USER_ID AS "userId"
+        FROM
+        	VW_USER
+        WHERE
+        	USE_YN = 'Y' AND
+        	USER_ID = #userId# AND
+        	USER_NM = #userNm# AND
+        	EMAIL = #email#
+    </select>
+
+    <!-- PWD 변경 -->
+    <update id="updtMembPwd" parameterClass="java.util.Map" >
+        UPDATE
+        	TB_USER
+        SET
+        	PASSWD = #passwd#
+        WHERE
+        	USER_ID = #userId#
+    </update>
+
+    <!-- 비밀번호 검사 -->
+    <select id="cnfmUserPasswd" parameterClass="java.util.Map" resultClass="String">
+        SELECT
+        	USER_ID AS "userId"
+        FROM
+        	VW_USER
+        WHERE
+        	USE_YN = 'Y' AND
+        	USER_ID = #userId# AND
+        	PASSWD = #passwd#
+    </select>
+
+    <!-- 회원탈퇴처리 -->
+    <delete id="updtWithdrawUser" parameterClass="java.util.Map" >
+        UPDATE
+        	TB_USER
+		SET
+			USE_YN = 'N'
+        WHERE
+        	USE_YN = 'Y' AND
+        	USER_ID = #userId#
+    </delete>
+
+    <!-- 사용자 기본정보 조회. -->
+    <select id="viewMembUserInfo" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+        SELECT
+			A.USER_ID				AS "userId",
+			A.USER_NM				AS "userNm",
+			A.PASSWD				AS "password",
+			A.EMAIL					AS "email",
+			CASE
+				WHEN A.USER_TYPE = 'U6' THEN A.ORGAN_NM ||' '|| A.RSCU_CD
+				ELSE A.ORGAN_NM
+			END AS "organNmCd",
+			A.ORGAN_NM				AS "organNm",
+			A.PSN_BUSI				AS "psnBusi",
+			A.TEL_NO					AS "telNo",
+			A.OFFI_TEL_NO			AS	"offTelNo",
+			A.FAX_NO				AS	"faxNo",
+			A.USER_TYPE				as "userType",
+			CASE
+				WHEN A.USER_TYPE = 'U6' THEN A.RSCU_CD
+			END AS "rscuCd1",
+			A.RSCU_CD 				AS "rscuCd",
+			A.POST_NO 				AS "roadPostNo",
+            A.ADDR1||' '||A.ADDR2||' '||A.ADDR3||' '||A.ADDR4||' '||A.ADDR5 AS "roadAddress1",
+			A.ADDR1					AS "roadAddr1",
+			A.ADDR2					AS "roadAddr2",
+			A.ADDR3					AS "roadAddr3",
+			A.ADDR4					AS "roadAddr4",
+			A.ADDR5   				AS "roadAddr5"
+        FROM VW_USER A
+        WHERE (0=0)
+          AND
+          		USER_ID = #gsUserId#
+    </select>
+
+
+    <!-- 회원정보 수정 -->
+    <update id="updtMembUser" parameterClass="java.util.Map">
+        UPDATE
+    		TB_USER
+    	SET
+    		EMAIL = #email#,
+    		ORGAN_NM = #organNm#,
+    		PSN_BUSI = #psnBusi#,
+    		TEL_NO = #telNo#,
+    		OFFI_TEL_NO = #offTelNo#,
+			FAX_NO = #faxNo#,
+			USER_TYPE	= #userType#,
+    		RSCU_CD = #rscuCdr#,
+    		POST_NO = #roadPostNo#,
+    		ADDR1 = #roadAddr1#,
+    		ADDR2 = #roadAddr2#,
+    		ADDR3 = #roadAddr3#,
+    		ADDR4 = #roadAddr4#,
+    		ADDR5 = #roadAddr5#,
+    		UPDT_ID = #userId#,
+    		UPDT_DATE = sysdate
+    	WHERE
+    		 (0=0)
+          	AND (    USER_ID = #userId# )
+    </update>
+
+    <!-- 비밀번호 변경처리 -->
+    <update id="updtMembInfoModifyPwd" parameterClass="java.util.Map">
+    	UPDATE
+    		TB_USER
+    	SET
+    		PASSWD = #passwd#
+    	WHERE
+    		 (0=0)
+          	AND (    USER_ID = #userId# )
+    </update>
+
+</sqlMap>

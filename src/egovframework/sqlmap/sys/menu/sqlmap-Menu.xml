@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Menu">
+
+	<select id="listMainMenu" resultClass="java.util.HashMap" parameterClass="java.util.Map" remapResults="true">
+		SELECT
+			   A.MENU_ID       			AS "menuId"
+		     , A.UPR_MENU_ID         AS "parentId"
+		     , A.MENU_LEVEL               AS "menuLvl"
+		     , A.MENU_ORDR               AS "menuOdr"
+		     , TRIM(A.MENU_NM)          AS "menuNm"
+			 , FN_GET_TAGTURL(B.ROLE_ID,A.MENU_ID) AS "tagtUrl"
+		     , A.POPUP_YN               AS "popupYn"
+		     , LEVEL                    AS "level"
+		     , REGEXP_SUBSTR(SUBSTR(SYS_CONNECT_BY_PATH(TRIM(A.MENU_ID), ','), 2),'[^,]+', 1, 1) AS "firstMenuId"
+             , CASE
+                 WHEN MAX(MENU_LEVEL) OVER() = MENU_LEVEL THEN 'true'
+                 ELSE 'false'
+               END                                              AS "isLast"
+             , DECODE(CONNECT_BY_ISLEAF, 0, 1, 0)               AS "isSubLast"
+		FROM   TN_DSCO_MENU_MGT A,
+		       TN_DSCO_ROLE_MENU B
+		WHERE  A.USE_YN = 'Y'
+		AND    A.MENU_ID = B.MENU_ID
+ 		AND    A.MENU_LEVEL = 11
+		CONNECT BY PRIOR A.MENU_ID = A.UPR_MENU_ID AND B.ROLE_ID = NVL(#gsRoleId#, 'ROLE_RESTRICTED')
+		START WITH A.UPR_MENU_ID = 'NONE' AND B.ROLE_ID = NVL(#gsRoleId#, 'ROLE_RESTRICTED')
+		ORDER BY A.MENU_LEVEL, A.MENU_ORDR
+	</select>
+
+	<!-- 메뉴관리] 메뉴리스트 -->
+	<select id="listMenu" resultClass="java.util.HashMap" parameterClass="java.util.Map" remapResults="true">
+		SELECT MENU_ID                             AS "menuId"
+		     , MENU_LEVEL                            AS "menuLvl"
+		     , MENU_ORDR                            AS "menuOdr"
+		     , MENU_NM                             AS "menuNm"
+<!-- 			 <isEmpty property="srchMenuNm"> -->
+<!--              , SUBSTR(LPAD(MENU_NM , ((LEVEL-1)*4) + LENGTHB(MENU_NM), '@'), 1, (LEVEL-1)*4) -->
+<!--                 ||DECODE(LEVEL, 1, '', '┖ ')||MENU_NM    AS "treeMenuNm" -->
+<!-- 			 </isEmpty> -->
+<!-- 			 <isNotEmpty property="srchMenuNm"> -->
+			 , MENU_NM                             AS "treeMenuNm"
+<!-- 			 </isNotEmpty> -->
+		     , CNNC_PROGRAM_ID                         AS "refProgId"
+		     , TRGT_URL                            AS "tagtUrl"
+		     , UPR_MENU_ID                      AS "parentMenuId"
+		     , (SELECT MENU_NM
+			 	FROM   TN_DSCO_MENU_MGT
+				WHERE  MENU_ID = A.UPR_MENU_ID) AS "parentMenuNm"
+		     , NVL(USE_YN, 'N')                    AS "useYn"
+		     , NVL(POPUP_YN, 'N')                  AS "popupYn"
+		FROM   TN_DSCO_MENU_MGT A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchMenuNm">
+				MENU_NM like '%'||#srchMenuNm#||'%'
+			</isNotEmpty>
+		</dynamic>
+		CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH UPR_MENU_ID = 'NONE'
+		ORDER siblings BY MENU_LEVEL, MENU_ORDR
+	</select>
+
+	<!-- [관리자] 메뉴리스트 -->
+	<select id="searchMenu" resultClass="java.util.HashMap" parameterClass="java.util.Map" remapResults="true">
+		SELECT MENU_ID                             AS "menuId"
+		     , MENU_LEVEL                            AS "menuLvl"
+		     , MENU_ORDR                            AS "menuOdr"
+		     , MENU_NM                             AS "menuNm"
+			 <isEmpty property="srchMenuNm">
+             , SUBSTR(LPAD(MENU_NM , ((LEVEL-1)*4) + LENGTHB(MENU_NM), '@'), 1, (LEVEL-1)*4)
+                ||DECODE(LEVEL, 1, '', '┖ ')||MENU_NM    AS "treeMenuNm"
+			 </isEmpty>
+			 <isNotEmpty property="srchMenuNm">
+			 , MENU_NM                             AS "treeMenuNm"
+			 </isNotEmpty>
+		     , CNNC_PROGRAM_ID                         AS "refProgId"
+		     , TRGT_URL                            AS "tagtUrl"
+		     , UPR_MENU_ID                      AS "parentMenuId"
+		     , (SELECT MENU_NM
+			 	FROM   TN_DSCO_MENU_MGT
+				WHERE  MENU_ID = A.UPR_MENU_ID) AS "parentMenuNm"
+		     , NVL(USE_YN, 'N')                    AS "useYn"
+		     , NVL(POPUP_YN, 'N')                  AS "popupYn"
+		FROM   TN_DSCO_MENU_MGT A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchMenuNm">
+				MENU_NM like '%'||#srchMenuNm#||'%'
+			</isNotEmpty>
+		</dynamic>
+		CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+		START WITH UPR_MENU_ID = 'NONE'
+		ORDER siblings BY MENU_LEVEL, MENU_ORDR
+	</select>
+
+    <select id="listComboMenu" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+        SELECT MENU_ID 													AS "comboValue"
+             , SUBSTR(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ' > '), 4)		AS "comboText"
+        FROM   TN_DSCO_MENU_MGT
+        WHERE  0 = 0
+        <isNotEmpty property="menuId">
+            AND    MENU_ID != #menuId#
+        </isNotEmpty>
+        CONNECT BY PRIOR MENU_ID = UPR_MENU_ID
+        START WITH UPR_MENU_ID = 'NONE'
+        ORDER siblings BY MENU_ID
+    </select>
+
+
+	<!-- 메뉴관리] 메뉴상세 -->
+	<select id="viewMenu" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		SELECT MENU_ID                             AS "menuId"
+		     , MENU_LEVEL                            AS "menuLvl"
+		     , MENU_ORDR                            AS "menuOdr"
+		     , MENU_NM                             AS "menuNm"
+		     , CNNC_PROGRAM_ID                         AS "refProgId"
+		     , TRGT_URL                            AS "tagtUrl"
+		     , UPR_MENU_ID                      AS "parentMenuId"
+		     , NVL(USE_YN, 'N')                    AS "useYn"
+		     , NVL(POPUP_YN, 'N')                  AS "popupYn"
+		FROM   TN_DSCO_MENU_MGT
+		WHERE  MENU_ID = #menuId#
+	</select>
+
+	<!-- 메뉴관리] 메뉴등록 -->
+	<insert id="regiMenu" parameterClass="java.util.Map">
+		INSERT INTO   TN_DSCO_MENU_MGT (
+		       MENU_ID
+		     , UPR_MENU_ID
+		     , MENU_LEVEL
+		     , MENU_ORDR
+		     , MENU_NM
+		     , CNNC_PROGRAM_ID
+		     , TRGT_URL
+		     , POPUP_YN
+		     , USE_YN
+		     , REGISTER
+		     , REGI_DATE
+		) VALUES (
+		       #menuId#
+		     , #parentMenuId#
+		     , #menuLvl#
+		     <isEmpty property="menuOdr">
+				, (SELECT NVL(MAX(MENU_ORDR), 0) + 1
+		           FROM   TN_DSCO_MENU_MGT
+		           WHERE  MENU_LEVEL = #menuLvl#)
+		     </isEmpty>
+			 <isNotEmpty property="menuOdr">
+				, #menuOdr#
+		     </isNotEmpty>
+			 , #menuNm#
+		     , #refProgId#
+		     , #tagtUrl#
+		     , #popupYn#
+		     , #useYn#
+		     , #gsUserId#
+		     , sysdate
+		)
+	</insert>
+
+	<!-- 메뉴관리] 메뉴수정 -->
+	<update id="updtMenu" parameterClass="java.util.Map">
+        UPDATE TN_DSCO_MENU_MGT
+        SET    MENU_NM          = #menuNm#
+             , MENU_LEVEL         = #menuLvl#
+             , MENU_ORDR         = #menuOdr#
+             , UPR_MENU_ID   = #parentMenuId#
+             , CNNC_PROGRAM_ID      = #refProgId#
+             , TRGT_URL         = #tagtUrl#
+             , POPUP_YN         = #popupYn#
+             , USE_YN           = #useYn#
+             , UPDT_ID          = #gsUserId#
+             , UPDT_DATE        = sysdate
+        WHERE  MENU_ID          = #menuId#
+	</update>
+
+	<!-- 메뉴관리] 메뉴삭제 -->
+	<delete id="deltMenu" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_MENU_MGT
+        WHERE  MENU_ID  = #menuId#
+	</delete>
+	<!-- ##################################################### -->
+	
+	<select id="getMenuList" resultClass="java.util.HashMap">
+		SELECT 
+		"ID"			AS "id"
+		, "NAME"		AS "name"
+		, "URL"			AS "url"
+		, "BELONG_TO"	AS "belongTo"
+		, "LEVEL"		AS "level"
+		FROM aea_menu_info
+		WHERE "ID" NOT IN('root')
+		ORDER BY "LEVEL", "BELONG_TO"
+	</select>
+	
+	<select id="getRoleAccessableMenu" resultClass="java.util.HashMap" parameterClass="map"> 
+		SELECT 
+		r."ROLE_ID"			AS "roleId"
+		, mi."ID"			AS "id"
+		, mi."NAME"			AS "name"
+		, mi."URL"			AS "url"
+		, mi."BELONG_TO"	AS "belongTo"
+		, mi."LEVEL"		AS "level"
+		FROM aea_role_mgt AS r
+		INNER JOIN aea_role_menu AS rm
+		ON rm."ROLE_ID" = r."ROLE_ID"
+		INNER JOIN aea_menu_info AS mi
+		ON mi."ID" = rm."MENU_ID"
+		WHERE 0 = 0
+		<isNotNull property="roleId" prepend="AND">
+			r."ROLE_ID" = #roleId#
+		</isNotNull>
+		<isNotNull property="roleName" prepend="AND">
+			r."ROLE_NM" = #roleName#
+		</isNotNull>
+		
+		ORDER BY
+		mi."LEVEL", mi."BELONG_TO",mi."NAME"
+		<!-- "LEVEL" DESC, mi."URL", mi -->
+	</select>
+	
+	<delete id="delAccessableMenu" parameterClass="map">
+		DELETE FROM aea_role_menu
+		WHERE "ROLE_ID" = #roleId# 
+		<isNotNull prepend="AND" property="selectedMenuList">
+			"MENU_ID" IN 
+			<iterate property="selectedMenuList" open="(" close=")" conjunction=",">
+				#selectedMenuList[]#
+			</iterate>
+		</isNotNull>
+	</delete>
+	
+	<insert id="addAccessableMenu" parameterClass="map">
+		INSERT INTO aea_role_menu("ROLE_ID", "MENU_ID")
+		VALUES
+		<iterate property="selectedMenuList" conjunction=",">
+			(#roleId#, #selectedMenuList[]#)
+		</iterate>
+	</insert>
+</sqlMap>

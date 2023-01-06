@@ -1,0 +1,97 @@
+@charset "utf-8";
+
+
+/* 메인페이지 스타일만 정의 */
+/* ******************** 데스크탑 (992~) ******************** */
+@media screen and (min-width: 992px), print{
+	.mobile {display:none !important;}	
+
+	section.main {
+		width:100%; height:100%;
+		background-color:#1f2732;
+	}
+	section.main .inner {width:1200px; max-width:100%; margin:0 auto;}
+	section.main .inner .con {padding:150px 0;}
+	section.main .inner .con h1 {text-align:center; color:#fff;}
+	section.main .inner .con h1 span {font-weight:300; font-size:20px;}
+	section.main .inner .con h1 p {font-weight:700; font-size:48px; margin-top:10px; letter-spacing:-1px;}
+	
+	/*공통::*/
+	.boxWrap.layoutBasic {width:400px;}
+	
+	.boxWrap.layoutBasic .box {border-top:1px solid rgba(255,255,255,.3); padding:10px 0;}
+	.boxWrap.layoutBasic .box>* {float:left; display:inline-block;}
+	.boxWrap.layoutBasic .box label {
+		width:15%; height:50px;
+		background-position:center;
+		background-repeat:no-repeat;
+	}
+	.boxWrap.layoutBasic .box.id label {background-image:url(../images/main/i_id.png);}
+	.boxWrap.layoutBasic .box.pw {border-bottom:1px solid rgba(255,255,255,.3);}
+	.boxWrap.layoutBasic .box.pw label {background-image:url(../images/main/i_pw.png);}
+	.boxWrap.layoutBasic .box div {width:85%;}
+	.boxWrap.layoutBasic .box div input {width:100%; border:1px solid #1f2732; background:#1f2732; height:50px; font-size:18px;}
+	
+	.boxWrap.layoutBasic .box div input::-webkit-input-placeholder {color:#fff !important;} /*크롬,사파리*/
+	.boxWrap.layoutBasic .box div input::-moz-placeholder {color:#fff !important;} /*파폭*/
+	.boxWrap.layoutBasic .box div input::-ms-input-placeholder {color:#fff !important;} /*ie*/
+	
+	.boxWrap.layoutBasic .box div input:focus {outline:none !important; border:1px solid #1f2732 !important; background-color:#1f2732 !important; color:#fff !important;}
+	
+	.boxWrap.layoutBasic .link>div * {font-size:14px; color:#d5d5d5;}
+	.boxWrap.layoutBasic .link>div+div {margin-top:10px;}
+	.boxWrap.layoutBasic .link.search {padding-left:10px; margin-top:20px;}
+	.boxWrap.layoutBasic .link.search a {position:relative;}
+	.boxWrap.layoutBasic .link.search a:before {
+		position:absolute; top:10px; left:-10px;
+		display:block; content:"";
+		width:2px; height:2px; border-radius:50%; background:#fff;
+	}
+	.boxWrap.layoutBasic .link.search a span {font-size:12px; opacity:.5; margin-left:10px;}
+	.boxWrap.layoutBasic .link.search a:hover {color:#00ab85;}
+	
+	.boxWrap.layoutBasic .btn {position:relative; margin-top:50px;}
+	.boxWrap.layoutBasic .btn a {
+		display:inline-block; width:100%; padding:30px; line-height:1; background:#00ab85;
+		text-align:center; color:#fff; font-size:26px;
+		font-weight:400;
+	}
+	.boxWrap.layoutBasic .btn a:hover {color:#1f2732; background:#ffe400;}
+	.boxWrap.layoutBasic .btn a span {position:relative; margin-left:10px;}
+	.boxWrap.layoutBasic .btn a span:before {
+		position:absolute; top:4px; left:-30px;
+		display:block; content:"";
+		width:21px; height:33px; background:url(../images/main/i_login.png)no-repeat left top;
+	}
+	.boxWrap.layoutBasic .btn a:hover span:before {background:url(../images/main/i_login_on.png)no-repeat left top;}
+	
+	.boxWrap.layoutBasic .link.join {text-align:center; margin-top:20px;}
+	.boxWrap.layoutBasic .link.join a {color:#00ab85; font-size:15px;}
+	.boxWrap.layoutBasic .link.join a span {margin-left:10px;}
+	.boxWrap.layoutBasic .link.join a:hover span{color:#00ab85; opacity:1; transition-duration:0.3s;}
+	
+	/*메인*/
+	section.main .boxWrap.layoutBasic {margin:70px auto 0;}
+	
+
+}
+
+
+
+
+/* ************************ 태블릿 이하(~991) ************************ */
+@media screen and (max-width: 991px) {
+	
+	
+	
+	
+}
+
+
+/* ************************ 모바일 (0~767) ************************ */
+@media screen and (max-width:767px) {
+	.pc {display:none !important;}
+	
+	
+	
+}

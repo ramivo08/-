@@ -1,0 +1,64 @@
+div.search {
+	margin-bottom: 20px;
+}
+
+div.select {
+	margin-bottom: 5px;
+	font: solid;
+}
+
+div.searchBtns {
+	text-align : right;
+	
+}
+
+ul.board {
+	width : 100%;
+	border-top : solid 2px;
+	padding-left: 0px;
+}
+
+
+div.list {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+div.pageInfo {
+	text-align : right;
+}
+
+.boardContent {
+	margin-top: 16px;
+	border-bottom : solid 1px #cccccc;
+}
+
+.contentNum {
+	font-size: 1rem;
+	margin-left: 20px;
+}
+
+.page_box_normal {
+    margin-left: auto;
+    margin-right: auto;
+    display: table;	
+}
+
+.pagination li {
+	padding-left : 5px;
+	padding-right : 5px;
+}
+
+.contentTitle {
+	font-size : 1rem;
+}
+.contentTitle a {
+	color : #5d5d5d;
+}
+.contentTitle a:hover {
+	color : #888888;
+}
+
+.card {
+	margin-bottom: 0px;
+}

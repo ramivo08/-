@@ -1,0 +1,158 @@
+a {text-decoration:none;}
+
+/*메인 로그인 버튼*/
+.login_btn a {display:block; width:550px; height:70px; background:#301d0a; border-radius:5px; color:#fff; font-size:22px; line-height:70px; text-align:center; text-transform:uppercase; font-family: "nanumGothicBold","돋움", sans-serif; text-decoration:none; margin:10px 0 30px;}
+.login_btn a:hover {background:#5194db;}
+
+/*회원정보수정,로그아웃 버튼*/
+div.logo_wrap div.loginBtn span a {display:inline-block; padding:4px 13px; background:#301d0a; color:#fff; font-size:13px; border-radius:5px;}
+div.logo_wrap div.loginBtn span.loginBtn_01 {margin-right: 3px;}
+
+/*상단 등록하기 버튼*/
+div.middle_btnWrap {padding:50px 0 20px; overflow: hidden;}
+div.middle_btnWrap span a {display:inline-block; padding:7px 15px; color:#fff; border-radius:5px; background:#67c352;}
+div.middle_btnWrap span a.all {background:#5194db;}
+
+/*상단 등록하기 버튼 - 하단공간 줄임*/
+div.middle_btnWrap_bott {padding:50px 0 0px; overflow: hidden;}
+div.middle_btnWrap_bott span a {display:inline-block; padding:7px 15px; color:#fff; border-radius:5px; background:#67c352;}
+
+/*등록하기 버튼*/
+.register_btn a { display: block; width: 150px; height: 45px; line-height: 45px; color: #fff; background-color: #5194db; text-align: center; margin: 30px auto; border-radius: 5px; font-size: 16px;}
+
+/*검색하기 버튼*/
+.top_searchBtn a {display: inline-block; width: 100px; height: 35px; line-height: 35px; background: #28bfd5; color: #fff; border-radius: 5px; text-align: center;}
+
+
+
+
+/*input 추가 삭제 버튼*/
+table.th_top_03 td .plus {display: inline-block; cursor:pointer; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #28bfd5; border-radius: 5px;}
+table.th_top_03 td .minus {display: inline-block; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #000; border-radius: 5px;}
+
+
+button.plus {display: inline-block; border:0; padding:0; cursor:pointer; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #28bfd5; border-radius: 5px;}
+button.minus {display: inline-block; border:0; padding:0; cursor:pointer; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #000; border-radius: 5px;}
+.minus a {display: inline-block; border:0; padding:0; cursor:pointer; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #000; border-radius: 5px;}
+
+
+
+button.minus_red {display: inline-block; border:0; padding:0; cursor:pointer; width: 42px; height: 47px; line-height: 47px; text-align: center; font-size: 13px; color: #fff; background-color: #ff0000; border-radius: 5px;}
+button.minus_small_red {display: inline-block; border:0; padding:0; cursor:pointer; font-size: 12px; width: 8px; height: 10px; background: #ff0000; color: #fff; border-radius: 3px; line-height: 1em;}
+
+
+
+
+/*뒤로가기버튼*/
+.view_back_btn a {display: inline-block; width: 150px; font-size: 14px; padding: 5px 10px; background: #666; color: #fff; text-align: center; margin:5px; border-radius: 5px; height: 20px; line-height: 20px;}
+
+
+/*수정, 삭제버튼*/
+.view_modify_btn a {display: inline-block; width: 150px; font-size: 16px; padding: 10px 15px; background: #f86050; color: #fff; text-align: center; margin:30px; border-radius: 5px; height: 25px; line-height: 25px;}
+.view_delete_btn a {display: inline-block; width: 150px; font-size: 16px; padding: 10px 15px; background: #666; color: #fff; text-align: center; margin:30px; border-radius: 5px; height: 25px; line-height: 25px;}
+
+
+/*상세보기 버튼*/
+table .td_middle_btn a {display: inline-block; cursor:pointer; font-size: 13px; padding: 10px 15px; background: #28bfd5; color: #fff; border-radius: 5px; line-height: 1em;}
+
+
+/*테이블 수정, 삭제버튼*/
+.td_modify_btn a {display: inline-block; font-size: 13px; padding: 10px 15px; background: #f86050; color: #fff; border-radius: 5px; line-height: 1em;}
+.td_delete_btn a {display: inline-block; font-size: 13px; padding: 10px 15px; background: #666; color: #fff; border-radius: 5px; line-height: 1em;}
+
+/*페이징 등록하기 버튼*/
+.small_regis_btn a {display: inline-block; width: 70px !important; border: 0; background-color: #000 !important; height: 30px !important; line-height: 30px !important; color: #fff !important; border-radius: 5px; font-size: 13px;}
+
+/*테이블 검색바 검색하기 버튼*/
+.search_btn a {display: inline-block; width: 60px; height: 35px; line-height: 35px; text-align: center; background-color: #f86050; color: #fff; border-radius: 5px; font-size: 14px; vertical-align: middle;}
+
+/*영업일지 등록버튼*/
+div.page_wrap span a {display: inline-block; width: 40px; line-height: 1em; text-align: center; color: #000; background-color: #fff; border-right: 1px solid #bbb; vertical-align: middle;}
+
+
+
+
+
+
+/*연녹색*/
+.big_color_01 a {color:#ffffff; background-position:left 1px;}
+.big_color_01 a strong {background-position:100% 0px;}
+
+/*짙은회색*/
+.big_color_02 a {color:#ffffff; background-position:left -99px;}
+.big_color_02 a strong {background-position:100% -100px;}
+
+/*밝은회색*/
+.big_color_03 a {color:#929292; background-position:left -199px;}
+.big_color_03 a strong {background-position:100% -200px;}
+
+/*짙은빨강*/
+.big_color_04 a {color:#fff; background-position:left -299px;}
+.big_color_04 a strong {background-position:100% -300px;}
+
+/*짙은파랑*/
+.big_color_05 a {color:#fff; background-position:left -399px;}
+.big_color_05 a strong {background-position:100% -400px;}
+
+
+
+/*푸녹배경 작은버튼 - 배경높이 18px*/
+.s_btn_07 a { padding:1px 0px 0px 1px; display:inline-block; color:#f6f6f6; text-decoration:none; background:url(/img/btns/middle_btn_032.jpg) no-repeat left 1px #08cce2; line-height:15px; border:1px solid #00a8c7;}
+.s_btn_07 a p{ font-family:"돋움", "sans-serif";display:inline-block; padding:7px 6px 5px 6px; font-weight:normal; font-size:11px; cursor:pointer;text-align:center;}
+
+
+
+
+/*등록버튼*/
+.big_btn_01 a {display:inline-block; background:#5194db; padding:8px 35px 7px; border-radius:5px; font-size:15px; color:#fff;}
+
+/* MEMBER EDIT */
+.member_etc_btn_01 a {display:inline-block; background:#5194db; padding:11px 60px 10px; border-radius:5px; font-size:15px; color:#fff;}
+
+/* table 안 상세보기버튼 */
+a.view {display:inline-block; padding:2px 15px; background:#fb3838; border-radius:5px; color:#fff;}
+/* table 안 검색버튼 */
+a.search {display:inline-block; padding:3px 10px; background:#f7b758; border-radius:5px; color:#fff; vertical-align:top; margin-left:4px;}
+
+/* table 밖 취소버튼 */
+a.cancel {background:#5d5d5d;}
+a.modify {background:#67c352;}
+a.delete {background:#fb3838;}
+a.print {background:#4374D9;}
+
+/* 첨부파일 */
+.fileWrap .filebox a.upload {display:inline-block; padding:6px 12px 5px; background:#ffec93; border-radius:5px; color:#000;}
+.fileWrap {position:relative; text-align:left !important;}
+.fileWrap input {margin:2px;}
+.fileWrap .fileDiv {margin:0;}
+.fileWrap .fileDiv:last-child {margin:0;}
+.filebox input[type="file"] {
+	position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden;
+	clip:rect(0,0,0,0); border: 0;
+}
+.filebox label[for*="fileName"] {
+	display: inline-block; padding:6px 12px 5px; overflow:hidden;
+	font-size: inherit; vertical-align: middle;	cursor: pointer; text-align: center;
+	background-color: #e2e2e2; color:#000; 
+}
+/*
+.filebox label:hover {
+	color:#fff;
+	background-color:#67c352;
+} */
+.filebox .upload-name {
+	display: inline-block; width:70%; padding:8px 5px; margin-left:6px;
+	font-size: inherit; font-family: inherit; line-height: normal; vertical-align: middle;
+	/* border: 1px solid #ebebeb; border-bottom-color: #e2e2e2; */
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+}
+.btnFile {position:absolute; right:0px; top:2px;}
+.btnFile li {padding-bottom:3px;}
+.btnFile a {width: 70px !important;}
+
+.fileWrap {/*padding:8px; margin-top:20px; */color:#fff;}
+.fileWrap input {vertical-align:middle;}
+.fileWrap .filebox {margin-left:-5px;}
+.fileWrap .filebox a:last-child {margin-left:2px; vertical-align:middle;}

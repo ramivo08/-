@@ -1,0 +1,321 @@
+#if ($type == 'normal2')
+	<link rel="stylesheet" type="text/css" href="${contextPath}/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${contextPath}/jquery/ui/jquery-ui-1.10.4.custom.css" />
+	<link rel="stylesheet" type="text/css" href="${contextPath}/jquery/alert/jquery.alerts.css">
+
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.1.12.0.min.js"></script>		<!-- jQuery Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/bootstrap.3.3.6.min.js"></script>		<!-- BootStrap Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/bootstrap-select.js"></script>		<!-- BootStrap Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.easing.1.3.js"></script>		<!-- jQuery Easing Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.gnb.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.default.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.slider.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery_script.js"></script>		<!-- Ebi Script-->
+	
+	
+	<script type="text/javascript" src="${contextPath}/js/index.js"></script>		<!-- Ebi Script-->
+
+	<!-- jquery 플러그인 부분 -->
+	<script type="text/javascript" src="${contextPath}/jquery/jcarousellite_1.0.1.min.js"></script>		<!-- jQuery Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.cookie.js"></script>		<!-- jQuery Cookie-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.json-2.3.js"></script>		<!-- jQuery JSON Plugin-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.xml2json.js"></script>		<!-- jQuery XML TO JSON-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery-ui.1.10.1.js"></script>		<!-- jQueryUI Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ui/jquery-ui-1.10.4.custom.js"></script>		<!-- jQueryUI Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/alert/jquery.alerts.js"></script>		<!-- jQueryAlert Script-->
+
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.meio.mask.min.js"></script>
+
+	<!-- 유틸 js 부분 -->
+	<script type="text/javascript" src="${contextPath}/js/jq-common.js"></script>		<!-- jQuery Common Script -->
+	<script type="text/javascript" src="${contextPath}/js/message.js"></script>		<!-- Message Script -->
+	<script type="text/javascript" src="${contextPath}/js/common.js"></script>		<!-- Common Script -->
+	<script type="text/javascript" src="${contextPath}/js/business.js"></script>		<!-- business Script -->
+
+	<!-- Business Script-->
+	<script type="text/javascript" src="${contextPath}/js/${currPage}.js"></script>
+
+#elseif ($type == 'normal')
+	<script type="text/javascript" src="/js/map/ol/polyfill.min.js"></script>
+	<script type="text/javascript" src="/js/map/ol/bluebird.min.js"></script>
+	<script type="text/javascript" src="/js/map/ol/fetch.js"></script>
+	<script type="text/javascript" src="/js/map/ol/proj4.js"></script>
+	<script type="text/javascript" src="/js/map/ol/ol.js"></script>
+	<script type="text/javascript" src="/js/map/ol/ol-ext.min.js"></script>
+	
+	
+	
+	<link rel="stylesheet" type="text/css" href="${contextPath}/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${contextPath}/styles/main.scss">
+	
+	<script type="text/javascript" src="${contextPath}/script/jquery.1.12.0.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/jquery-ui.1.10.1.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/jquery.cookie.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/jquery.easing.1.3.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/ebi.default.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/ebi.gnb.js"></script>
+	<script type="text/javascript" src="${contextPath}/script/ebi.js"></script>
+
+	<script type="text/javascript" src="${contextPath}/js/jq-common.js"></script>		<!-- jQuery Common Script -->-->
+	<script type="text/javascript" src="${contextPath}/js/message.js"></script>		<!-- Message Script -->
+	<script type="text/javascript" src="${contextPath}/js/common.js"></script>
+	<script type="text/javascript" src="${contextPath}/js/business.js"></script>		<!-- business Script -->
+	
+	<!-- Business Script-->
+	<script type="text/javascript" src="${contextPath}/js/${currPage}.js"></script>
+	
+	
+	
+#elseif ($type == 'main')
+
+	
+	<script type="text/javascript" src="/jquery/jquery.1.12.0.min.js"></script>		<!-- jQuery Script-->
+		 <!-- jQuery UI required by datepicker editable -->
+	<script type="text/javascript" src="/assets/plugins/jquery-ui/jquery-ui.js"></script>
+  	<link href="/assets/plugins/jquery-ui/jquery-ui.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="/jquery/bootstrap.3.3.6.min.js"></script>		<!-- BootStrap Script-->
+
+	<!-- vender.js -->
+	<script type="text/javascript" src=""/js/
+	<!-- d3.js-->
+	<script type="text/javascript" src="/js/d3.min.js"></script>
+	
+	<!-- chart.js -->
+	<!--  <script type="text/javascript" src="/assets/js/Chart.bundle.js"></script> -->
+	<!-- Plugins -->
+	<script src="/assets/plugins/chart.js/Chart.min.js"></script>
+	<script src="/assets/plugins/chart.js/chartjs-plugin-zoom.min.js"></script>
+	
+	<!-- fileSaver-->
+	<script src="/assets/plugins/file-saver/FileSaver.min.js"></script>
+	
+	
+	<!-- chart.css -->	
+	<!--  <link href="/assets/css/Chart.css" rel="stylesheet" type="text/css" /> -->
+	
+	
+	<link href="/assets/css/design.css" rel="stylesheet" type="text/css" />
+	
+	<!-- datepicker -->
+	
+	 <!-- App css -->
+    <link href="/assets/css/bootstrap-custom.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+ 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">	
+
+
+  	<!-- Bootstrap Tour css -->
+<!--  	<link href="/assets/plugins/bootstrap-tour/bootstrap-tour-standalone.min.css" rel="stylesheet" type="text/css" /> -->
+  	<link href="/assets/plugins/bootstrap-tour/bootstrap-tour-standalone.css" rel="stylesheet" type="text/css" />
+
+ 	<!-- JQVMap css -->
+  	<link href="/assets/plugins/jqvmap/jqvmap.min.css" rel="stylesheet" type="text/css" />
+
+<!-- 	MAP JS -->
+	<script type="text/javascript" src="/vendor/map/ol/ol.js"></script>
+	
+	<script type="text/javascript" src="/vendor/map/mapFunction.js"></script>
+	
+
+	
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96"	href="/img/favicon.png">
+
+
+
+	
+		
+	<script type="text/javascript" src="/js/common.js"></script>
+	<!-- 유틸 js 부분 -->
+	<!--<script type="text/javascript" src="/js/jq-common.js"></script>		<!-- jQuery Common Script -->
+	<script type="text/javascript" src="/js/message.js"></script>		<!-- Message Script -->
+	<script type="text/javascript" src="/js/common.js"></script>		<!-- Common Script -->
+	<script type="text/javascript" src="/js/business.js"></script>		<!-- business Script -->
+	
+	<!-- Business Script-->
+	<script type="text/javascript" src="/js/${currPage}.js"></script>
+	
+	
+#elseif ($type == 'popup')
+
+	
+	<script type="text/javascript" src="/jquery/jquery.1.12.0.min.js"></script>		<!-- jQuery Script-->
+	<script type="text/javascript" src="/jquery/bootstrap.3.3.6.min.js"></script>		<!-- BootStrap Script-->
+	<!-- vender.js -->
+	<script type="text/javascript" src=""/js/
+	<!-- d3.js-->
+	<script type="text/javascript" src="/js/d3.min.js"></script>
+	
+	<!-- chart.js -->
+	<!--  <script type="text/javascript" src="/assets/js/Chart.bundle.js"></script> -->
+	<!-- Plugins -->
+	<script src="/assets/plugins/chart.js/Chart.min.js"></script>
+	<script src="/assets/plugins/chart.js/chartjs-plugin-zoom.min.js"></script>
+	<script src="/assets/plugins/chart.js/hammer.js"></script>
+	
+	<!-- chart.css -->	
+	<!--  <link href="/assets/css/Chart.css" rel="stylesheet" type="text/css" /> -->
+	
+	
+	<link href="/assets/css/design.css" rel="stylesheet" type="text/css" />
+	
+	<!-- datepicker -->
+	
+	 <!-- App css -->
+    <link href="/assets/css/bootstrap-custom.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/app.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+ 
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/images/favicon.png">	
+
+
+  	<!-- Bootstrap Tour css -->
+<!--  	<link href="/assets/plugins/bootstrap-tour/bootstrap-tour-standalone.min.css" rel="stylesheet" type="text/css" /> -->
+  	<link href="/assets/plugins/bootstrap-tour/bootstrap-tour-standalone.css" rel="stylesheet" type="text/css" />
+
+	 <!-- jQuery UI required by datepicker editable -->
+  	<link href="/assets/plugins/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css" />	
+
+ 	<!-- JQVMap css -->
+  	<link href="/assets/plugins/jqvmap/jqvmap.min.css" rel="stylesheet" type="text/css" />
+
+<!-- 	MAP JS -->
+	<script type="text/javascript" src="/vendor/map/ol/ol.js"></script>
+	
+	<script type="text/javascript" src="/vendor/map/mapFunction.js"></script>
+	
+
+	
+	<!-- GOOGLE FONTS -->
+	<link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet">
+
+	<!-- ICONS -->
+	<link rel="apple-touch-icon" sizes="76x76" href="/img/apple-icon.png">
+	<link rel="icon" type="image/png" sizes="96x96"	href="/img/favicon.png">
+
+
+
+	
+		
+	<script type="text/javascript" src="/js/common.js"></script>
+	<!-- 유틸 js 부분 -->
+	<!--<script type="text/javascript" src="/js/jq-common.js"></script>		<!-- jQuery Common Script -->
+	<script type="text/javascript" src="/js/message.js"></script>		<!-- Message Script -->
+	<script type="text/javascript" src="/js/common.js"></script>		<!-- Common Script -->
+	<script type="text/javascript" src="/js/business.js"></script>		<!-- business Script -->
+	
+	<!-- Business Script-->
+	<script type="text/javascript" src="/js/${currPage}.js"></script>
+	
+#elseif ($type == 'error')
+
+	<link rel="stylesheet" type="text/css" href="${contextPath}/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${contextPath}/style/error.css" />
+
+	<script type="text/javascript" src="${contextPath}/script/jquery.1.12.0.min.js"></script>		<!-- jquery.1.12.0.min.js-->
+	<script type="text/javascript" src="${contextPath}/script/jquery-ui.1.10.1.js"></script>		<!-- jquery-ui.1.10.1.js-->
+	<script type="text/javascript" src="${contextPath}/script/jquery.cookie.js"></script>		<!-- jquery.cookie.js-->
+	<script type="text/javascript" src="${contextPath}/script/jquery.easing.1.3.js"></script>		<!-- jquery.easing.1.3.js-->
+	<script type="text/javascript" src="${contextPath}/script/ebi.default.js"></script>		<!-- ebi.default.js-->
+	<script type="text/javascript" src="${contextPath}/script/ebi.gnb.js"></script>		<!-- ebi.gnb.js-->
+	<script type="text/javascript" src="${contextPath}/script/ebi.js"></script>		<!-- ebi.js-->
+	
+#elseif ($type == 'footer')
+	<!-- Vendor -->
+	<script src="/assets/js/vendor.min.js"></script>
+
+	<!-- Plugins -->
+	<script src="/assets/plugins/chart.js/Chart.min.js"></script>
+	<script src="/assets/plugins/chart.js/chartjs-plugin-zoom.min.js"></script>
+	<script src="/assets/plugins/flot/jquery.canvaswrapper.js"></script>
+	<script src="/assets/plugins/flot/jquery.colorhelpers.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.saturated.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.browser.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.drawSeries.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.uiConstants.js"></script>
+	<script src="/assets/plugins/flot/jquery.flot.resize.js"></script>
+	<script src="/assets/plugins/easy-pie-chart/jquery.easypiechart.min.js"></script>
+	<script src="/assets/plugins/datatables.net/jquery.dataTables.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-bs4/dataTables.bootstrap4.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.html5.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons/js/buttons.print.min.js"></script>
+	<script src="/assets/plugins/jszip/jszip.min.js"></script>
+	<script
+		src="/assets/plugins/datatables.net-buttons-bs4/buttons.bootstrap4.min.js"></script>
+	<!-- sweetalert -->
+	<script src="/assets/plugins/sweetalert2/sweetalert2.all.min.js"></script>
+	<script src="/assets/js/pages/sweetalert2.init.min.js"></script>
+
+	<!-- App -->
+	<script type="text/javascript" src="/assets/js/app.min.js"></script>
+
+#elseif ($type == 'chart')
+	<link rel="stylesheet" type="text/css" href="${contextPath}/css/style.css">
+	<link rel="stylesheet" type="text/css" href="${contextPath}/jquery/ui/jquery-ui-1.10.4.custom.css" />
+	<link rel="stylesheet" type="text/css" href="${contextPath}/jquery/alert/jquery.alerts.css">
+	<link rel="stylesheet" type="text/css" href="${contextPath}/jquery/jqplot/jquery.jqplot.css">
+
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.1.12.0.min.js"></script>		<!-- jQuery Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/bootstrap.3.3.6.min.js"></script>		<!-- BootStrap Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/bootstrap-select.js"></script>		<!-- BootStrap Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.easing.1.3.js"></script>		<!-- jQuery Easing Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.gnb.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.default.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.slider.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ebi.js"></script>		<!-- Ebi Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery_script.js"></script>		<!-- Ebi Script-->
+
+	<!-- jquery 플러그인 부분 -->
+	<script type="text/javascript" src="${contextPath}/jquery/jcarousellite_1.0.1.min.js"></script>		<!-- jQuery Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.cookie.js"></script>		<!-- jQuery Cookie-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.json-2.3.js"></script>		<!-- jQuery JSON Plugin-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.xml2json.js"></script>		<!-- jQuery XML TO JSON-->
+	<script type="text/javascript" src="${contextPath}/jquery/jquery-ui.1.10.1.js"></script>		<!-- jQueryUI Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/ui/jquery-ui-1.10.4.custom.js"></script>		<!-- jQueryUI Script-->
+	<script type="text/javascript" src="${contextPath}/jquery/alert/jquery.alerts.js"></script>		<!-- jQueryAlert Script-->
+
+	<script type="text/javascript" src="${contextPath}/jquery/jquery.meio.mask.min.js"></script>
+
+	<!-- 유틸 js 부분 -->
+	<script type="text/javascript" src="${contextPath}/js/jq-common.js"></script>		<!-- jQuery Common Script -->
+	<script type="text/javascript" src="${contextPath}/js/message.js"></script>		<!-- Message Script -->
+	<script type="text/javascript" src="${contextPath}/js/common.js"></script>		<!-- Common Script -->
+	<script type="text/javascript" src="${contextPath}/js/business.js"></script>		<!-- business Script -->
+
+	<!-- Business Script-->
+	<script type="text/javascript" src="${contextPath}/js/${currPage}.js"></script>
+
+	<!-- chart -->
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/jquery.jqplot.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.barRenderer.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.pieRenderer.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.highlighter.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.canvasTextRenderer.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.canvasAxisTickRenderer.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.categoryAxisRenderer.min.js"></script>
+	<script type="text/javascript" src="${contextPath}/jquery/jqplot/plugins/jqplot.pointLabels.min.js"></script>
+	
+#else
+
+
+#end
+

@@ -1,0 +1,155 @@
+.cb-50{
+	width:50% !important;
+	margin:auto !important;
+}
+
+.cb-25{
+	width:25% !important;
+}
+
+.cb-20{
+	width:20% !important;
+	margin:0 10px;
+}
+.cb-40{
+	width:40% !important;
+
+}
+.m-side{
+	margin: 0 18px;
+}
+.lhAv{
+	line-height:1.5
+}
+
+.h_t{
+	text-align:center;
+	
+}
+
+
+.wrap-loading { /*화면 전체를 어둡게 합니다. */
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	background: rgba(0, 0, 0, 0.2); /*not in ie */
+	filter: progid:DXImageTransform.Microsoft.Gradient(startColorstr='#20000000',
+		endColorstr='#20000000'); /* ie */
+}
+
+.wrap-loading div { /*로딩 이미지 */
+	position: fixed;
+	top: 40%;
+	left: 40%;
+	margin-left: -21px;
+	margin-top: -21px;
+	width:400px;
+	height:400px;
+	text-align:center;
+	
+}
+.center{
+	text-align : center!important;
+}
+
+
+.display-none { /*감추기 */
+	display: none;
+}
+
+.toggle-info{
+	 border-radius: 50%;
+    width: 23px;
+    height: 23px;
+    line-height: 20px;
+    display: block;
+    border: 1px solid #c6d2dd;
+    text-align: center;
+    font-size: 16px;
+    color: #c6d2dd;
+	
+	
+}
+
+
+.green{
+	color: green;
+}
+
+.orange{
+	color: orange;
+}
+
+.red{
+	color: red;
+}
+
+.right{
+	float: right;
+}
+
+.vertical-middle{
+	vertical-align : middle !important;
+}
+
+#discrim{
+	font-size:18px;
+	font-weight:bold;
+}
+
+.btn-result{
+    color: #212529 !important;
+    background-color: #f8f9fa !important;
+    border-color: #cbd3da !important;
+    cursor:auto !important;
+}
+
+.btn-help{
+
+    border: 1px solid #00AAFF;
+    width: 20px;
+    height: 20px;
+    color: white;
+    border-radius: 5px;
+    background-color: #00AAFF;
+}
+.padding-25{
+	padding : 0 2.25rem;
+}
+
+#modalTable{
+	padding : 0.75rem 1.25rem !important;
+}
+
+/* 220706 페이징 style 추가 */
+	.pagination>li {display:inline;}
+	.pagination>li:first-child>a, .pagination>li:first-child>span {margin-left:0;}
+	.page_box_normal .pagination .first, .page_box_normal .pagination .next, .page_box_normal .pagination>li:nth-child(3) > a {border-left:1px solid #dedede;}
+	.pagination>li>a,
+	.pagination>li>span {position:relative; float:left; padding:6px 12px;}
+	
+	.page_box_normal {position:relative; margin-top:30px; text-align:center;}
+	.page_box_normal .pagination {display:inline-block; margin:0; text-align:center;}
+	.page_box_normal .pagination>li>a {text-align:center; color:#333; border:1px solid #dedede; width:40px; height:40px; line-height:1.6; border-left:0; font-weight:300;}
+	.page_box_normal .pagination>li>a.active {color:#000; position:relative;}
+	.page_box_normal .pagination>li>a.active:before {
+		position:absolute; bottom:0; left:0;
+		display:block; content:"";
+		width:100%; height:2px; background:#6d6d6d;
+	}
+	.page_box_normal .pagination .first,
+	.page_box_normal .pagination .prev,
+	.page_box_normal .pagination .next,
+	.page_box_normal .pagination .last {color:#333; background-color:#fff;}
+	.page_box_normal .pagination .first:hover,
+	.page_box_normal .pagination .prev:hover,
+	.page_box_normal .pagination .next:hover,
+	.page_box_normal .pagination .last:hover {color:#fff;}
+	.page_box_normal .pagination .prev {margin-right:5px;}
+	.page_box_normal .pagination .next {margin-left:5px;}
+	.page_box_write {margin-top:30px; text-align:right;}
+	.page_box_write a {display:inline-block; height:40px; line-height:40px; margin-left:5px; padding:0 20px 0 20px; background:#eee; border:1px solid #ccc; color:#000;}
+	.page_box_write a:hover {background:#42ac48; border:1px solid #42ac48; color:#fff;}
+	.pagination >li:first-child >a, .pagination>li:last-child>a {border-radius:0;}

@@ -1,0 +1,448 @@
+$(document).ready(function () {
+	
+	
+	
+	
+	
+	
+	// 운전자료데이터
+	$.ajax({
+		url: "/ship/getFnmRule.do",
+		dataType: "json",
+		contentType: "application/json; charset=utf-8",
+		success: function (result) {
+			 console.log("result.fnmRule    "+result.fnmRules.length);
+			 
+			 if(result.fnmRules.length == 0){
+				var div =  $("#grid");
+				div.append("<div>해당 계정에 등록되어있는 운전자료가 없습니다.</div>")
+			 }else{
+				 
+				 $("#downloadBtn").append('<button type="button" class="btn btn-outline-light text-right"'
+											+'id="excelDownladBtn">Download</button>')
+			 
+			
+			let fnmNumList = []
+			var grid = new tui.Grid({
+				el: document.getElementById('grid'),
+				data: result.fnmRules,
+				scrollX: false,
+				scrollY: true,
+				bodyHeight: 300,
+				rowHeaders: ['checkbox'],
+				columns: [
+					{
+						header: '파일명',
+						name: 'fnmRule',
+						sortingType: 'desc',
+						sortable: true,
+						align: 'center'
+					},
+					{
+						header: '처리장치',
+						name: 'bwmsType',
+						sortingType: 'desc',
+						sortable: true,
+						align: 'center'
+					},
+					{
+						header: '등록일자',
+						name: 'rgsDe',
+						sortingType: 'desc',
+						sortable: true,
+						align: 'center'
+					},
+					{
+						header: '파일명',
+						name: 'excelOrgNm'
+					},
+					{
+						header: '',
+						name: 'fnmRuleNum',
+						hidden: true
+					}
+				]
+			});
+
+			grid.on("check", (e) => {
+				const { rowKey, instance } = e
+				// if(columnName == "excelOrgNm" && rowKey >= 0) {
+				// const fnmRuleNum = instance.getRow(rowKey)["fnmRuleNum"]
+				// document.location.href = ROOT_PATH
+				// +"/comm/exclDownload.do?fnmRuleNum="+fnmRuleNum;
+				// }
+				fnmNumList.push(instance.getValue(rowKey, "fnmRuleNum"))
+				// console.log(fnmNumList)
+			})
+
+			grid.on("uncheck", (e) => {
+				const { rowKey, instance } = e
+				fnmNumList.splice(fnmNumList.indexOf(instance.getValue(rowKey, "fnmRuleNum")), 1)
+				// console.log(fnmNumList)
+			})
+
+			grid.on("checkAll", (e) => {
+				const { instance } = e
+				instance.getData().forEach((val, idx) => {
+					if (!fnmNumList.includes(val["fnmRuleNum"])) {
+						fnmNumList.push(val["fnmRuleNum"])
+					}
+				})
+				// console.log(fnmNumList)
+			})
+
+			grid.on("uncheckAll", () => {
+				fnmNumList = []
+				// console.log(fnmNumList)
+			})
+
+			$("#excelDownladBtn").click(() => {
+				console.log("json stringfy " + JSON.stringify(fnmNumList))
+				console.log("fnmNumList" + fnmNumList)
+				if (fnmNumList.length > 0) {
+					document.location.href = ROOT_PATH + "/comm/exclDownload.do?fnmRuleNum=" + fnmNumList;
+				}
+				
+
+			})
+			 }
+		},
+		error: function (request, status, error) {
+			 alert('error');
+		}
+	});
+
+
+	// 등록된 데이터 셋 비율
+
+	var registeredDateSetGraph = document.getElementById('driveData1');
+	$.ajax({
+		type: 'post',
+		url: '/ship/getDataSetCount.do',
+		dataType: 'json',
+		success: (result) => {
+			const { ecCount, uvCount, o3Count } = result.hashMap
+			const totalCount = ecCount + uvCount + o3Count
+
+			new Chart(registeredDateSetGraph, {
+				type: 'doughnut',
+				data: {
+					labels: ["EC", "UV", "O3"],
+					datasets: [{
+						label: "등록된 데이터 건수(개)",
+						backgroundColor: ["#3e95cd", "#8e5ea2", "#3cba9f"],
+						data: [ecCount, uvCount, o3Count]
+					}]
+				},
+				options: {
+					title: {
+						display: true,
+						text: '등록된 데이터셋 비율'
+					}
+				}
+			});
+		},
+		error: (error, status, request) => {
+
+		}
+	})
+
+	// 정상화 판변기준 통과 비율
+	var graph2 = document.getElementById('driveData2');
+
+
+
+	/*
+	 * var myChart2 = new Chart(graph2, { type: 'pie', data: { labels: ["정상",
+	 * "점검필요"], datasets: [{ label: "123", backgroundColor: ["#3e95cd",
+	 * "#8e5ea2", "#3cba9f"], data: [95, 5] }] }, options: { title: { display:
+	 * true, text: '정상화 판별기준 통과 비율' } } });
+	 */
+
+
+	// 등록된 데이터 건 (달별)
+	var registeredDateSetGroupByMonthGraph = document.getElementById('driveData3');
+	$.ajax({
+		type: 'post',
+		url: '/ship/getDataSetRgsDe.do',
+		dataType: 'json',
+		success: (result) => {
+			var  dateList = result.result
+			var  monthCount = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]		
+//			dateList.forEach((idx,val) => console.log(val))
+			console.log("#@!dateList    " + result.result[0].month)
+			
+			if(result.result.length != 0 ){
+//				dateList.forEach((val, idx) => {
+//					console.log("val ", val )
+//					const { month } = val
+//					monthCount[month] += 1
+//				}) 
+//				dateList.forEach(function(el,index){
+//					var month = dataList[index].month +1
+//					monthCount[month] +=1
+//					
+//				})
+//	
+//				$.Each(dateList, function(){
+//					var month = dataList[index].month +1
+//					monthCount[month] +=1
+//				});
+				dateList.forEach((element,idx) =>{ var month =element.month
+						monthCount[month] +=1
+						
+				});
+				new Chart(registeredDateSetGroupByMonthGraph, {
+					type: 'bar',
+					data: {
+						labels: ['1월', '2월', '3월', '4월', '5월', '6월', '7월',
+							'8월', '9월', '10월', '11월', '12월'],
+						datasets: [{
+							label: '등록된 운전자료  파일 수',
+							data: monthCount,
+							backgroundColor: [
+								'rgba(255, 99, 132, 0.2)',
+								'rgba(54, 162, 235, 0.2)',
+								'rgba(255, 206, 86, 0.2)',
+								'rgba(75, 192, 192, 0.2)',
+								'rgba(153, 102, 255, 0.2)',
+								'rgba(255, 159, 64, 0.2)',
+								'rgba(255, 99, 132, 0.2)',
+								'rgba(54, 162, 235, 0.2)',
+								'rgba(255, 206, 86, 0.2)',
+								'rgba(75, 192, 192, 0.2)',
+								'rgba(153, 102, 255, 0.2)',
+								'rgba(255, 159, 64, 0.2)'
+							],
+							borderColor: [
+								'rgba(255, 99, 132, 1)',
+								'rgba(54, 162, 235, 1)',
+								'rgba(255, 206, 86, 1)',
+								'rgba(75, 192, 192, 1)',
+								'rgba(153, 102, 255, 1)',
+								'rgba(255, 159, 64, 1)',
+								'rgba(255, 99, 132, 1)',
+								'rgba(54, 162, 235, 1)',
+								'rgba(255, 206, 86, 1)',
+								'rgba(75, 192, 192, 1)',
+								'rgba(153, 102, 255, 1)',
+								'rgba(255, 159, 64, 1)'
+							],
+							borderWidth: 1
+						}]
+					},
+					options: {
+						scales: {
+							yAxes: [{
+								ticks: {
+									beginAtZero: true
+								}
+							}]
+						}
+					
+					},
+					plugins: {
+						zoom: {
+							pan: {
+								enabled: true,
+								mode: 'xy'
+							},
+							zoom: {
+								enabled: true,
+								mode: 'xy'
+							}
+						}
+					}
+					
+				});
+			}else{
+				$("#driveData3").remove();
+				$("#card-messages").append("<p>해당년도에 등록된 데이터가 없습니다.</p>");
+			}
+		},
+		error: (error, status, request) => {
+
+		}
+	})
+	
+	var port = document.getElementById('portGraph');
+	
+//	var portGraph = new Chart(port,{
+//		type: 'horizontalBar',
+//		data : {
+//			labels: ['부산항','인천항','울산항','포항항','마산항','여수항','목포항','광양항','군산항'],
+//			datasets: [{
+//				label: '전국 주요 항구 ',
+//				data: ['10','9','8','7','6','5','4','3','2','1'],
+//				backgroundColor: [
+//					'rgba(255, 99, 132, 0.2)',
+//					'rgba(54, 162, 235, 0.2)',
+//					'rgba(255, 206, 86, 0.2)',
+//					'rgba(75, 192, 192, 0.2)',
+//					'rgba(153, 102, 255, 0.2)',
+//					'rgba(255, 159, 64, 0.2)',
+//					'rgba(255, 99, 132, 0.2)',
+//					'rgba(54, 162, 235, 0.2)',
+//					'rgba(255, 206, 86, 0.2)',
+//					'rgba(75, 192, 192, 0.2)'
+//				],
+//				borderColor: [
+//					'rgba(255, 99, 132, 1)',
+//					'rgba(54, 162, 235, 1)',
+//					'rgba(255, 206, 86, 1)',
+//					'rgba(75, 192, 192, 1)',
+//					'rgba(153, 102, 255, 1)',
+//					'rgba(255, 159, 64, 1)',
+//					'rgba(255, 99, 132, 1)',
+//					'rgba(54, 162, 235, 1)',
+//					'rgba(255, 206, 86, 1)',
+//					'rgba(75, 192, 192, 1)'
+//				],
+//				borderWidth: 1
+//			}],
+//			options: {
+//				scales: {
+//					yAxes: [{
+//						ticks: {
+//							beginAtZero: true
+//						}
+//					}]
+//				}
+//			}
+//			
+//	}
+//	})
+});
+
+
+
+
+/*example*/
+
+
+
+
+//var randomScalingFactor = function() {
+//	return (Math.random() > 0.5 ? 1.0 : -1.0) * Math.round(Math.random() * 100);
+//};
+//var randomColor = function(opacity) {
+//	return 'rgba(' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + Math.round(Math.random() * 255) + ',' + (opacity || '.3') + ')';
+//};
+//
+//var scatterChartData = {
+//	datasets: [{
+//		label: 'My First dataset',
+//		data: [{
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}]
+//	}, {
+//		label: 'My Second dataset',
+//		data: [{
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}, {
+//			x: randomScalingFactor(),
+//			y: randomScalingFactor(),
+//		}]
+//	}]
+//};
+//
+//scatterChartData.datasets.forEach(function(dataset) {
+//	dataset.borderColor = randomColor(0.4);
+//	dataset.backgroundColor = randomColor(0.1);
+//	dataset.pointBorderColor = randomColor(0.7);
+//	dataset.pointBackgroundColor = randomColor(0.5);
+//	dataset.pointBorderWidth = 1;
+//});
+//
+//window.onload = function() {
+//	var ctx = document.getElementById('canvas').getContext('2d');
+//	window.myScatter = window.Chart.Scatter(ctx, {
+//		data: scatterChartData,
+//		options: {
+//			title: {
+//				display: true,
+//				text: 'Chart.js Scatter Chart'
+//			},
+//			scales: {
+//				xAxes: [{
+//					position: 'top',
+//					gridLines: {
+//						zeroLineColor: 'rgba(0,255,0,1)'
+//					},
+//					scaleLabel: {
+//						display: true,
+//						labelString: 'x axis'
+//					},
+//					ticks: {
+//						maxRotation: 0,
+//						reverse: true
+//					}
+//				}],
+//				yAxes: [{
+//					position: 'right',
+//					gridLines: {
+//						zeroLineColor: 'rgba(0,255,0,1)'
+//					},
+//					scaleLabel: {
+//						display: true,
+//						labelString: 'y axis'
+//					},
+//					ticks: {
+//						reverse: true
+//					}
+//				}]
+//			},
+//			plugins: {
+//				zoom: {
+//					pan: {
+//						enabled: true,
+//						mode: 'xy'
+//					},
+//					zoom: {
+//						enabled: true,
+//						mode: 'xy'
+//					}
+//				}
+//			},
+//			onClick: function(e) {
+//				// eslint-disable-next-line no-alert
+//				alert(e.type);
+//			}
+//		}
+//	});
+//};

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Code2">
+
+	<!-- [관리자] 코드관리 리스트 -->
+	<select id="searchCodeMgmt" resultClass="java.util.HashMap" parameterClass="java.util.Map" remapResults="true">
+		SELECT GROUP_ID							AS "codeType"
+			 , CODE_ID                             	AS "code"
+		     , CODE_ORDR                            	AS "codeOdr"
+		     , CODE_NM                             	AS "codeNm"
+			 <isEmpty property="srchCodeNm">
+             , SUBSTR(LPAD(CODE_NM , ((LEVEL-1)*4) + LENGTHB(CODE_NM), '@'), 1, (LEVEL-1)*4)
+                ||DECODE(LEVEL, 1, '', '┖ ')||CODE_NM    AS "treeCodeNm"
+			 </isEmpty>
+			 <isNotEmpty property="srchCodeNm">
+			 , CODE_NM                             	AS "treeCodeNm"
+			 </isNotEmpty>
+		     , UPR_CODE                      	AS "parentCode"
+		     , (SELECT CODE_NM
+			 	FROM   TC_DSCO_CODE
+				WHERE  CODE_ID = A.UPR_CODE) 		AS "parentCodeNm"
+		     , NVL(USE_YN, 'N')                    	AS "useYn"
+		FROM   TC_DSCO_CODE A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchCodeTypeNm">
+				GROUP_ID like '%'||#srchCodeTypeNm#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="srchCodeNm">
+				(CODE_ID like '%'||#srchCodeNm#||'%' OR CODE_NM like '%'||#srchCodeNm#||'%')
+			</isNotEmpty>
+		</dynamic>
+		CONNECT BY PRIOR CODE_ID = UPR_CODE
+		START WITH UPR_CODE = 'NONE'
+		ORDER siblings BY GROUP_ID, CODE_ORDR
+	</select>
+
+	<!-- [관리자] 코드관리 리스트 Count-->
+	<select id="searchCodeMgmtCount" resultClass="int" parameterClass="java.util.Map">
+		SELECT COUNT(*)
+		FROM   TC_DSCO_CODE A
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchCodeTypeNm">
+				GROUP_ID like '%'||#srchCodeTypeNm#||'%'
+			</isNotEmpty>
+			<isNotEmpty prepend="AND" property="srchCodeNm">
+				(CODE_ID like '%'||#srchCodeNm#||'%' OR CODE_NM like '%'||#srchCodeNm#||'%')
+			</isNotEmpty>
+			<!-- <isNotEmpty prepend="AND" property="srchCodeNm">
+				(UPPER(CODE_ID) like '%'||UPPER(#srchCodeNm#)||'%' OR UPPER(CODE_NM) like '%'||UPPER(#srchCodeNm#)||'%')
+			</isNotEmpty> -->
+		</dynamic>
+		CONNECT BY PRIOR CODE_ID = UPR_CODE
+		START WITH UPR_CODE = 'NONE'
+		ORDER siblings BY GROUP_ID, CODE_ORDR
+	</select>
+	
+	<!-- [관리자] > 코드관리 상위코드 조회(콤보용) -->
+	<select id="searchComboCode" parameterClass="java.util.Map" resultClass="java.util.HashMap">
+		SELECT CODE_ID 													AS "comboValue"
+			, SUBSTR(SYS_CONNECT_BY_PATH(TRIM(CODE_NM), ' > '), 4)		AS "comboText"
+		FROM   TC_DSCO_CODE
+		WHERE  0 = 0
+		CONNECT BY PRIOR CODE_ID = UPR_CODE
+		START WITH UPR_CODE = 'NONE'
+		ORDER siblings BY CODE_ID
+	</select>
+	
+	<!-- [관리자] 코드관리 코드 추가-->
+	<update id="insertCodeMgmt" parameterClass="java.util.Map">
+		INSERT INTO TC_DSCO_CODE
+		(
+			GROUP_ID
+			, CODE_ID
+			, UPR_CODE
+			, CODE_ORDR
+			, CODE_NM
+			, USE_YN
+			, REGISTER
+			, RGS_DE
+		) VALUES (
+			#codeType#
+			, #code#
+			, #parentCode#
+		<isEmpty property="codeOdr">
+			, (SELECT NVL(MAX(CODE_ORDR), 0) + 1
+	           FROM   TC_DSCO_CODE
+	           WHERE  GROUP_ID = #codeType#)
+		</isEmpty>
+		<isNotEmpty property="codeOdr">
+			, #codeOdr#
+	     </isNotEmpty>
+	     , #codeNm#
+	     , #useYn#
+	     , #gsUserId#
+	     , SYSDATE
+		)
+	</update>
+	
+	<!-- [관리자] 코드관리 상세 조회 -->
+	<select id="selectCodeMgmt" parameterClass="java.util.HashMap" resultClass="java.util.HashMap">
+		SELECT GROUP_ID					AS "codeType"
+			, CODE_ID							AS "code"
+			, CODE_ORDR						AS "codeOdr"
+			, CODE_NM						AS "codeNm"
+			, NVL(USE_YN, 'N')				AS "useYn"
+			, UPR_CODE					AS "parentCode"
+		FROM TC_DSCO_CODE
+		WHERE GROUP_ID = #codeType#
+		AND CODE_ID = #code#
+	</select>
+	
+	<!-- [관리자] 코드 수정 -->
+	<update id="updateCodeMgmt" parameterClass="java.util.HashMap">
+		UPDATE
+			TC_DSCO_CODE
+		SET UPR_CODE = #parentCode#
+			, CODE_NM = #codeNm#
+			, CODE_ORDR = #codeOdr#
+			, USE_YN = #useYn#
+		WHERE GROUP_ID = #codeType#
+		AND CODE_ID = #code#
+	</update>
+
+	<!-- [관리자] 코드 삭제 -->
+	<delete id="deleteCodeMgmt" parameterClass="java.util.HashMap">
+		DELETE
+			TC_DSCO_CODE
+		WHERE
+			CODE_ID = #code#
+		AND GROUP_ID = #codeType#
+	</delete>
+	
+	<!-- 코드관리] 코드상세 -->
+	<select id="viewCode" parameterClass="java.util.Map" resultClass="java.util.Map">
+		SELECT GROUP_ID							AS "codeType"
+			 , CODE_ID                             	AS "code"
+		     , CODE_ORDR                            	AS "codeOdr"
+		     , CODE_NM                             	AS "codeNm"
+		     , UPR_CODE                      	AS "parentCode"
+		     , NVL(USE_YN, 'N')                    	AS "useYn"
+			 , CODE_DC1								AS "addCol1"
+			 , CODE_DC2								AS "addCol2"
+			 , CODE_DC3								AS "addCol3"
+			 , CODE_DC4								AS "addCol4"
+			 , CODE_DC5								AS "addCol5"
+		FROM   TC_DSCO_CODE
+		WHERE  CODE_ID = #code#
+	</select>
+
+	<!-- 코드관리] 코드등록 -->
+	<insert id="regiCode" parameterClass="java.util.Map">
+		INSERT INTO   TC_DSCO_CODE (
+		       GROUP_ID
+			 , CODE_ID
+		     , UPR_CODE
+		     , CODE_ORDR
+		     , CODE_NM
+		     , USE_YN
+			 , CODE_DC1
+			 , CODE_DC2
+			 , CODE_DC3
+			 , CODE_DC4
+			 , CODE_DC5
+		     , REGISTER
+		     , REGI_DATE
+		) VALUES (
+		       #codeType#
+		     , #code#
+		     , #parentCode#
+		     <isEmpty property="codeOdr">
+				, (SELECT NVL(MAX(CODE_ORDR), 0) + 1
+		           FROM   TC_DSCO_CODE
+		           WHERE  GROUP_ID = #codeType#)
+		     </isEmpty>
+			 <isNotEmpty property="codeOdr">
+				, #codeOdr#
+		     </isNotEmpty>
+			 , #codeNm#
+		     , #useYn#
+		     , #addCol1#
+		     , #addCol2#
+		     , #addCol3#
+		     , #addCol4#
+		     , #addCol5#
+		     , #gsUserId#
+		     , sysdate
+		)
+	</insert>
+
+	<!-- 코드관리] 코드수정 -->
+	<update id="updtCode" parameterClass="java.util.Map">
+        UPDATE TC_DSCO_CODE
+        SET    CODE_NM          = #codeNm#
+             , CODE_ORDR         = #codeOdr#
+             , UPR_CODE   	= #parentCode#
+			 , CODE_DC1			= #addCol1#
+			 , CODE_DC2			= #addCol2#
+			 , CODE_DC3			= #addCol3#
+			 , CODE_DC4			= #addCol4#
+			 , CODE_DC5			= #addCol5#
+             , USE_YN           = #useYn#
+             , UPDT_ID          = #gsUserId#
+             , UPDT_DATE        = sysdate
+        WHERE  GROUP_ID		= #codeType#
+		AND    CODE_ID				= #code#
+	</update>
+
+	<!-- 코드관리] 코드삭제 -->
+	<delete id="deltCode" parameterClass="java.util.Map">
+		DELETE FROM TC_DSCO_CODE
+        WHERE  CODE_ID  = #code#
+	</delete>
+</sqlMap>

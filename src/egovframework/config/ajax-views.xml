@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN"
+    "http://www.springframework.org/dtd/spring-beans.dtd"> -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+	<!--
+	ajax view xml rendering
+	-->
+	<bean name="xmlView"  class="commf.view.XMLView">
+    	<property name="contentType">
+     	 	<value>text/xml;charset=utf-8</value>
+        </property>
+    </bean>
+
+    <!--
+	ajax view a single JSON rendering
+	-->
+    <bean name="jsonView"  class="commf.view.JSONView">
+    	<property name="contentType">
+     	 	<value>text/xml;charset=utf-8</value>
+        </property>
+    </bean>
+</beans>

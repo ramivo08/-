@@ -1,0 +1,228 @@
+.ol-popup {
+	position: absolute;
+	background-color: white;
+	-webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+	filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+	padding: 15px;
+	border-radius: 10px;
+	bottom: 12px;
+	left: -50px;
+	min-width: 150px;
+}
+
+.ol-popup:after, .ol-popup:before {
+	top: 100%;
+	border: solid transparent;
+	content: " ";
+	height: 0;
+	width: 0;
+	position: absolute;
+	pointer-events: none;
+}
+
+.ol-popup:after {
+	border-top-color: #006464;
+	border-width: 10px;
+	left: 48px;
+	margin-left: -10px;
+}
+
+.ol-popup:before {
+	border-top-color: #cccccc;
+	border-width: 11px;
+	left: 48px;
+	margin-left: -11px;
+}
+
+.ol-popup-closer {
+	text-decoration: none;
+	position: absolute;
+	top: 2px;
+	right: 8px;
+}
+
+.ol-popup-closer:after {
+	content: "x";
+}
+
+.ol-popup-content {
+	color: #000000;
+	font-size: 13px;
+}
+
+#info {
+	position: absolute;
+	height: 1px;
+	width: 1px;
+	z-index: 100;
+}
+
+.measuretooltip {
+	position: relative;
+	background: rgba(0, 0, 0, 0.5);
+	border-radius: 4px;
+	color: #fff;
+	padding: 4px 8px;
+	opacity: 0.7;
+	white-space: nowrap;
+}
+
+.measuretooltip.tooltip-measure {
+	opacity: 1;
+	font-weight: bold;
+}
+
+.measuretooltip.tooltip-measure sup {
+	vertical-align: super;
+}
+
+.measuretooltip.tooltip-static {
+	background-color: #000;
+	color: #fff;
+	border: 1px solid #fff;
+}
+
+.measuretooltip.tooltip-static sup {
+	vertical-align: super;
+}
+
+.measuretooltip.tooltip-measure:before, .measuretooltip.tooltip-static:before
+	{
+	border-top: 6px solid rgba(0, 0, 0, 0.5);
+	border-right: 6px solid transparent;
+	border-left: 6px solid transparent;
+	content: "";
+	position: absolute;
+	bottom: -6px;
+	margin-left: -7px;
+	left: 50%;
+}
+
+.measuretooltip.tooltip-static:before {
+	border-top-color: #000;
+}
+
+
+/* #header button.AI_search{width:60px; height:60px; text-align:center; color:#fff; font-size:24px; line-height:60px; float:left; border-right:1px solid #3494d0; background: url(../images/gis/AI_search.png) no-repeat 30% 30%;}
+		#header button.AI_search:hover, #header button.AI_search.active{background: url(../images/gis/AI_search_yellow.png) no-repeat 30% 30%;} */
+
+#ai_view_img:hover, #ai_view_img.active {background: url(../images/view_yellow.png) no-repeat 30% 30%;}
+
+#ai_search_img:hover, #ai_search_img.active {background: url(../images/search_yellow.png) no-repeat 30% 30%;}
+
+#ai_statistics_img:hover, #ai_statistics_img.active {background: url(../images/statistics_yellow.png) no-repeat 30% 30%;}
+
+#ai_plus_img:hover, #ai_plus_img.active {background: url(../images/plus_yellow.png) no-repeat 30% 30%;}
+
+.btnbox_move>a.active {
+	font-family: "NotoMedium";
+	font-size: 16px;
+}
+
+#req_view_img:hover, #req_view_img.active {
+	background: url(../images/view_yellow.png) no-repeat 30% 30%;
+}
+
+#req_search_img:hover, #req_search_img.active {
+	background: url(../images/search_yellow.png) no-repeat 30% 30%;
+}
+
+#req_statistics_img:hover, #req_statistics_img.active {
+	background: url(../images/statistics_yellow.png) no-repeat 30% 30%;
+}
+
+#req_plus_img:hover, #req_plus_img.active {
+	background: url(../images/plus_yellow.png) no-repeat 30% 30%;
+}
+
+.btnbox_move>a.active {
+	font-family: "NotoMedium";
+	font-size: 16px;
+}
+
+#fore_view_img:hover, #fore_view_img.active {
+	background: url(../images/view_yellow.png) no-repeat 30% 30%;
+}
+
+#fore_search_img:hover, #fore_search_img.active {
+	background: url(../images/search_yellow.png) no-repeat 30% 30%;
+}
+
+#fore_statistics_img:hover, #fore_statistics_img.active {
+	background: url(../images/statistics_yellow.png) no-repeat 30% 30%;
+}
+
+#fore_plus_img:hover, #fore_plus_img.active {
+	background: url(../images/plus_yellow.png) no-repeat 30% 30%;
+}
+
+.btnbox_move>a.active {
+	font-family: "NotoMedium";
+	font-size: 16px;
+}
+
+#died_view_img:hover, #died_view_img.active {
+	background: url(../images/view_yellow.png) no-repeat 30% 30%;
+}
+
+#died_search_img:hover, #died_search_img.active {
+	background: url(../images/search_yellow.png) no-repeat 30% 30%;
+}
+
+#died_statistics_img:hover, #died_statistics_img.active {
+	background: url(../images/statistics_yellow.png) no-repeat 30% 30%;
+}
+
+#died_plus_img:hover, #died_plus_img.active {
+	background: url(../images/plus_yellow.png) no-repeat 30% 30%;
+}
+#mu_view_img:hover, #mu_view_img.active {
+	background: url(../images/view_yellow.png) no-repeat 30% 30%;
+}
+
+.btnbox_move>a.active {
+	font-family: "NotoMedium";
+	font-size: 16px;
+}
+
+#draggable {
+	width: 150px;
+	height: 150px;
+	padding: 0.5em;
+}
+
+
+.header_right button {
+	width: 60px;
+	height: 60px;
+	text-align: center;
+	color: #fff;
+	font-size: 24px;
+	line-height: 60px;
+	float: left;
+	border-right: 1px solid #005656;
+}
+
+/* 메뉴, AI경보현황, 통계, 관리자  */
+#header button.AI_menu { background: url(../images/gis/AI_menu.png) no-repeat 30% 30%;}
+#header button.AI_menu:hover, #header button.AI_menu.active { background: url(../images/gis/AI_menu_yellow.png) no-repeat 30% 30%;}
+#header button.AI_notice { background: url(../images/gis/AI_notice.png) no-repeat 30% 30%; }
+#header button.AI_notice:hover, #header button.AI_notice.active { background: url(../images/gis/AI_notice_yellow.png) no-repeat 30% 30%; }
+#header button.AI_statistics { background: url(../images/gis/AI_statistics.png) no-repeat 30% 30%;}
+#header button.AI_statistics:hover, #header button.AI_statistics.active {background: url(../images/gis/AI_statistics_yellow.png) no-repeat 30% 30%;}
+#header button.AI_admin { background: url(../images/gis/AI_admin.png) no-repeat 30% 30%;}
+#header button.AI_admin:hover, #header button.AI_admin.active {background: url(../images/gis/AI_admin_yellow.png) no-repeat 30% 30%;}
+
+
+/* 지리정보 메뉴 하위 메뉴 */
+#display_menu div{width:160px; background-color:#008b8b;}
+#display_menu div{width:160px; background-color:#008b8b;}
+#display_menu div img:nth-child(1){margin-top: 7px; margin-bottom: 7px; margin-left: 7px;}
+#display_menu div img:nth-child(2){margin-top: 7px; margin-bottom: 7px; margin-left: 14px;}
+#display_menu .menu_title {background-color:#008b8b; width:160px; border-top: 1px solid #FFFFFF; border-bottom: 1px solid #FFFFFF; font-size: 12px;padding: 7px;}
+#display_menu .menu_title span, .bg_map_container span{color:white; margin-left: 5px;}
+.div_left .select_wrap {width: 130px; height:29px; border: 1px solid #FFFFFF; font-size:13px;}
+.div_left .pop_title {background-color:#006464; width:380px; padding: 7px;}
+.div_left .pop_title a{float:right;}
+.div_left .pop_sub_title{background-color:#008b8b; width:380px; border-top: 1px solid #FFFFFF; border-bottom: 1px solid #FFFFFF; font-size: 12px;padding: 7px;}
+.div_left .date_wrap {background-color: #FFFFFF; height:29px;}

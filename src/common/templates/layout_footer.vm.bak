@@ -1,0 +1,29 @@
+#set ($urlTerms				= "/info/viewAccessTerms.do?tab=agreebox_01div")			<!-- 이용약관 -->
+#set ($urlPerInfo			= "/info/viewAccessTerms.do?tab=agreebox_02div")			<!-- 개인정보처리방침 -->
+#set ($urlEmail				= "/info/viewAccessTerms.do?tab=agreebox_03div")			<!-- 이메일무단수집거부 -->
+
+#if ($type == 'normal')
+		        </div><!-- //contents -->
+		    </div><!-- //con_wrap -->
+		</section>
+#end	
+
+	<!--▼ 하단 영역 -->
+	<footer>
+		<address>
+			<img src="${contextPath}/images/common/bottom_logo.jpg" alt="국립환경과학원 야생동물 건강성평가 및 질병 정보시스템 로고">
+			<p>야생동물 건강성평가 및 질병 정보시스템</p>
+			<div>
+	        	(우)22689 인천 서구 환경로 42(종합환경연구단지) / 대표전화 : 032-560-7114 / 홈페이지안내 : 032-560-7090, 7088<br>
+	            Copyright © NATIONAL INSTITUTE OF ENVIRONMENTAL RESEARCH. All Rights Reserved.
+	        </div>
+			<div>
+				<a href="#void">이용약관</a>
+				<a href="#void">개인정보취급방침</a>
+			</div>
+		</address>
+	</footer>
+
+	<!-- ie8 이하 안내 메시지 -->
+	<!--#include virtual="/ver3/include/ie8.asp"-->
+	<!--▲ 하단 영역 -->

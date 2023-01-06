@@ -1,0 +1,5 @@
+#if(!$icon)
+    <span id="btn_${id}" class="${style}"><a href="javascript:${jsFunction}('${id}');" ${width}>${name}</a></span>
+#else
+    <span id="btn_${id}" class="${style}" onclick="javascript:${jsFunction}('${id}');"><span class="${icon}"></span><a href="#" ${width}>${name}</a></span>
+#end

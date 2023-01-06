@@ -1,0 +1,38 @@
+ul.notice, ul.faq {
+	width : 100%;
+	border-top : solid 2px;
+	border-bottom : solid 2px;
+	padding-left: 0px;
+}
+
+
+div.list {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+
+.noticeContent, .faqContent {
+	margin-top: 16px;
+	border-bottom : solid 1px #cccccc;
+}
+
+.contentNum {
+	font-size: 1rem;
+	margin-left: 20px;
+}
+
+.contentTitle {
+	font-size : 1rem;
+}
+.contentTitle a, .contentTitle span {
+	color : #5d5d5d;
+}
+.contentTitle a:hover {
+	color : #888888;
+}
+
+.boardRow .card-body{
+	max-height: 400px;
+	overflow-y: auto;
+}

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="Prog">
+
+	<!-- Program Information-->
+	<select id="getProgInfo" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT PROGRAM_ID 											AS "progId"
+			, PROGRAM_NM 											AS "progNm"
+			, PROGRAM_PTTRN 									AS "progPattern"
+			, PROGRAM_TY 										AS "progType"
+			, MENU_ID 											AS "menuId"
+			, NVL( (SELECT MENU_NM
+					FROM   TN_DSCO_MENU_MGT
+					WHERE  MENU_ID = A.MENU_ID), PROGRAM_NM) 		AS "titleNm"
+			, PROGRAM_ORDR AS "progOdr"
+			, REGEXP_SUBSTR(B.MENU_ID_PATH, '[^,]+', 1, 1) 	AS "firstMenuId"
+			, REGEXP_SUBSTR(B.MENU_ID_PATH, '[^,]+', 1, 2) 	AS "secondMenuId"
+			, B.MENU_PATH 										AS "menuPath"
+			, B.URL_PATH 										AS "urlPath"
+			, LPAD((SELECT MENU_LEVEL
+		FROM   TN_DSCO_MENU_MGT
+		WHERE  MENU_ID = A.MENU_ID
+		AND    ROWNUM = 1), 2, '0') 				AS "menuIcon"
+		FROM
+		(
+			SELECT *
+			FROM   TN_DSCO_PROGRAM_MGT
+			WHERE  PROGRAM_PTTRN like #url#||'%'
+			AND    PROGRAM_TY = 'url'
+			AND    ROWNUM = 1
+		) A,
+		(
+			SELECT SUBSTR(MAX(SYS_CONNECT_BY_PATH(TRIM(MENU_ID), ',')), 2) 		AS menu_id_path
+				, SUBSTR(MAX(SYS_CONNECT_BY_PATH(TRIM(MENU_NM), ',')), 2) 		AS menu_path
+				, SUBSTR(MAX(SYS_CONNECT_BY_PATH(TRIM(TRGT_URL), ',')), 2) 	AS url_path
+			FROM   (SELECT ROWNUM num
+						, MENU_ID
+						, MENU_NM
+						, TRGT_URL
+					FROM   (SELECT MENU_ID
+								, MENU_NM
+								, TRGT_URL
+							FROM   TN_DSCO_MENU_MGT A
+							CONNECT BY PRIOR UPR_MENU_ID = MENU_ID
+							START WITH MENU_ID = (SELECT DISTINCT MENU_ID
+												FROM   TN_DSCO_PROGRAM_MGT
+												WHERE  PROGRAM_PTTRN like #url#||'%')
+							ORDER BY ROWNUM DESC ) )
+			START WITH num = 1
+			CONNECT BY PRIOR num = num - 1
+		) B
+		WHERE ROWNUM = 1
+    </select>
+
+	<!-- 프로그램관리] 프로그램 리스트 -->
+	<select id="listProg" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT   PROGRAM_ID                               	AS "progId"
+			   , PROGRAM_NM                             	AS "progNm"
+			   , PROGRAM_PTTRN                          	AS "progPattern"
+			   , PROGRAM_TY                             	AS "progType"
+			   , MENU_ID								AS "menuId"
+        FROM   TN_DSCO_PROGRAM_MGT
+		<dynamic prepend="WHERE">
+			<isNotEmpty prepend="AND" property="srchProgNm">
+				PROGRAM_NM like '%'||#srchProgNm#||'%'
+			</isNotEmpty>
+		</dynamic>
+        ORDER BY PROGRAM_ID
+	</select>
+
+	<!-- 프로그램관리] 상세조회 -->
+	<select id="viewProg" resultClass="java.util.HashMap" parameterClass="java.util.Map">
+		SELECT   PROGRAM_ID                               	AS "progId"
+			   , PROGRAM_NM                             	AS "progNm"
+			   , PROGRAM_PTTRN                          	AS "progPattern"
+			   , PROGRAM_TY                             	AS "progType"
+			   , MENU_ID								AS "menuId"
+        FROM   TN_DSCO_PROGRAM_MGT
+		WHERE  PROGRAM_ID = #progId#
+	</select>
+
+	<!-- 프로그램관리] 프로그램 등록 -->
+	<insert id="regiProg" parameterClass="java.util.Map">
+        INSERT INTO TN_DSCO_PROGRAM_MGT (
+               PROGRAM_ID
+             , PROGRAM_NM
+             , PROGRAM_PTTRN
+             , PROGRAM_TY
+             , MENU_ID
+             , REGISTER
+             , REGI_DATE
+        ) VALUES (
+               #progId#
+             , #progNm#
+             , #progPattern#
+             , 'url'
+             , #menuId#
+             , #gsUserId#
+             , sysdate
+        )
+	</insert>
+
+	<!-- 프로그램관리] 프로그램 수정 -->
+	<update id="updtProg" parameterClass="java.util.Map">
+		UPDATE TN_DSCO_PROGRAM_MGT
+		SET    PROGRAM_NM          = #progNm#
+		     , PROGRAM_PTTRN     = #progPattern#
+		     , MENU_ID          = #menuId#
+		     , UPDT_ID          = #gsUserId#
+		     , UPDT_DATE        = sysdate
+		WHERE  PROGRAM_ID          = #progId#
+	</update>
+
+	<!-- 프로그램관리] 프로그램 삭제 -->
+	<delete id="deltProg" parameterClass="java.util.Map">
+		DELETE FROM TN_DSCO_PROGRAM_MGT
+        WHERE  PROGRAM_ID  = #progId#
+	</delete>
+
+</sqlMap>

@@ -1,0 +1,6 @@
+<div class="popWrap">
+	<!-- 팝업 타이틀 -->
+	<div class="title bg_blue">
+    	<p>$!{title}</p>
+		<a class="close" href="#none" title="창닫기" id="closeBtn"><span>닫기</span></a>
+	</div>

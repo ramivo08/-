@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://www.ibatis.com/dtd/sql-map-2.dtd">
+<sqlMap namespace="UserInfo">
+
+	<typeAlias alias="userInfo" type="common.user.UserInfo"/>
+
+	<!-- 사용자정보 가져온다. -->
+	<!-- <select id="getUserInfo" resultClass="userInfo" parameterClass="java.util.Map">
+		SELECT
+			  USER_ID					AS "userId"
+			, USER_NM					AS "userNm"
+			, PASSWD					AS "passwd"
+			, EMAIL						AS "email"
+			, ORGAN_NM					AS "organNm"
+			, TEL_NO					AS "telNo"
+			, OFFI_TEL_NO				AS "offiTelNo"
+			, FAX_NO					AS "faxNo"
+			, USE_YN					AS "useYn"
+			, USER_TYPE					as "userType"
+			, RSCU_CD					AS "rscuCd"
+			, POST_NO					AS "postNo"
+			, ADDR1						AS "addr1"
+			, ADDR2						AS "addr2"
+			, ADDR3						AS "addr3"
+			, ADDR4						AS "addr4"
+			, ADDR5						AS "addr5"
+			, USE_STAT					AS "useStat"
+			, ROLE_ID					AS "roleId"
+		FROM  VW_USER
+        WHERE 0 = 0
+		AND USER_ID = #userId#
+    </select> -->
+    <sql id="searchSql">
+	    <isNotNull property="searchType">
+	    	<isEqual property="searchType" compareValue="all" prepend="AND">
+					(u."USER_ID" LIKE  '%'||#searchCont#||'%'
+				OR	u."USER_NM" LIKE  '%'||#searchCont#||'%'
+				OR	r."ROLE_NM" LIKE  '%'||#searchCont#||'%')
+			</isEqual>
+			<isEqual property="searchType" compareValue="id" prepend="AND">
+				u."USER_ID" LIKE  '%'||#searchCont#||'%'
+			</isEqual>
+			<isEqual property="searchType" compareValue="name" prepend="AND">
+				u."USER_NM" LIKE  '%'||#searchCont#||'%'
+			</isEqual>
+			<isEqual property="searchType" compareValue="auth" prepend="AND">
+				r."ROLE_NM" LIKE  '%'||#searchCont#||'%'
+			</isEqual>		
+	    </isNotNull>
+		
+	</sql>
+    
+    <!-- 사용자정보 가져온다. -->
+	<select id="getUserInfo" resultClass="common.user.UserInfo" parameterClass="java.util.Map">
+		SELECT
+			  u."USER_ID"					AS "userId"
+			, u."USER_NM"					AS "userNm"
+			, u."USER_EMAIL"				AS "email"
+			, u."OFFI_NM"					AS "offiNm"
+			, u."USER_TEL"					AS "telNo"
+			, u."OFFI_TEL"					AS "offiTelNo"
+			, u."USER_ROLE"					AS "roleId"
+			, r."ROLE_NM"					AS "roleName"
+			, u."ship_nm"					AS "shipNm"
+<!-- 			, u."mnft_en"					AS "mnftNm" -->
+			<!-- 0924 선박평형수 user seq  추가 -->
+<!-- 			, u."user_role_seq"  			AS "roleSeq" -->
+		FROM  aea_user_info AS u
+		JOIN aea_role_mgt r
+		ON u."USER_ROLE" = r."ROLE_ID"
+        
+        WHERE 0 = 0
+		AND "USER_ID" = #userId#
+		<include refid="searchSql" />
+    </select>
+    
+    <select id="getUserInfoList" parameterClass="map" resultClass="java.util.HashMap">
+    		SELECT
+    		u."USER_ID"			AS	"userId"
+			, u."USER_NM"		AS	"userNm"
+			, u."USER_EMAIL"	AS	"email"
+			, u."USER_TEL"		AS	"telNo"
+			, u."OFFI_NM"		AS	"offiNm"
+			, u."OFFI_TEL"		AS	"offiTelNo"
+			, u."ACCESS_YN"		AS	"isAccessible"
+			, r."ROLE_NM"		AS	"roleName"
+			, u."USER_ROLE"		AS	"roleId"
+			
+			FROM aea_user_info u
+			JOIN aea_role_mgt r
+			ON u."USER_ROLE" = r."ROLE_ID"
+			
+			<include refid="searchSql" />
+			
+			ORDER BY
+			CASE WHEN u."USER_ROLE" = 'ROLE_AUTH_SYS' THEN 1 END, u."ACCESS_YN" DESC, u."USER_ROLE";
+			
+			
+    </select>
+    
+    <select id="getUserInfoListCount" resultClass="int">
+    
+    	SELECT COUNT(*)
+    	FROM aea_user_info u
+		JOIN aea_role_mgt r
+		ON u."USER_ROLE" = r."ROLE_ID"
+    	WHERE 0 = 0
+    	<include refid="searchSql" />
+    </select>
+    
+    <select id="getRoleName" parameterClass="String" resultClass="String">
+    	SELECT
+    	"ROLE_NM" AS "roleName"
+    	FROM
+    	aea_role_mgt
+    	"ROLE_ID" = #roleId#
+    </select>
+    
+    <select id="getRoleList" resultClass="java.util.HashMap">
+    	SELECT
+    	"ROLE_ID" AS "roleId",
+    	"ROLE_NM" AS "roleName"
+    	FROM
+    	aea_role_mgt
+    </select>
+    
+    <select id="checkUserInfo" resultClass="Boolean" parameterClass="Hashmap">
+    	SELECT CASE WHEN EXISTS (
+		    SELECT *
+		    FROM aea_user_info
+		    WHERE "USER_ID"= #inputId# AND "USER_PW"= #inputPwd# AND "ACCESS_YN")
+		THEN CAST(TRUE AS BOOLEAN)
+		ELSE CAST(FALSE AS BOOLEAN) END
+    </select>
+    
+    <select id="checkId" resultClass="int" parameterClass="Hashmap">
+		    SELECT COUNT(*)
+		    FROM aea_user_info
+		    WHERE "USER_ID"= #inputId#
+    </select>
+    
+    <select id="randomCookieId" resultClass="String">
+    	SELECT substr(concat(md5(random()::text), md5(random()::text)), 0, 21)
+    </select>
+    
+    <select id="getUserId" resultClass="String" parameterClass="java.util.Map">
+    	SELECT 
+    	"USER_ID"
+    	FROM aea_user_info
+		
+		WHERE "REM_COOKIE" = #cookieValue#
+    </select>
+    
+    <select id="getUserEmail" resultClass="String" parameterClass="java.util.Map">
+    	SELECT 
+    	"USER_EMAIL"
+    	
+		FROM public.aea_user_info
+		
+		WHERE "USER_ID" = #inputId#
+    </select>
+    
+    <select id="getAuthList" resultClass="String">
+    	SELECT
+    	"NAME" AS "roleName"
+    	FROM
+    	aea_role_mgt
+    </select>
+
+   <update id="rememberId" parameterClass="java.util.Map">
+   		UPDATE public.aea_user_info
+		SET "REM_COOKIE" = #cookieId#
+		WHERE "USER_ID" = #inputId#;
+    </update>
+
+	<insert id="registerUser" parameterClass="java.util.Map"> 
+		INSERT INTO public.aea_user_info(
+		"USER_ID", "USER_NM", "USER_PW", "USER_EMAIL", "USER_ROLE", "ROADADRESS", "OFFI_NM", "USER_TEL", "OFFI_TEL", "ACCESS_YN", "REM_COOKIE","mnft_en" )
+		VALUES (#inputId#, #inputName#, #inputPwd#, #inputEmail#, #userRole#, NULL, #inputOfName#, #inputTel#, #inputOfTel#, 'true', NULL,#mnftNm#)
+	</insert>
+	
+	
+	 
+	<update id="deleteRmemberId" parameterClass="java.util.Map"> 
+		UPDATE public.aea_user_info
+		SET "REM_COOKIE" = NULL
+		WHERE "USER_ID" = #inputId#;
+	</update>
+	
+	<update id="initPwd" parameterClass="java.util.Map">
+		UPDATE public.aea_user_info
+		SET "USER_PW"=#initPwd#
+		WHERE "USER_ID" = #inputId#;
+	</update>
+
+	<update id="changeUserInfo" parameterClass="map">
+		UPDATE public.aea_user_info
+		SET "USER_NM" = #inputName#, "USER_TEL" = #inputTel#, "OFFI_NM" = #inputOffNm#, "OFFI_TEL" = #inputOffTel#
+		<isEqual property="gsRoleId" compareValue="ROLE_AUTH_SYS" prepend=",">
+			"ACCESS_YN" = #isActive#, "USER_EMAIL" = #inputEmail#, "USER_ROLE" = #inputRoleNm#
+		</isEqual> 
+		<isNotEqual property="gsRoleId" compareValue="ROLE_AUTH_SYS">
+			<isNotNull property="inputChangePwd" prepend=",">
+				"USER_PW" = #inputChangePwd#
+			</isNotNull> 
+		</isNotEqual> 
+		
+		WHERE "USER_ID" = #inputId#;
+	</update>
+	<!-- <update id="changeUserInfo" parameterClass="map">
+	
+		UPDATE public.aea_user_info
+		SET "$changeDomain$" = #changeValue#
+		
+		WHERE "USER_ID" = #userId#;
+	</update> -->
+	
+	<delete id="deleteUser" parameterClass="String">
+		DELETE FROM aea_user_info
+		WHERE "USER_ID" = #userId#
+	</delete>
+</sqlMap>
