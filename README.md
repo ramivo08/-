@@ -16,7 +16,7 @@ Beckend 6명의 팀원으로 구성된 팀프로젝트로 기업의 연계를 �
 🔹 Backend : Java, spring, PostgreSQL</br>
 🔹 Frontend : HTML/CSS, JS</br>
 🔹 Framework / Library : egovFramework, iBatis, Bootstrap</br>
-🔹 협업도구 : SVN
+🔹 협업도구 : SVN</br>
 🔹 주요업무 및 상세역할</br>
 - 공지사항 CRUD, 텍스트에디터, 파일 업로드, 검색
 - 글 등록과 수정 시 파일 첨부와 summernote를 활용하여 텍스트에디터를 구현하였습니다.
