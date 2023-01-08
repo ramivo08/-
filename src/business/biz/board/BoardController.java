@@ -59,6 +59,7 @@ public class BoardController extends BaseController {
 	@Resource(name = "fileManager")
 	FileManager fileManager;
 
+	// 이런 상수들은 ConstantUtil 같은걸 만들어서 모아두는게 좋음 (Controller에 종속되어 변수가 존재할 필요가 없음)
 	protected static final String BBS_TYPE_B01 = "BW1"; // 공지사항(Notice)
 	protected static final String BBS_TYPE_B02 = "BW2"; // 자주묻는 질문(FAQ)
 	protected static final String BBS_TYPE_B03 = "BW3"; // Q&A(Q&A)
